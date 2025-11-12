@@ -91,7 +91,9 @@ if (!isset($_SESSION['admin_id'])) {
                         }
 
                         while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
+                            $status = $row['status'] ?? 'pending';
+                            $reason = $row['reject_reason'] ?? '';
+                            echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
                             echo "<td>{$i}</td>";
                             echo "<td>{$row['full_name']}</td>";
                             echo "<td>{$row['phone']}</td>";
@@ -127,10 +129,27 @@ if (!isset($_SESSION['admin_id'])) {
                             }
                             echo "<td>{$badge}</td>";
 
-                            echo "<td>
-                                <button class='btn btn-success btn-sm'>อนุมัติ</button>
-                                <button class='btn btn-danger btn-sm' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
-                                </td>";
+                            echo '<td>';
+                            if ($status === 'pending') {
+                                // ยังไม่ตัดสินใจ → แสดง อนุมัติ/ไม่อนุมัติ
+                                echo "
+      <button class='btn btn-success btn-sm btn-approve'>อนุมัติ</button>
+      <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
+    ";
+                            } else {
+                                // อนุมัติหรือไม่อนุมัติแล้ว → แสดงปุ่มรายละเอียดแทน
+                                // เก็บ reason ใน data-* ด้วย (กรณี rejected)
+                                echo "
+      <button class='btn btn-outline-secondary btn-sm btn-detail'
+              data-id='{$row['id']}'
+              data-status='{$status}'
+              data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+        <i class='fas fa-info-circle'></i> รายละเอียด
+      </button>
+    ";
+                            }
+                            echo '</td>';
+
                             echo "</tr>";
                             $i++;
                         }
@@ -144,32 +163,15 @@ if (!isset($_SESSION['admin_id'])) {
         </div>
     </div>
 
-    <!-- Modal เหตุผลไม่อนุมัติ -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">ระบุเหตุผลที่ไม่อนุมัติ</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <textarea class="form-control" rows="4" placeholder="กรุณาระบุเหตุผล..."></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                    <button type="button" class="btn btn-danger">ส่งเหตุผล</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal: เหตุผลการไม่อนุมัติ -->
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">ระบุเหตุผลที่ไม่อนุมัติ</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form id="rejectForm">
@@ -186,20 +188,28 @@ if (!isset($_SESSION['admin_id'])) {
             </div>
         </div>
     </div>
-    <!-- jQuery -->
+    <!-- Modal: รายละเอียด -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white" id="detailHeader">
+                    <h5 class="modal-title" id="detailTitle">รายละเอียดคำขอ</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="detailBody">
+                    <!-- เติมด้วย JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-    <!-- Bootstrap 4 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- AdminLTE -->
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-
-    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
-
-    <!-- เรียกใช้งานตาราง -->
     <script>
         $(function() {
             $('#bookingsTable').DataTable({
@@ -218,9 +228,121 @@ if (!isset($_SESSION['admin_id'])) {
                 pageLength: 10,
                 order: []
             });
-        });
-    </script>
 
+            // อนุมัติ
+            $('#bookingsTable').on('click', '.btn-approve', function() {
+                const $tr = $(this).closest('tr');
+                const id = $tr.data('id');
+                updateStatus(id, 'approved');
+            });
+
+            // ไม่อนุมัติ — เปิด modal เก็บเหตุผล
+            let selectedId = null;
+            $('#bookingsTable').on('click', '.btn-reject', function() {
+                selectedId = $(this).closest('tr').data('id');
+                $('#rejectModal').modal('show');
+            });
+
+            $('#rejectForm').on('submit', function(e) {
+                e.preventDefault();
+                const reason = $('#reason').val().trim();
+                if (!reason) {
+                    alert('กรุณากรอกเหตุผลก่อนส่ง');
+                    return;
+                }
+                updateStatus(selectedId, 'rejected', reason);
+                $('#rejectModal').modal('hide');
+                $('#reason').val('');
+            });
+
+            // รายละเอียด
+            $('#bookingsTable').on('click', '.btn-detail', function() {
+                const $tr = $(this).closest('tr');
+                openDetailModalFromRow($tr);
+            });
+
+            // ===== ฟังก์ชัน =====
+            function updateStatus(id, status, reason = null) {
+                $.post('ad_updateStatus.php', {
+                    id,
+                    status,
+                    reason
+                }, function(res) {
+                    if (res === 'success') {
+                        const $tr = $(`#bookingsTable tr[data-id="${id}"]`);
+                        const $statusCell = $tr.find('td').eq(12); // คอลัมน์ "สถานะ"
+
+                        if (status === 'approved') {
+                            $statusCell.html('<span class="badge badge-success">อนุมัติแล้ว</span>');
+                        } else if (status === 'rejected') {
+                            $statusCell.html('<span class="badge badge-danger">ไม่อนุมัติ</span>');
+                        } else {
+                            $statusCell.html('<span class="badge badge-warning text-dark">รออนุมัติ</span>');
+                        }
+
+                        // อัปเดต data-* บนแถว
+                        $tr.attr('data-status', status);
+                        if (reason !== null) $tr.attr('data-reason', reason);
+
+                        // แทนที่ปุ่มในคอลัมน์สุดท้ายด้วย "รายละเอียด"
+                        const $actionCell = $tr.find('td').last();
+                        $actionCell.html(`
+          <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
+            <i class="fas fa-info-circle"></i> รายละเอียด
+          </button>
+        `);
+
+                        // (เลือกได้) เปิด modal รายละเอียดให้ดูทันที
+                        openDetailModalFromRow($tr);
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการอัปเดต');
+                    }
+                }).fail(function() {
+                    alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+                });
+            }
+
+            function openDetailModalFromRow($tr) {
+                const status = ($tr.data('status') || '').toString();
+                const reason = ($tr.data('reason') || '').toString();
+
+                // ดึงค่าจากเซลล์ในแถว (ปรับ index ตามหัวตารางของคุณ)
+                const name = $tr.find('td').eq(1).text().trim();
+                const inDate = $tr.find('td').eq(9).text().trim();
+                const outDate = $tr.find('td').eq(10).text().trim();
+                const ppl = $tr.find('td').eq(11).text().trim();
+
+                // ตั้งหัว modal และสีตามสถานะ
+                const $header = $('#detailHeader');
+                $header.removeClass('bg-success bg-danger bg-secondary');
+
+                let title = 'รายละเอียดคำขอ';
+                if (status === 'approved') {
+                    $header.addClass('bg-success');
+                    title = 'รายละเอียดคำขอ (อนุมัติแล้ว)';
+                } else if (status === 'rejected') {
+                    $header.addClass('bg-danger');
+                    title = 'รายละเอียดคำขอ (ไม่อนุมัติ)';
+                } else {
+                    $header.addClass('bg-secondary');
+                }
+                $('#detailTitle').text(title);
+
+                // เนื้อหาใน modal
+                let html = `
+                <div class="mb-2"><b>ชื่อผู้จอง:</b> ${name}</div>
+                <div class="mb-2"><b>วันที่เข้าพัก:</b> ${inDate}</div>
+                <div class="mb-2"><b>วันที่ออก:</b> ${outDate}</div>
+                <div class="mb-2"><b>จำนวนคน:</b> ${ppl}</div>
+                `;
+                if (status === 'rejected') {
+                    html += `<div class="alert alert-danger mt-3"><b>เหตุผลที่ไม่อนุมัติ:</b> ${reason || '—'}</div>`;
+                }
+
+                $('#detailBody').html(html);
+                $('#detailsModal').modal('show');
+            }
+        });
     </script>
 </body>
 

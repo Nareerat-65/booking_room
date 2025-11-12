@@ -103,7 +103,6 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
-
 // สร้าง object
 $mail = new PHPMailer(true);
 
