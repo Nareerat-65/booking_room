@@ -1,14 +1,5 @@
 <?php
-$host     = 'localhost';
-$user     = 'root';
-$password = '';
-$dbname   = 'booking_system';
-
-// เชื่อมต่อ MySQL
-$conn = new mysqli($host, $user, $password, $dbname);
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+require_once '../db.php';
 
 // รับค่าจากฟอร์ม
 $fullName   = $_POST['fullName'] ?? '';
@@ -27,8 +18,16 @@ $studyCourse = $_POST['studyCourse'] ?? '';
 $studyDept  = $_POST['studyDept'] ?? '';
 $electiveDept = $_POST['electiveDept'] ?? '';
 
-$checkInDate  = $_POST['checkInDate'] ?? null;
-$checkOutDate = $_POST['checkOutDate'] ?? null;
+
+function toSqlDate($d) {
+    if (!$d) return null;
+    // รับได้ทั้ง d-m-Y (จาก placeholder/datepicker เดิม) และ Y-m-d (จาก <input type="date">)
+    $dt = DateTime::createFromFormat('d-m-Y', $d) ?: DateTime::createFromFormat('Y-m-d', $d);
+    return $dt ? $dt->format('Y-m-d') : null;
+}
+
+$checkInDate  = toSqlDate($_POST['checkInDate'] ?? null);
+$checkOutDate = toSqlDate($_POST['checkOutDate'] ?? null);
 
 $womanCount = isset($_POST['womanCount']) ? (int)$_POST['womanCount'] : 0;
 $manCount   = isset($_POST['manCount'])   ? (int)$_POST['manCount']   : 0;
