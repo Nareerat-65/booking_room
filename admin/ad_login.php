@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (hash('sha256', $password) === $row['password']) {
             $_SESSION['admin_id'] = $row['id'];
             $_SESSION['admin_name'] = $row['full_name'];
-            header('Location: admin_dashboard.php');
+            header('Location: ad_dashboard.php');
             exit;
         } else {
             $error = 'รหัสผ่านไม่ถูกต้อง';

@@ -9,23 +9,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         body {
-            background: #f4f5fb;
+            background: #fbf6f4ff;
             font-family: 'Kanit', sans-serif;
         }
 
         .navbar {
             font-size: 0.95rem;
             backdrop-filter: blur(12px);
+            background-color: #F57B39;
         }
 
         .nav-link {
             transition: 0.3s;
+            font-size: 1.1rem;
         }
 
         .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.15);
             border-radius: 0.5rem;
             padding-inline: 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.9rem;
         }
 
         .booking-wrapper {
@@ -112,7 +118,8 @@
             background: #e9f2ff;
             color: #1d4ed8;
         }
-        .btn-light{
+
+        .btn-light {
             background-color: #fff;
             border-color: #cfcfcfff;
         }
@@ -120,6 +127,13 @@
         .btn-primary {
             border-radius: 999px;
             padding-inline: 1.75rem;
+            border: none;
+            background-color: #F57B39;
+        }
+
+        .btn-primary:hover {
+            background-color: #F57B39;
+            opacity: 0.9;
         }
 
         .btn-outline-secondary {
@@ -129,9 +143,9 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold py-2" href="#">
                 🏨 ระบบจองห้องพัก
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -149,9 +163,6 @@
                         <a class="nav-link active" href="u_booking.php">จองห้องพัก</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="status.php">ตรวจสอบสถานะ</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="contact.php">ติดต่อเรา</a>
                     </li>
                 </ul>
@@ -161,7 +172,7 @@
     <div class="container py-5">
         <h1 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h1>
 
-        <form method="post" action="u_booking_process.php">
+        <form id="bookingForm" method="post" action="u_booking_process.php">
             <!-- ชื่อ / เบอร์ / LINE / Email -->
             <div class="mb-3">
                 <label for="fullName" class="form-label">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
@@ -183,7 +194,7 @@
                 <input type="email" class="form-control" id="email" name="email" required />
             </div>
 
-            <!-- ตำแหน่ง (เลือกได้อย่างเดียว) -->
+            <!-- ตำแหน่ง -->
             <fieldset class="mb-3">
                 <legend class="fs-6">ตำแหน่ง</legend>
 
@@ -208,7 +219,7 @@
                 </div>
 
                 <!-- แพทย์ -->
-                <div class="form-check mb-2 d-flex align-items-center gap-2">
+                <div class="form-check mb-2">
                     <input
                         class="form-check-input mt-0"
                         type="radio"
@@ -253,7 +264,7 @@
                 </div>
             </fieldset>
 
-            <!-- ชื่อหน่วยงาน / สังกัด (ค้นหา + กรอกเองได้) -->
+            <!-- ชื่อหน่วยงาน / สังกัด -->
             <div class="mb-3">
                 <label for="department" class="form-label">ชื่อหน่วยงานต้นสังกัด</label>
                 <input
@@ -264,7 +275,7 @@
                     required
                     placeholder="พิมพ์เพื่อค้นหา หรือกรอกใหม่" />
                 <datalist id="departmentList">
-                    <!-- ตัวอย่าง option สามารถแก้/เพิ่มได้เอง -->
+                    <!-- ตัวอย่าง option -->
                     <option value="คณะแพทยศาสตร์">
                     <option value="โรงพยาบาลมหาวิทยาลัย">
                     <option value="ภาควิชาอายุรศาสตร์">
@@ -356,7 +367,7 @@
             <div class="row g-3 mb-3" id="dateRangePicker">
                 <div class="col-md-6">
                     <label for="checkInDate" class="form-label">วันที่ย้ายเข้าพัก</label>
-                    <input type="text" class="form-control date start" id="checkInDate" name="checkInDate" required  placeholder="DD-MM-YYYY" />
+                    <input type="text" class="form-control date start" id="checkInDate" name="checkInDate" required placeholder="DD-MM-YYYY" />
                 </div>
                 <div class="col-md-6">
                     <label for="checkOutDate" class="form-label">วันที่ย้ายออก</label>
@@ -387,6 +398,27 @@
         </form>
     </div>
 
+    <!-- Modal: ส่งคำขอสำเร็จ -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">ส่งคำขอสำเร็จ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>ระบบได้รับคำขอจองห้องพักของคุณเรียบร้อยแล้ว</p>
+                    <p class="mb-0 text-muted" style="font-size: 0.9rem;">
+                        กรุณารอการติดต่อกลับจากเจ้าหน้าที่เพื่อยืนยันการจอง
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">ตกลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
@@ -396,8 +428,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        
-        // เปลี่ยนข้อความปุ่ม + ใส่ค่าใน hidden input
+        // เปลี่ยนข้อความปุ่มตามที่เลือกใน dropdown
         document.querySelectorAll('.dropdown').forEach(drop => {
             const btn = drop.querySelector('.dropdown-toggle');
             const hidden = drop.querySelector('input[type="hidden"]');
@@ -422,7 +453,7 @@
             // อัปเดตให้วันออกเลือกได้ไม่น้อยกว่าวันเข้า
             $('#checkOutDate').datepicker('setStartDate', start);
 
-            // ถ้าตอนนี้มีค่าในช่องวันออก แล้วดัน < วันเข้า ให้ดันขึ้นมาเท่ากับวันเข้า
+            // ถ้าตอนนี้มีค่าในช่องวันออก แล้ว < วันเข้า ให้ดันขึ้นมาเท่ากับวันเข้า
             const end = $('#checkOutDate').datepicker('getDate');
             if (end && end < start) {
                 $('#checkOutDate').datepicker('setDate', start);
@@ -434,6 +465,41 @@
             format: 'dd-mm-yyyy',
             autoclose: true,
             startDate: today
+        });
+
+        //ส่งฟอร์มแบบ AJAX
+        const bookingForm = document.getElementById('bookingForm');
+
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            const formData = new FormData(bookingForm); // สร้าง FormData จากฟอร์ม
+
+            fetch('u_booking_process.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.text())
+                .then(text => {
+                    // ถ้า u_booking_process.php ส่ง echo "OK" ตอนทำสำเร็จ
+                    if (text.trim() === 'OK') {
+                        // เคลียร์ฟอร์ม
+                        bookingForm.reset();
+                        $('#checkInDate').datepicker('update', '');
+                        $('#checkOutDate').datepicker('update', '');
+
+                        // แสดง modal success
+                        const modalEl = document.getElementById('successModal');
+                        const successModal = new bootstrap.Modal(modalEl);
+                        successModal.show();
+                    } else {
+                        // ถ้าฝั่ง PHP ส่ง error text กลับมา
+                        alert('เกิดข้อผิดพลาด: ' + text);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง');
+                });
         });
     </script>
 </body>

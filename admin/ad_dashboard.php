@@ -15,19 +15,84 @@ if (!isset($_SESSION['admin_id'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
 
+    <style>
+        body {
+            background: #fbf6f4ff;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .navbar {
+            font-size: 0.95rem;
+            backdrop-filter: blur(12px);
+            background-color: #F57B39;
+        }
+
+        .nav-link {
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 0.5rem;
+            padding-inline: 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.9rem;
+        }
+        .d-flex{
+            font-size: 1.1rem;
+        }
+        .card-title {
+            font-size: 1.5rem;
+        }
+        .card-header {
+            background-color: #F57B39;
+            opacity: 0.9;
+        }
+        .badge{
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-dark bg-primary px-4">
-        <span class="navbar-brand">แดชบอร์ดผู้ดูแล</span>
-        <div class="d-flex align-items-center text-white g-3">
-            <?= htmlspecialchars($_SESSION['admin_name']) ?>
-            <a href="ad_logout.php" class="btn btn-outline-light btn-sm ms-3">ออกจากระบบ</a>
+    <nav class="navbar navbar-expand-lg navbar-dark px-4">
+        <a class="navbar-brand font-weight-bold py-2" href="#">แดชบอร์ดผู้ดูแล</a>
+
+        <!-- ปุ่ม toggle สำหรับจอเล็ก -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- เมนูหลัก -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="ad_dashboard.php">รายการคำขอจองห้องพัก</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="ad_calendar.php">ปฏิทินห้องพัก</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact.php">ติดต่อเรา</a>
+                </li>
+            </ul>
+
+            <!-- ส่วนชื่อและปุ่มออก -->
+            <div class="d-flex align-items-center text-white ml-3">
+                <?= htmlspecialchars($_SESSION['admin_name']) ?>
+                <a href="ad_logout.php" class="btn btn-outline-light btn-sm ml-3">ออกจากระบบ</a>
+            </div>
         </div>
     </nav>
+
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header text-white ">
             <h1 class="card-title">📋 รายการคำขอจองห้องพัก</h1>
         </div>
         <div class="card-body">
@@ -133,20 +198,20 @@ if (!isset($_SESSION['admin_id'])) {
                             if ($status === 'pending') {
                                 // ยังไม่ตัดสินใจ → แสดง อนุมัติ/ไม่อนุมัติ
                                 echo "
-      <button class='btn btn-success btn-sm btn-approve'>อนุมัติ</button>
-      <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
-    ";
+                                <button class='btn btn-success btn-sm btn-approve'>อนุมัติ</button>
+                                <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
+                                ";
                             } else {
                                 // อนุมัติหรือไม่อนุมัติแล้ว → แสดงปุ่มรายละเอียดแทน
                                 // เก็บ reason ใน data-* ด้วย (กรณี rejected)
                                 echo "
-      <button class='btn btn-outline-secondary btn-sm btn-detail'
-              data-id='{$row['id']}'
-              data-status='{$status}'
-              data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-        <i class='fas fa-info-circle'></i> รายละเอียด
-      </button>
-    ";
+                                <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                        data-id='{$row['id']}'
+                                        data-status='{$status}'
+                                        data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                    <i class='fas fa-info-circle'></i> รายละเอียด
+                                </button>
+                                ";
                             }
                             echo '</td>';
 
@@ -287,10 +352,10 @@ if (!isset($_SESSION['admin_id'])) {
                         // แทนที่ปุ่มในคอลัมน์สุดท้ายด้วย "รายละเอียด"
                         const $actionCell = $tr.find('td').last();
                         $actionCell.html(`
-          <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
-            <i class="fas fa-info-circle"></i> รายละเอียด
-          </button>
-        `);
+                        <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
+                            <i class="fas fa-info-circle"></i> รายละเอียด
+                        </button>
+                        `);
 
                         // (เลือกได้) เปิด modal รายละเอียดให้ดูทันที
                         openDetailModalFromRow($tr);

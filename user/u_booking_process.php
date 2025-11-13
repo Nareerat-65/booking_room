@@ -1,31 +1,25 @@
 <?php
 require_once '../db.php';
 
-// รับค่าจากฟอร์ม
 $fullName   = $_POST['fullName'] ?? '';
 $phone      = $_POST['phone'] ?? '';
 $lineId     = $_POST['lineId'] ?? '';
 $email      = $_POST['email'] ?? '';
-
 $position   = $_POST['position'] ?? null;
 $studentYear = $_POST['studentYear'] ?? null;
 $positionOther = $_POST['positionOtherDetail'] ?? null;
-
 $department = $_POST['department'] ?? '';
-
 $purpose    = $_POST['purpose'] ?? null;
 $studyCourse = $_POST['studyCourse'] ?? '';
 $studyDept  = $_POST['studyDept'] ?? '';
 $electiveDept = $_POST['electiveDept'] ?? '';
 
-
+//แปลงวันที่จากรูปแบบ d-m-Y หรือ Y-m-d เป็น Y-m-d
 function toSqlDate($d) {
     if (!$d) return null;
-    // รับได้ทั้ง d-m-Y (จาก placeholder/datepicker เดิม) และ Y-m-d (จาก <input type="date">)
     $dt = DateTime::createFromFormat('d-m-Y', $d) ?: DateTime::createFromFormat('Y-m-d', $d);
     return $dt ? $dt->format('Y-m-d') : null;
 }
-
 $checkInDate  = toSqlDate($_POST['checkInDate'] ?? null);
 $checkOutDate = toSqlDate($_POST['checkOutDate'] ?? null);
 
@@ -55,7 +49,7 @@ if (!empty($errors)) {
     exit;
 }
 
-// เตรียมคำสั่ง SQL แบบ prepared statement
+//เพิ่มข้อมูล
 $sql = "INSERT INTO bookings
         (full_name, phone, line_id, email,
          position, student_year, position_other,
@@ -74,7 +68,7 @@ if (!$stmt) {
 $studentYear = ($studentYear === '') ? null : (int)$studentYear;
 
 $stmt->bind_param(
-    'sssssissssssssii', // เดี๋ยวเราแก้สตริงนี้ให้ถูก (ดูด้านล่าง)
+    'sssssissssssssii', 
     $fullName,
     $phone,
     $lineId,
@@ -96,50 +90,52 @@ if (!$stmt->execute()) {
     die('Execute failed: ' . $stmt->error);
 }
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\Exception;
 
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
+// require 'PHPMailer/src/Exception.php';
+// require 'PHPMailer/src/PHPMailer.php';
+// require 'PHPMailer/src/SMTP.php';
 
-// สร้าง object
-$mail = new PHPMailer(true);
+// // สร้าง object
+// $mail = new PHPMailer(true);
 
-try {
-    // ตั้งค่า SMTP
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';  // ใช้ Gmail SMTP
-    $mail->SMTPAuth = true;
-    $mail->Username = 'nareerats65@nu.ac.th';     // 👉 Gmail ของคุณ
-    $mail->Password = 'gwfq rtik mszl bjhl';       // 👉 รหัสผ่านแอป (App Password)
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+// try {
+//     // ตั้งค่า SMTP
+//     $mail->isSMTP();
+//     $mail->Host = 'smtp.gmail.com';  // ใช้ Gmail SMTP
+//     $mail->SMTPAuth = true;
+//     $mail->Username = 'nareerats65@nu.ac.th';     // 👉 Gmail ของคุณ
+//     $mail->Password = 'gwfq rtik mszl bjhl';       // 👉 รหัสผ่านแอป (App Password)
+//     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+//     $mail->Port = 587;
 
-    // ผู้ส่ง
-    $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
-    // ผู้รับ (Admin)
-    $mail->addAddress('nareeerat28012547@gmail.com', 'Admin');
+//     // ผู้ส่ง
+//     $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
+//     // ผู้รับ (Admin)
+//     $mail->addAddress('nareeerat28012547@gmail.com', 'Admin');
 
-    // เนื้อหาอีเมล
-    $mail->isHTML(true);
-    $mail->CharSet = 'UTF-8';  
-    $mail->Subject = 'มีคำขอจองห้องพักใหม่เข้ามา';
-    $mail->Body    = "
-        <h3>มีคำขอจองห้องพักใหม่</h3>
-        <p><b>ชื่อผู้จอง:</b> {$fullName}</p>
-        <p><b>เบอร์โทร:</b> {$phone}</p>
-        <p><b>LINE ID:</b> {$lineId}</p>
-        <p><b>Email:</b> {$email}</p>
-        <p><b>หน่วยงาน:</b> {$department}</p>
-        <p><b>วันที่เข้าพัก:</b> {$checkInDate}</p>
-        <p><b>วันที่ย้ายออก:</b> {$checkOutDate}</p>
-    ";
+//     // เนื้อหาอีเมล
+//     $mail->isHTML(true);
+//     $mail->CharSet = 'UTF-8';  
+//     $mail->Subject = 'มีคำขอจองห้องพักใหม่เข้ามา';
+//     $mail->Body    = "
+//         <h3>มีคำขอจองห้องพักใหม่</h3>
+//         <p><b>ชื่อผู้จอง:</b> {$fullName}</p>
+//         <p><b>เบอร์โทร:</b> {$phone}</p>
+//         <p><b>LINE ID:</b> {$lineId}</p>
+//         <p><b>Email:</b> {$email}</p>
+//         <p><b>หน่วยงาน:</b> {$department}</p>
+//         <p><b>วันที่เข้าพัก:</b> {$checkInDate}</p>
+//         <p><b>วันที่ย้ายออก:</b> {$checkOutDate}</p>
+//     ";
 
-    $mail->send();
-    echo "ส่งอีเมลแจ้งเตือนเรียบร้อยแล้ว!";
-} catch (Exception $e) {
-    echo "ไม่สามารถส่งอีเมลได้: {$mail->ErrorInfo}";
-}
+//     $mail->send();
+//     echo "OK";
+// } catch (Exception $e) {
+//     echo "MAIL ERROR: " . $mail->ErrorInfo;
+// }
+echo "OK";
+
 $stmt->close();
 $conn->close();
