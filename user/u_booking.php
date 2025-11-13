@@ -146,7 +146,7 @@
                         <a class="nav-link " href="index.php">หน้าแรก</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="booking.php">จองห้องพัก</a>
+                        <a class="nav-link active" href="u_booking.php">จองห้องพัก</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="status.php">ตรวจสอบสถานะ</a>
@@ -161,7 +161,7 @@
     <div class="container py-5">
         <h1 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h1>
 
-        <form method="post" action="booking_process.php">
+        <form method="post" action="u_booking_process.php">
             <!-- ชื่อ / เบอร์ / LINE / Email -->
             <div class="mb-3">
                 <label for="fullName" class="form-label">ชื่อ–นามสกุล ผู้จองห้องพัก</label>

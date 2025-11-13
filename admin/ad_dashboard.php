@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: login.php');
+    header('Location: ad_login.php');
     exit;
 }
 ?>
@@ -21,9 +21,9 @@ if (!isset($_SESSION['admin_id'])) {
 <body class="bg-light">
     <nav class="navbar navbar-dark bg-primary px-4">
         <span class="navbar-brand">แดชบอร์ดผู้ดูแล</span>
-        <div class="d-flex align-items-center text-white">
+        <div class="d-flex align-items-center text-white g-3">
             <?= htmlspecialchars($_SESSION['admin_name']) ?>
-            <a href="logout.php" class="btn btn-outline-light btn-sm ms-3">ออกจากระบบ</a>
+            <a href="ad_logout.php" class="btn btn-outline-light btn-sm ms-3">ออกจากระบบ</a>
         </div>
     </nav>
     <div class="card">
