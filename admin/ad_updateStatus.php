@@ -1,20 +1,17 @@
 <?php
-// ad_updateStatus.php
 header('Content-Type: text/plain; charset=utf-8');
 
-require_once '../db.php';  // ไฟล์เชื่อมต่อ $conn
+require_once '../db.php';  
 
-// ====== PHPMailer ======
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// 👉 ปรับ path ให้ตรงกับโฟลเดอร์ PHPMailer ของโปรเจกต์เธอ
 require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
 /**
- * ฟังก์ชันจัดสรรห้องตาม booking
+ * จัดสรรห้องพักให้ booking ที่อนุมัติแล้ว
  */
 function allocateRooms(mysqli $conn, int $bookingId): void
 {
@@ -45,9 +42,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     }
     $stmt->close();
 
-    // -------------------------------
-    // กำหนดช่วงวันที่ของการจองนี้
-    // -------------------------------
+    
     $startDate = $checkIn;
     $endDate   = $checkOut;
 
@@ -198,7 +193,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         if ($status === 'approved') {
             // ลิงก์ให้ผู้จองเข้าไปกรอกรายชื่อผู้เข้าพัก
 
-            $link = 'http://localhost:3000/user/guest_fill.php?token=' . urlencode((string)$token);
+            $link = 'http://localhost:3000/user/u_guest_form.php?token=' . urlencode((string)$token);
 
             $subject = 'ผลการจองห้องพัก: อนุมัติ';
 

@@ -1,18 +1,13 @@
 <?php
-// guest_fill.php
-// หน้าให้ผู้จองกรอกรายชื่อผู้เข้าพักจากลิงก์ในอีเมล
-
 header('Content-Type: text/html; charset=utf-8');
-require_once '../db.php'; // ปรับ path ให้ตรงกับไฟล์เชื่อม DB ของโปรเจกต์
+require_once '../db.php';
 
 $token = $_GET['token'] ?? '';
 if ($token === '') {
     die('ลิงก์ไม่ถูกต้อง');
 }
 
-// -------------------------------------------
-// 1) ดึงข้อมูลการจองจาก token
-// -------------------------------------------
+// ดึงข้อมูลการจองจาก token
 $stmt = $conn->prepare("
     SELECT id, full_name, check_in_date, check_out_date,
            woman_count, man_count
@@ -31,9 +26,8 @@ if (!$stmt->fetch()) {
 }
 $stmt->close();
 
-// -------------------------------------------
-// 2) ดึงรายการห้องที่จัดให้ booking นี้จาก room_allocations
-// -------------------------------------------
+
+// ดึงรายการห้องที่จัดให้ booking นี้จาก room_allocations
 $sqlAlloc = "
     SELECT 
         a.id AS allocation_id,
@@ -62,16 +56,15 @@ if (empty($allocs)) {
     die('ยังไม่ได้จัดสรรห้องสำหรับการจองนี้ กรุณาติดต่อเจ้าหน้าที่');
 }
 
-// -------------------------------------------
-// 3) ดึงรายชื่อผู้เข้าพักเดิม (ถ้ามี) จาก room_guests
-// -------------------------------------------
+
+// ดึงรายชื่อผู้เข้าพักเดิม (ถ้ามี) จาก room_guests
 $sqlGuests = "
     SELECT allocation_id, guest_name
     FROM room_guests
     WHERE booking_id = ?
     ORDER BY id
 ";
-$guests = []; // [allocation_id] => [ 'ชื่อ1', 'ชื่อ2', ... ]
+$guests = [];
 
 $stmt = $conn->prepare($sqlGuests);
 $stmt->bind_param('i', $bookingId);
@@ -88,9 +81,8 @@ $stmt->close();
 
 $saveMessage = '';
 
-// -------------------------------------------
-// 4) ถ้ามีการ submit ฟอร์ม (POST) → บันทึกรายชื่อ
-// -------------------------------------------
+
+// ถ้ามีการ submit ฟอร์ม (POST) → บันทึกรายชื่อ
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $posted = $_POST['guests'] ?? []; // guests[allocation_id][] = ชื่อ
 
@@ -174,16 +166,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #fbf6f4ff;
             font-family: 'Kanit', sans-serif;
         }
+
         .navbar {
             font-size: 0.95rem;
             backdrop-filter: blur(12px);
             background-color: #F57B39;
         }
+
         .navbar-brand {
             font-size: 1.9rem;
         }
     </style>
-    
+
 </head>
 
 <body class="bg-light">
@@ -257,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endfor; ?>
 
                         <p class="text-muted small mb-0">
-                            * ถ้าไม่ครบทุกช่อง ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริง ที่เหลือปล่อยว่างได้
+                            *ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริง ที่เหลือปล่อยว่างไว้
                         </p>
                     </div>
                 </div>
