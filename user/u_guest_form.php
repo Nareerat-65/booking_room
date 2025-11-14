@@ -163,83 +163,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <title>กรอกรายชื่อผู้เข้าพัก</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            background: #fbf6f4ff;
+            font-family: 'Kanit', sans-serif;
+        }
+        .navbar {
+            font-size: 0.95rem;
+            backdrop-filter: blur(12px);
+            background-color: #F57B39;
+        }
+        .navbar-brand {
+            font-size: 1.9rem;
+        }
+    </style>
+    
 </head>
+
 <body class="bg-light">
-<div class="container py-4">
-    <h2 class="mb-3">กรอกรายชื่อผู้เข้าพัก</h2>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold py-2" href="#">
+                🏨 ระบบจองห้องพัก
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    </nav>
+    <div class="container py-4">
+        <h2 class="mb-3">กรอกรายชื่อผู้เข้าพัก</h2>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <p class="mb-1"><b>ผู้จอง:</b> <?= htmlspecialchars($bookerName, ENT_QUOTES, 'UTF-8') ?></p>
-            <p class="mb-1"><b>ช่วงเข้าพัก:</b>
-                <?= htmlspecialchars($checkIn, ENT_QUOTES, 'UTF-8') ?>
-                ถึง
-                <?= htmlspecialchars($checkOut, ENT_QUOTES, 'UTF-8') ?>
-            </p>
-            <p class="mb-0"><b>จำนวนทั้งหมด:</b>
-                หญิง <?= (int)$totalW ?> คน,
-                ชาย <?= (int)$totalM ?> คน
-            </p>
-        </div>
-    </div>
-
-    <?php if ($saveMessage): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($saveMessage, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php endif; ?>
-
-    <form method="post" class="mb-5">
-
-        <?php foreach ($allocs as $aid => $a): ?>
-            <?php
-            $aid       = (int)$aid;
-            $roomName  = $a['room_name'];
-            $wCount    = (int)$a['woman_count'];
-            $mCount    = (int)$a['man_count'];
-            $maxGuests = $wCount + $mCount;
-            $genderLbl = ($wCount > 0 && $mCount === 0) ? 'หญิง' : 'ชาย';
-            $existing  = $guests[$aid] ?? [];
-            ?>
-
-            <div class="card mb-3">
-                <div class="card-header">
-                    ห้อง: <?= htmlspecialchars($roomName, ENT_QUOTES, 'UTF-8') ?>
-                    (<?= $genderLbl ?> สูงสุด <?= $maxGuests ?> คน)
-                </div>
-                <div class="card-body">
-
-                    <?php for ($i = 0; $i < $maxGuests; $i++): ?>
-                        <?php
-                        $value = $existing[$i] ?? '';
-                        ?>
-                        <div class="mb-2">
-                            <label class="form-label">
-                                ชื่อคนที่ <?= $i + 1 ?>:
-                            </label>
-                            <input
-                                type="text"
-                                name="guests[<?= $aid ?>][]"
-                                class="form-control"
-                                value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>"
-                            >
-                        </div>
-                    <?php endfor; ?>
-
-                    <p class="text-muted small mb-0">
-                        * ถ้าไม่ครบทุกช่อง ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริง ที่เหลือปล่อยว่างได้
-                    </p>
-                </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="mb-1"><b>ผู้จอง:</b> <?= htmlspecialchars($bookerName, ENT_QUOTES, 'UTF-8') ?></p>
+                <p class="mb-1"><b>ช่วงเข้าพัก:</b>
+                    <?= htmlspecialchars($checkIn, ENT_QUOTES, 'UTF-8') ?>
+                    ถึง
+                    <?= htmlspecialchars($checkOut, ENT_QUOTES, 'UTF-8') ?>
+                </p>
+                <p class="mb-0"><b>จำนวนทั้งหมด:</b>
+                    หญิง <?= (int)$totalW ?> คน,
+                    ชาย <?= (int)$totalM ?> คน
+                </p>
             </div>
+        </div>
 
-        <?php endforeach; ?>
+        <?php if ($saveMessage): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($saveMessage, ENT_QUOTES, 'UTF-8') ?></div>
+        <?php endif; ?>
 
-        <button type="submit" class="btn btn-primary">
-            บันทึกรายชื่อผู้เข้าพัก
-        </button>
-    </form>
-</div>
+        <form method="post" class="mb-5">
+
+            <?php foreach ($allocs as $aid => $a): ?>
+                <?php
+                $aid       = (int)$aid;
+                $roomName  = $a['room_name'];
+                $wCount    = (int)$a['woman_count'];
+                $mCount    = (int)$a['man_count'];
+                $maxGuests = $wCount + $mCount;
+                $genderLbl = ($wCount > 0 && $mCount === 0) ? 'หญิง' : 'ชาย';
+                $existing  = $guests[$aid] ?? [];
+                ?>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        ห้อง: <?= htmlspecialchars($roomName, ENT_QUOTES, 'UTF-8') ?>
+                        (<?= $genderLbl ?> สูงสุด <?= $maxGuests ?> คน)
+                    </div>
+                    <div class="card-body">
+
+                        <?php for ($i = 0; $i < $maxGuests; $i++): ?>
+                            <?php
+                            $value = $existing[$i] ?? '';
+                            ?>
+                            <div class="mb-2">
+                                <label class="form-label">
+                                    ชื่อคนที่ <?= $i + 1 ?>:
+                                </label>
+                                <input
+                                    type="text"
+                                    name="guests[<?= $aid ?>][]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>">
+                            </div>
+                        <?php endfor; ?>
+
+                        <p class="text-muted small mb-0">
+                            * ถ้าไม่ครบทุกช่อง ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริง ที่เหลือปล่อยว่างได้
+                        </p>
+                    </div>
+                </div>
+
+            <?php endforeach; ?>
+
+            <button type="submit" class="btn btn-primary">
+                บันทึกรายชื่อผู้เข้าพัก
+            </button>
+        </form>
+    </div>
 </body>
+
 </html>
