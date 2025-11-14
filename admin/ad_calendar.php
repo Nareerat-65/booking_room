@@ -91,7 +91,13 @@ if (!isset($_SESSION['admin_id'])) {
         </div>
     </nav>
 
-    <div id="calendar"></div>
+    <div class="container pb-4 text-center">
+        <h3 class="my-3">ปฏิทินการใช้ห้องพัก</h3>
+        <p class="text-muted mb-2">
+            แสดงช่วงวันที่เข้าพักจริง + 3 วันสำหรับทำความสะอาด
+        </p>
+        <div id="calendar"></div>
+    </div>
 
     <!-- jQuery + Bootstrap 4 -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -101,53 +107,39 @@ if (!isset($_SESSION['admin_id'])) {
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar');
+            var calendarEl = document.getElementById('calendar');
 
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth', // มุมมอง เดือน
-                locale: 'th', // ภาษาไทย
-                firstDay: 1, // เริ่มวันจันทร์
-                selectable: true, // คลิกลากเลือกช่วงวันที่ได้
-                editable: false, // ถ้าอยากลากย้าย event ได้ให้ true
-
-                // โหลด event มาจาก PHP (เดี๋ยวทำไฟล์นี้ต่อ)
-                events: 'calendar_events.php',
-
-                // เวลาเลือกวันที่ (คลิก/ลาก) → ใช้ทำ "โน้ต" หรือเพิ่มรายการ
-                select: function(info) {
-                    const note = prompt(`เพิ่มโน้ตสำหรับวันที่ ${info.startStr} ถึง ${info.endStr} :`);
-                    if (note) {
-                        // เรียก AJAX ไปบันทึกโน้ต (เดี๋ยวเขียนไฟล์ PHP อีกตัว)
-                        $.post('calendar_add_note.php', {
-                            start: info.startStr,
-                            end: info.endStr,
-                            title: note
-                        }, function(res) {
-                            if (res === 'ok') {
-                                calendar.refetchEvents(); // รีโหลด event ใหม่
-                            } else {
-                                alert('บันทึกไม่สำเร็จ');
-                            }
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                locale: 'th',
+                firstDay: 0, // อาทิตย์
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                events: 'ad_calendar_events.php',
+                eventDidMount: function(info) {
+                    // เอา tooltip ขึ้นเวลา hover
+                    if (info.event.extendedProps.tooltip) {
+                        $(info.el).tooltip({
+                            title: info.event.extendedProps.tooltip,
+                            container: 'body',
+                            placement: 'top',
+                            trigger: 'hover',
                         });
                     }
-                },
-
-                // เวลา click event ที่มีอยู่แล้ว (เช่น การจอง หรือโน้ต)
-                eventClick: function(info) {
-                    alert(
-                        'รายละเอียด:\n' +
-                        'หัวข้อ: ' + info.event.title + '\n' +
-                        'เริ่ม: ' + info.event.startStr + '\n' +
-                        (info.event.endStr ? 'สิ้นสุด: ' + info.event.endStr : '')
-                    );
                 }
             });
 
             calendar.render();
         });
     </script>
+
 </body>
 
 </html>
