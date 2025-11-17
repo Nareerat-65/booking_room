@@ -55,6 +55,19 @@ if (!isset($_SESSION['admin_id'])) {
             border-radius: 0.75rem;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
         }
+
+        .fc-daygrid-day-number {
+            color: #dc723aff !important;
+            /* สีตัวเลขวันที่ */
+            font-weight: 600;
+        }
+
+        .fc-col-header-cell-cushion {
+            color: #dc723aff !important;
+            /* สีของชื่อวัน */
+            font-size: 15px;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -99,6 +112,28 @@ if (!isset($_SESSION['admin_id'])) {
         <div id="calendar"></div>
     </div>
 
+    <!-- Modal: รายละเอียดการเข้าพัก -->
+    <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">รายละเอียดผู้เข้าพัก</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    <p><strong>ห้อง:</strong> <span id="eventRoom"></span></p>
+                    <p><strong>ผู้จอง:</strong> <span id="eventBooker"></span></p>
+                    <p><strong>ช่วงเข้าพัก:</strong> <span id="eventDates"></span></p>
+                    <hr>
+                    <p class="mb-1"><strong>รายชื่อผู้เข้าพัก</strong></p>
+                    <pre id="eventGuests" class="mb-0" style="white-space: pre-wrap;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- jQuery + Bootstrap 4 -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -116,15 +151,16 @@ if (!isset($_SESSION['admin_id'])) {
                 initialView: 'dayGridMonth',
                 height: 'auto',
                 locale: 'th',
-                firstDay: 0, // อาทิตย์
+                firstDay: 0,
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,listWeek'
                 },
                 events: 'ad_calendar_events.php',
+
                 eventDidMount: function(info) {
-                    // เอา tooltip ขึ้นเวลา hover
+                    // tooltip เวลา hover
                     if (info.event.extendedProps.tooltip) {
                         $(info.el).tooltip({
                             title: info.event.extendedProps.tooltip,
@@ -133,8 +169,34 @@ if (!isset($_SESSION['admin_id'])) {
                             trigger: 'hover',
                         });
                     }
+                },
+
+                // 👇 เพิ่มส่วนนี้
+                eventClick: function(info) {
+                    var ev = info.event;
+                    var props = ev.extendedProps || {};
+
+                    // ห้อง / ผู้จอง
+                    $('#eventRoom').text(props.room || '-');
+                    $('#eventBooker').text(props.booker || '-');
+
+                    // ช่วงวันที่เข้าพัก (ใช้ start_real / end_real จาก PHP)
+                    var start = props.start_real || ev.startStr;
+                    var end = props.end_real || (ev.end ? ev.end.toISOString().slice(0, 10) : '');
+                    var dateText = start;
+                    if (end) {
+                        dateText += ' ถึง ' + end;
+                    }
+                    $('#eventDates').text(dateText);
+
+                    // รายชื่อผู้เข้าพัก
+                    $('#eventGuests').text(props.guests || 'ยังไม่มีรายชื่อผู้เข้าพัก');
+
+                    // เปิด modal
+                    $('#eventDetailModal').modal('show');
                 }
             });
+
 
             calendar.render();
         });

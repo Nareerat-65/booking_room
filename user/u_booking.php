@@ -419,6 +419,18 @@
         </div>
     </div>
 
+    <!-- Modal โหลดสำหรับผู้จอง -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
+                <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
+                <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
+            </div>
+        </div>
+    </div>
+
+
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
@@ -471,7 +483,9 @@
         const bookingForm = document.getElementById('bookingForm');
 
         bookingForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
+            e.preventDefault();
+
+            $('#loadingModal').modal('show'); // แสดง modal โหลด
             const formData = new FormData(bookingForm); // สร้าง FormData จากฟอร์ม
 
             fetch('u_booking_process.php', {
@@ -480,6 +494,8 @@
                 })
                 .then(res => res.text())
                 .then(text => {
+                    $('#loadingModal').modal('hide'); // ซ่อน modal โหลด
+
                     // ถ้า u_booking_process.php ส่ง echo "OK" ตอนทำสำเร็จ
                     if (text.trim() === 'OK') {
                         // เคลียร์ฟอร์ม
@@ -497,6 +513,7 @@
                     }
                 })
                 .catch(err => {
+                    $('#loadingModal').modal('hide'); // ปิดตอน error ด้วย
                     console.error(err);
                     alert('ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง');
                 });

@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #e0f0ff, #ffffff);
+            background: #fbf6f4ff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1.4rem;
             text-align: center;
             margin-bottom: 1.5rem;
-            color: #0d6efd;
+            color: #F57B39;
         }
 
         .form-control {
@@ -79,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             padding: 0.75rem;
             font-weight: 600;
+            background-color: #F57B39;
+            border: 0;
         }
 
         .alert {

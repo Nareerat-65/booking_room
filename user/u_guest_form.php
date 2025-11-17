@@ -84,35 +84,40 @@ $saveMessage = '';
 
 // ถ้ามีการ submit ฟอร์ม (POST) → บันทึกรายชื่อ
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $posted = $_POST['guests'] ?? []; // guests[allocation_id][] = ชื่อ
+    $posted = $_POST['guests'] ?? [];
+    $phones = $_POST['guest_phones'] ?? [];  // ⭐ รับเบอร์มาด้วย
 
-    // วนทุก allocation ที่จัดไว้
     foreach ($allocs as $aid => $a) {
         $aid = (int)$aid;
 
-        $maxGuests = (int)$a['woman_count'] + (int)$a['man_count']; // ห้องนี้ให้ได้กี่คน
-        $gender    = ((int)$a['woman_count'] > 0 && (int)$a['man_count'] === 0) ? 'F' : 'M';
+        $maxGuests = (int)$a['woman_count'] + (int)$a['man_count'];
+        $gender = ((int)$a['woman_count'] > 0 && (int)$a['man_count'] === 0) ? 'F' : 'M';
 
-        $names = $posted[$aid] ?? [];
-        if (!is_array($names)) {
-            $names = [];
-        }
+        $names  = $posted[$aid] ?? [];
+        $phonesPerAlloc = $phones[$aid] ?? [];   // ⭐ เบอร์ของห้องนี้
 
-        // ล้างชื่อ: trim + ตัดช่องว่างที่ว่างเปล่าออก
+        if (!is_array($names)) $names = [];
+        if (!is_array($phonesPerAlloc)) $phonesPerAlloc = [];
+
+        // ทำความสะอาดชื่อ
         $cleanNames = [];
-        foreach ($names as $n) {
+        $cleanPhones = [];
+
+        foreach ($names as $idx => $n) {
             $n = trim((string)$n);
             if ($n !== '') {
-                $cleanNames[] = $n;
+                $cleanNames[]  = $n;
+                $cleanPhones[] = trim($phonesPerAlloc[$idx] ?? ''); // ⭐ แมปเบอร์ตาม index
             }
         }
 
-        // ถ้าชื่อเยอะกว่าจำนวนคนที่ห้องนี้รองรับ → ตัดทิ้งส่วนเกิน
+        // จำกัดจำนวนตาม maxGuests
         if (count($cleanNames) > $maxGuests) {
-            $cleanNames = array_slice($cleanNames, 0, $maxGuests);
+            $cleanNames  = array_slice($cleanNames, 0, $maxGuests);
+            $cleanPhones = array_slice($cleanPhones, 0, $maxGuests);
         }
 
-        // ลบข้อมูลเดิมของห้องนี้ก่อน แล้วค่อย insert ใหม่
+        // ลบข้อมูลเดิม
         $del = $conn->prepare("
             DELETE FROM room_guests
             WHERE booking_id = ? AND allocation_id = ?
@@ -121,36 +126,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $del->execute();
         $del->close();
 
+        // insert ใหม่
         if (!empty($cleanNames)) {
             $ins = $conn->prepare("
-                INSERT INTO room_guests (booking_id, allocation_id, guest_name, gender)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO room_guests (booking_id, allocation_id, guest_name, guest_phone, gender)
+                VALUES (?, ?, ?, ?, ?)
             ");
-            foreach ($cleanNames as $gname) {
-                $ins->bind_param('iiss', $bookingId, $aid, $gname, $gender);
+
+            foreach ($cleanNames as $i => $gname) {
+                $gphone = $cleanPhones[$i] ?? '';
+
+                $ins->bind_param(
+                    'iisss',
+                    $bookingId,
+                    $aid,
+                    $gname,
+                    $gphone,
+                    $gender
+                );
                 $ins->execute();
             }
             $ins->close();
         }
     }
-
-    $saveMessage = 'บันทึกรายชื่อเรียบร้อยแล้ว ขอบคุณค่ะ 🙏';
-
-    // โหลดข้อมูลใหม่มาแสดง (จะได้เห็นชื่อที่เพิ่งกรอก)
-    $guests = [];
-    $stmt = $conn->prepare($sqlGuests);
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $aid = (int)$row['allocation_id'];
-        if (!isset($guests[$aid])) {
-            $guests[$aid] = [];
-        }
-        $guests[$aid][] = $row['guest_name'];
-    }
-    $stmt->close();
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -175,6 +175,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .navbar-brand {
             font-size: 1.9rem;
+        }
+
+        .btn {
+            background-color: #F57B39;
+            border: 0;
         }
     </style>
 
@@ -238,29 +243,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php
                             $value = $existing[$i] ?? '';
                             ?>
-                            <div class="mb-2">
-                                <label class="form-label">
-                                    ชื่อคนที่ <?= $i + 1 ?>:
-                                </label>
-                                <input
-                                    type="text"
-                                    name="guests[<?= $aid ?>][]"
-                                    class="form-control"
-                                    value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>">
+                            <div class="row g-2 align-items-center mb-2">
+                                <div class="mb-2">
+                                    <label class="form-label">
+                                        ชื่อคนที่ <?= $i + 1 ?>:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="guests[<?= $aid ?>][]"
+                                        class="form-control"
+                                        value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small">
+                                        เบอร์โทรผู้เข้าพักคนที่ <?= $i + 1 ?>
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="guest_phones[<?= $aid ?>][]"
+                                        class="form-control"
+                                        placeholder="เช่น 0812345678">
+
+                                </div>
                             </div>
-                        <?php endfor; ?>
+                            <?php endfor; ?>
 
-                        <p class="text-muted small mb-0">
-                            *ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริง ที่เหลือปล่อยว่างไว้
-                        </p>
+                            <p class="text-muted small mb-0">
+                                *ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริงและเบอร์โทรอย่างน้อย 1 คนต่อห้อง ที่เหลือปล่อยว่างไว้
+                            </p>
+                            </div>
                     </div>
-                </div>
 
-            <?php endforeach; ?>
+                <?php endforeach; ?>
 
-            <button type="submit" class="btn btn-primary">
-                บันทึกรายชื่อผู้เข้าพัก
-            </button>
+                <button type="submit" class="btn btn-primary">
+                    บันทึกรายชื่อผู้เข้าพัก
+                </button>
         </form>
     </div>
 </body>

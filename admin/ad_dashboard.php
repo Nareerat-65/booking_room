@@ -43,17 +43,21 @@ if (!isset($_SESSION['admin_id'])) {
         .navbar-brand {
             font-size: 1.9rem;
         }
-        .d-flex{
+
+        .d-flex {
             font-size: 1.1rem;
         }
+
         .card-title {
             font-size: 1.5rem;
         }
+
         .card-header {
             background-color: #F57B39;
             opacity: 0.9;
         }
-        .badge{
+
+        .badge {
             font-size: 0.9rem;
         }
     </style>
@@ -269,6 +273,16 @@ if (!isset($_SESSION['admin_id'])) {
             </div>
         </div>
     </div>
+    <!-- Modal โหลด -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
+                <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
+                <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
+            </div>
+        </div>
+    </div>
+    
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -328,6 +342,8 @@ if (!isset($_SESSION['admin_id'])) {
 
             // ===== ฟังก์ชัน =====
             function updateStatus(id, status, reason = null) {
+                $('#loadingModal').modal('show');
+
                 $.post('ad_updateStatus.php', {
                     id,
                     status,
@@ -364,6 +380,8 @@ if (!isset($_SESSION['admin_id'])) {
                     }
                 }).fail(function() {
                     alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+                }).always(function() {
+                    $('#loadingModal').modal('hide');
                 });
             }
 

@@ -60,8 +60,8 @@ function allocateRooms(mysqli $conn, int $bookingId): void
             SELECT DISTINCT ra.room_id
             FROM room_allocations ra
             WHERE NOT (
-                DATE_ADD(ra.end_date, INTERVAL 3 DAY) <= ?
-                OR ra.start_date >= ?
+                DATE_ADD(ra.end_date, INTERVAL 3 DAY) < ?
+                OR ra.start_date > ?
             )
         )
         ORDER BY r.id ASC
