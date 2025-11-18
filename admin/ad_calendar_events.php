@@ -76,10 +76,9 @@ if ($result) {
 
         // tooltip เวลา hover
         $tooltip = "ผู้จอง: {$row['full_name']}\n"
-            . "ห้อง: {$roomName}\n"
-            . "เข้าพัก: {$startDate}\n"
-            . "ออกจริง: {$endDateRaw}\n"
-            . "ทำความสะอาดถึง: {$cleanEnd}";
+            . "{$roomName}\n"
+            . "วันเข้าพัก: {$startDate}\n"
+            . "วันออก: {$endDateRaw}\n";
 
         // สีประจำห้อง
         $roomColors = [

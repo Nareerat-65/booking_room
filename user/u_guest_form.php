@@ -149,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ins->close();
         }
     }
+    $saveMessage = 'บันทึกรายชื่อผู้เข้าพักเรียบร้อยแล้ว';
 }
 
 

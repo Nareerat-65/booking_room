@@ -82,9 +82,6 @@ if (!isset($_SESSION['admin_id'])) {
                 <li class="nav-item">
                     <a class="nav-link" href="ad_calendar.php">ปฏิทินห้องพัก</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contact.php">ติดต่อเรา</a>
-                </li>
             </ul>
 
             <!-- ส่วนชื่อและปุ่มออก -->

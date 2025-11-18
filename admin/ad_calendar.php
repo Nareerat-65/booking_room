@@ -11,12 +11,8 @@ if (!isset($_SESSION['admin_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>ปฏิทินการจองห้องพัก</title>
-
-    <!-- Bootstrap 4 + AdminLTE ที่ใช้ในโปรเจกต์อยู่แล้ว -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-
-    <!-- FullCalendar (ใช้เวอร์ชัน 6.x แบบ CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
 
@@ -90,9 +86,6 @@ if (!isset($_SESSION['admin_id'])) {
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="ad_calendar.php">ปฏิทินห้องพัก</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contact.php">ติดต่อเรา</a>
                 </li>
             </ul>
 

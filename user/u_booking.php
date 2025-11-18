@@ -145,8 +145,16 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold py-2" href="#">
-                🏨 ระบบจองห้องพัก
+            <a class="navbar-brand fw-bold py-2 d-flex align-items-center" href="#">
+                <img src="../img/Medicine_Naresuan.png"
+                    alt="Logo"
+                    width="80"
+                    height="80"
+                    class="me-3">
+
+                <span style="line-height:1; font-size:1.8rem;">
+                    ระบบจองห้องพัก
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNav" aria-controls="navbarNav"
@@ -163,14 +171,14 @@
                         <a class="nav-link active" href="u_booking.php">จองห้องพัก</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.php">ติดต่อเรา</a>
+                        <a class="nav-link" href="u_contact.php">ติดต่อเรา</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container py-5">
-        <h1 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h1>
+        <h2 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h2>
 
         <form id="bookingForm" method="post" action="u_booking_process.php">
             <!-- ชื่อ / เบอร์ / LINE / Email -->
@@ -397,6 +405,20 @@
             </div>
         </form>
     </div>
+
+    <footer class="py-3 border-top bg-white text-center">
+        <div class="container small text-muted" >
+            <div class="mb-2">
+                หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร
+            </div>
+            <div class="mb-2">
+                เลขที่ 99 หมู่ 9 ตำบลท่าโพธิ์ อำเภอเมืองพิษณุโลก จังหวัดพิษณุโลก รหัสไปรษณีย์ 65000
+            </div>
+            <div class="mb-2">
+                โทร 0-5596-7847 | Email: example@example.com
+            </div>
+        </div>
+    </footer>
 
     <!-- Modal: ส่งคำขอสำเร็จ -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
