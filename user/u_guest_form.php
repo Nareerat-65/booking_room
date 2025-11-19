@@ -189,14 +189,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold py-2" href="#">
-                🏨 ระบบจองห้องพัก
+            <a class="navbar-brand fw-bold py-2 d-flex align-items-center" href="#">
+                <img src="../img/Medicine_Naresuan.png" alt="Logo" width="80" height="80" class="me-3">
+                <span style="line-height:1; font-size:1.8rem;">
+                    ระบบจองห้องพัก
+                </span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav"
-                aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        </div>
     </nav>
     <div class="container py-4">
         <h2 class="mb-3">กรอกรายชื่อผู้เข้าพัก</h2>

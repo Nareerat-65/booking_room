@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/plain; charset=utf-8');
 
-require_once '../db.php';  
+require_once '../db.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -42,7 +42,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     }
     $stmt->close();
 
-    
+
     $startDate = $checkIn;
     $endDate   = $checkOut;
 
@@ -186,7 +186,9 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
         $mail->addAddress($email, $fullName);
 
-        $mail->isHTML(false); // ส่งเป็น text ธรรมดา
+        $mail->isHTML(true); 
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
         $subject = '';
         $body    = '';
 
@@ -197,22 +199,109 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
             $subject = 'ผลการจองห้องพัก: อนุมัติ';
 
-            $body  = "สวัสดีคุณ {$fullName}\n\n";
-            $body .= "คำขอจองห้องพักของคุณได้รับการ \"อนุมัติ\" แล้ว\n\n";
-            $body .= "ช่วงวันที่เข้าพัก: {$checkIn} ถึง {$checkOut}\n";
-            $body .= "จำนวนผู้เข้าพัก: หญิง {$w} คน ชาย {$m} คน\n\n";
-            $body .= "กรุณาคลิกลิงก์ด้านล่างเพื่อกรอกรายชื่อผู้เข้าพักในแต่ละห้อง:\n";
-            $body .= "{$link}\n\n";
-            $body .= "ขอบคุณค่ะ";
+            $body  = '<div style="background:#f2f2f2; padding:20px; font-family:Kanit, sans-serif;">
+                    <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px;
+                            overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+
+                        <div style="background:#F57B39; padding:18px; align-items:center; color:#ffffff; display:flex;">
+                            <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
+                            <div>
+                                <h2 style="margin:0; font-size:22px;">ยืนยันการจองห้องพักของคุณ</h2>
+                                <p style="margin:4px 0 0; font-size:14px; opacity:.9;">
+                                    คำขอของคุณได้รับการ <b>อนุมัติ</b> แล้ว
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="padding:20px; color:#333333; line-height:1.7;">
+                            <p>เรียนคุณ <b>' . htmlspecialchars($fullName, ENT_QUOTES, "UTF-8") . '</b>,</p>
+
+                            <p>
+                                ระบบได้อนุมัติคำขอจองห้องพักของคุณเรียบร้อยแล้ว
+                                โปรดตรวจสอบข้อมูลรายละเอียดการเข้าพักด้านล่าง
+                                และกดปุ่มเพื่อกรอกรายชื่อผู้เข้าพักในแต่ละห้อง
+                            </p>
+
+                            <div style="background:#fafafa; border-radius:8px; padding:12px 14px;
+                                border-left:4px solid #F57B39; margin:10px 0 18px;">
+                                <p style="margin:0;"><b>ชื่อผู้จอง:</b> ' . htmlspecialchars($fullName, ENT_QUOTES, "UTF-8") . '</p>
+                                <p style="margin:0;"><b>วันที่เข้าพัก:</b> ' . htmlspecialchars($checkIn  ?? '', ENT_QUOTES, 'UTF-8') . '</p>
+                                <p style="margin:0;"><b>วันที่ย้ายออก:</b> ' . htmlspecialchars($checkOut ?? '', ENT_QUOTES, "UTF-8") . '</p>
+                                <p style="margin:0;"><b>จำนวนผู้เข้าพัก:</b> หญิง ' . $w . ' คน, ชาย ' . $m . ' คน</p>
+                            </div>
+            
+                            <p>
+                                <b>ขั้นตอนถัดไป:</b><br>
+                                กรุณากดปุ่มด้านล่างเพื่อกรอกรายชื่อผู้เข้าพัก (พร้อมเบอร์โทร) แยกตามแต่ละห้อง
+                            </p>
+
+                            <div style="text-align:center; margin:24px 0 10px;">
+                                <a href="' . $link . '" style="background:#F57B39; color:#ffffff; padding:12px 26px; 
+                                border-radius:999px; text-decoration:none; font-weight:bold;
+                                display:inline-block;">
+                                    กรอกรายชื่อผู้เข้าพัก
+                                </a>
+                            </div>
+
+                            <p style="font-size:13px; color:#777; margin-top:15px;">
+                                หากกดปุ่มไม่ได้ สามารถคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ได้เช่นกัน:<br>
+                                <span style="word-break:break-all; color:#555;">
+                                    ' . $link . '
+                                </span>
+                            </p>
+
+                            <hr style="border:none; border-top:1px solid #e0e0e0; margin:22px 0 12px;">
+
+                            <p style="font-size:12px; color:#999; text-align:center; margin:0;">
+                                อีเมลฉบับนี้ถูกส่งจากระบบจองห้องพักโดยอัตโนมัติ<br>
+                                กรุณาอย่าตอบกลับอีเมลฉบับนี้
+                            </p>
+                        </div>
+                    </div>
+                </div>';
         } elseif ($status === 'rejected') {
             $subject = 'ผลการจองห้องพัก: ไม่อนุมัติ';
 
-            $body  = "สวัสดีคุณ {$fullName}\n\n";
-            $body .= "คำขอจองห้องพักของคุณ \"ไม่อนุมัติ\" ค่ะ\n\n";
-            if ($reason) {
-                $body .= "เหตุผล: {$reason}\n\n";
-            }
-            $body .= "หากมีข้อสงสัยสามารถติดต่อเจ้าหน้าที่ได้ค่ะ";
+            $body  = '<div style="background:#f2f2f2; padding:20px; font-family:Kanit, sans-serif;">
+                        <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:12px;
+                                overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+
+                            <div style="background:#F57B39; padding:18px; align-items:center; color:#ffffff; display:flex;">
+                                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
+                                <div>
+                                    <h2 style="margin:0; font-size:22px;">ยืนยันการจองห้องพักของคุณ</h2>
+                                    <p style="margin:4px 0 0; font-size:14px; opacity:.9;">
+                                        คำขอของคุณ <b>ไม่ได้รับการอนุมัติ</b> 
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="padding:20px; color:#333333; line-height:1.7;">
+                                <p>เรียนคุณ <b>' . htmlspecialchars($fullName, ENT_QUOTES, "UTF-8") . '</b>,</p>
+
+                                <p>
+                                    คำขอจองห้องพักของคุณไม่ได้รับการอนุมัติ
+                                    เนื่องจาก <b>' . $reason . '</b>.
+                                    หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่เพื่อสอบถามข้อมูลเพิ่มเติม
+                                </p>
+
+                                <div style="background:#fafafa; border-radius:8px; padding:12px 14px;
+                                    border-left:4px solid #F57B39; margin:10px 0 18px;">
+                                    <p style="margin:0;"><b>หน่วยงาน : </b> หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร </p>
+                                    <p style="margin:0;"><b>เบอร์โทรศัพท์ : </b> 0-5596-7847 </p>
+                                    <p style="margin:0;"><b>E-mail : </b> dormitory@nu.ac.th </p>
+                                    
+                                </div>
+
+                                <hr style="border:none; border-top:1px solid #e0e0e0; margin:22px 0 12px;">
+
+                                <p style="font-size:12px; color:#999; text-align:center; margin:0;">
+                                    อีเมลฉบับนี้ถูกส่งจากระบบจองห้องพักโดยอัตโนมัติ<br>
+                                    กรุณาอย่าตอบกลับอีเมลฉบับนี้
+                                </p>
+                            </div>
+                        </div>
+                    </div>';
         } else {
             return;
         }

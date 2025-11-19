@@ -69,31 +69,40 @@ if (!isset($_SESSION['admin_id'])) {
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark px-4">
-        <a class="navbar-brand font-weight-bold py-2" href="#">แดชบอร์ดผู้ดูแล</a>
+    <nav class="navbar navbar-expand-lg navbar-dark px-4" style="background-color:#F57B39;">
+        <div class="container d-flex align-items-center">
 
-        <!-- ปุ่ม toggle สำหรับจอเล็ก -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <!-- โลโก้ + ชื่อระบบ -->
+            <a class="navbar-brand d-flex align-items-center " href="#">
+                <img src="../img/Medicine_Naresuan.png" alt="Logo" width="70" class="me-2">
+                <span class="font-weight-bold ml-2 ">แดชบอร์ดผู้ดูแล</span>
+            </a>
 
-        <!-- เมนูหลัก -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="ad_dashboard.php">รายการคำขอจองห้องพัก</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="ad_calendar.php">ปฏิทินห้องพัก</a>
-                </li>
-            </ul>
+            <!-- Toggle สำหรับจอเล็ก -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-            <!-- ส่วนชื่อและปุ่มออก -->
-            <div class="d-flex align-items-center text-white ml-3">
-                <?= htmlspecialchars($_SESSION['admin_name']) ?>
-                <a href="ad_logout.php" class="btn btn-outline-light btn-sm ml-3">ออกจากระบบ</a>
+            <!-- เมนูหลัก -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link " href="ad_dashboard.php">รายการคำขอจองห้องพัก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="ad_calendar.php">ปฏิทินห้องพัก</a>
+                    </li>
+                </ul>
+
+                <!-- ส่วนชื่อ Admin + Logout -->
+                <div class="d-flex align-items-center ms-3 text-white">
+                    <?= htmlspecialchars($_SESSION['admin_name']) ?>
+                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm ms-3">ออกจากระบบ</a>
+                </div>
             </div>
+
         </div>
     </nav>
 

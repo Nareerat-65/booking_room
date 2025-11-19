@@ -407,7 +407,7 @@
     </div>
 
     <footer class="py-3 border-top bg-white text-center">
-        <div class="container small text-muted" >
+        <div class="container small text-muted">
             <div class="mb-2">
                 หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร
             </div>
