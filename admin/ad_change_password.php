@@ -4,34 +4,15 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: ad_login.php');
     exit;
 }
+
+$pageTitle = 'เปลี่ยนรหัสผ่านผู้ดูแลระบบ';
+$extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่มทีหลังได้
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <title>เปลี่ยนรหัสผ่านผู้ดูแลระบบ</title>
-
-    <!-- Bootstrap 4 + FontAwesome + AdminLTE -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .main-header {
-            background-color: #F57B39 !important;
-        }
-
-        .main-header .nav-link,
-        .main-header .navbar-text {
-            color: #fff !important;
-        }
-    </style>
+    <?php include 'partials/head_admin.php'; ?>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -67,7 +48,7 @@ if (!isset($_SESSION['admin_id'])) {
 
         <!-- SIDEBAR -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="test_dashboard.php" class="brand-link d-flex align-items-center">
+            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="../img/Medicine_Naresuan.png" class="brand-image img-circle elevation-3" style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
@@ -81,28 +62,28 @@ if (!isset($_SESSION['admin_id'])) {
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column">
                         <li class="nav-item">
-                            <a href="test_dashboard.php" class="nav-link ">
+                            <a href="ad_dashboard.php" class="nav-link ">
                                 <!-- แนะนำเปลี่ยนเป็น icon ที่มีจริงใน Font Awesome -->
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="test_requests.php" class="nav-link">
+                            <a href="ad_requests.php" class="nav-link">
                                 <i class="nav-icon fas fa-list"></i>
                                 <p>รายการคำขอจองห้องพัก</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="test_calendar.php" class="nav-link">
+                            <a href="ad_calendar.php" class="nav-link">
                                 <i class="nav-icon fas fa-calendar"></i>
                                 <p>ปฏิทินห้องพัก</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="test_change_password.php" class="nav-link active">
+                            <a href="ad_change_password.php" class="nav-link active">
                                 <i class="nav-icon fas fa-key"></i>
                                 <p>เปลี่ยนรหัสผ่าน</p>
                             </a>

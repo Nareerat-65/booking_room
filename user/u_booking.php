@@ -1,145 +1,35 @@
-<!DOCTYPE html>
-<html lang="th">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบฟอร์มขอจองห้องพัก</title>
-    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<?php
+$pageTitle = 'แบบฟอร์มขอจองห้องพัก';
+$extraHead = '
     <style>
-        body {
-            background: #fbf6f4ff;
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .navbar {
-            font-size: 0.95rem;
-            backdrop-filter: blur(12px);
-            background-color: #F57B39;
-        }
-
-        .nav-link {
-            transition: 0.3s;
-            font-size: 1.1rem;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 0.5rem;
-            padding-inline: 1rem;
-        }
-
-        .navbar-brand {
-            font-size: 1.9rem;
-        }
-
-        .booking-wrapper {
-            min-height: 100vh;
-        }
-
+        .booking-wrapper { min-height: 100vh; }
         .booking-card {
             border: none;
             border-radius: 1.25rem;
             box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
             overflow: hidden;
         }
-
         .booking-card-header {
             background: linear-gradient(135deg, #0d6efd, #4e9bff);
             color: #fff;
         }
-
-        .booking-card-header h1 {
-            font-size: 1.4rem;
-            margin-bottom: .25rem;
+        .dropdown-toggle{
+            background-color: #ffffffff;
+            border-color: #e1e1e1ff;
         }
-
-        .booking-card-header p {
-            margin: 0;
-            opacity: .9;
-            font-size: .9rem;
-        }
-
-        .form-section {
-            padding: 1.25rem 1.5rem;
-            border-radius: 1rem;
-            background: #ffffff;
-            margin-bottom: 1rem;
-            border: 1px solid #eef0f7;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: .75rem;
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            color: #1f2933;
-        }
-
-        .section-title::before {
-            content: "";
-            width: 4px;
-            height: 18px;
-            border-radius: 999px;
-            background: #0d6efd;
-        }
-
-        fieldset {
-            border: 0;
-            padding: 0;
-            margin: 0;
-        }
-
-        .form-label {
-            font-weight: 500;
-            font-size: .9rem;
-        }
-
-        .text-muted-small {
-            font-size: .8rem;
-            color: #6c757d;
-        }
-
-        .radio-inline-group .form-check {
-            padding-left: 0;
-        }
-
-        .radio-inline-group .form-check-input {
-            margin-right: .35rem;
-        }
-
-        .pill-badge {
-            font-size: .75rem;
-            padding: .15rem .5rem;
-            border-radius: 999px;
-            background: #e9f2ff;
-            color: #1d4ed8;
-        }
-
-        .btn-light {
-            background-color: #fff;
-            border-color: #cfcfcfff;
-        }
-
         .btn-primary {
-            border-radius: 999px;
-            padding-inline: 1.75rem;
+            background-color: #F57B39;
             border: none;
-            background-color: #F57B39;
-        }
-
-        .btn-primary:hover {
-            background-color: #F57B39;
-            opacity: 0.9;
-        }
-
-        .btn-outline-secondary {
-            border-radius: 999px;
         }
     </style>
+';
+?>
+
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <?php include 'partials/head_user.php'; ?>
 </head>
 
 <body>

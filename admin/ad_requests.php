@@ -4,68 +4,15 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: ad_login.php');
     exit;
 }
+
+$pageTitle = 'รายการคำขอจองห้องพัก';
+$extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.php แล้ว
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <title>แดชบอร์ดผู้ดูแล</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
-
-    <style>
-        body {
-            background: #fbf6f4ff;
-            font-family: 'Kanit', sans-serif;
-        }
-
-
-        /* เปลี่ยนสีพื้นหลังของเมนูที่ Active */
-        .nav-sidebar .nav-link.active {
-            background-color: #F57B39 !important;
-            color: #fff !important;
-        }
-
-        /* ถ้าต้องการเปลี่ยนไอคอนตอน active ให้เป็นสีขาว */
-        .nav-sidebar .nav-link.active i {
-            color: #fff !important;
-        }
-
-
-
-        .main-header {
-            background-color: #F57B39 !important;
-        }
-
-        .main-header .nav-link,
-        .main-header .navbar-brand,
-        .main-header .navbar-text {
-            color: #fff !important;
-        }
-
-        .brand-link {
-            background-color: #111827;
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-        }
-
-        .card-header {
-            background-color: #F57B39;
-            opacity: 0.9;
-        }
-
-        .badge {
-            font-size: 0.9rem;
-        }
-    </style>
+    <?php include 'partials/head_admin.php'; ?>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -104,7 +51,7 @@ if (!isset($_SESSION['admin_id'])) {
         <!-- SIDEBAR -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="test_dashboard.php" class="brand-link d-flex align-items-center">
+            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="../img/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
@@ -126,26 +73,26 @@ if (!isset($_SESSION['admin_id'])) {
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
                         <li class="nav-item">
-                            <a href="test_dashboard.php" class="nav-link">
+                            <a href="ad_dashboard.php" class="nav-link">
                                 <!-- แนะนำเปลี่ยนเป็น icon ที่มีจริงใน Font Awesome -->
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="test_requests.php" class="nav-link active">
+                            <a href="ad_requests.php" class="nav-link active">
                                 <i class="nav-icon fas fa-list"></i>
                                 <p>รายการคำขอจองห้องพัก</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="test_calendar.php" class="nav-link ">
+                            <a href="ad_calendar.php" class="nav-link ">
                                 <i class="nav-icon fas fa-calendar-alt"></i>
                                 <p>ปฏิทินห้องพัก</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="test_change_password.php" class="nav-link">
+                            <a href="ad_change_password.php" class="nav-link">
                                 <i class="nav-icon fas fa-key"></i>
                                 <p>เปลี่ยนรหัสผ่าน</p>
                             </a>

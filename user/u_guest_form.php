@@ -152,38 +152,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $saveMessage = 'บันทึกรายชื่อผู้เข้าพักเรียบร้อยแล้ว';
 }
 
+$pageTitle = 'กรอกรายชื่อผู้เข้าพัก';
+$extraHead = '
+    <style>
+        .btn {
+            background-color: #F57B39;
+            border: 0;
+        }
+    </style>';
 
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <title>กรอกรายชื่อผู้เข้าพัก</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet" type="text/css" />
-    <style>
-        body {
-            background: #fbf6f4ff;
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .navbar {
-            font-size: 0.95rem;
-            backdrop-filter: blur(12px);
-            background-color: #F57B39;
-        }
-
-        .navbar-brand {
-            font-size: 1.9rem;
-        }
-
-        .btn {
-            background-color: #F57B39;
-            border: 0;
-        }
-    </style>
-
+    <?php include 'partials/head_user.php'; ?>
 </head>
 
 <body class="bg-light">
@@ -198,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </nav>
     <div class="container py-4">
-        <h2 class="mb-3">กรอกรายชื่อผู้เข้าพัก</h2>
+        <h2 class=" text-center mb-4">กรอกรายชื่อผู้เข้าพัก</h2>
 
         <div class="card mb-4">
             <div class="card-body">

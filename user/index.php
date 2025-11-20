@@ -1,38 +1,7 @@
-<!DOCTYPE html>
-<html lang="th">
-
-<head>
-    <meta charset="UTF-8">
-    <title>ระบบจองห้องพัก</title>
-    <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php
+$pageTitle = 'ระบบจองห้องพัก';
+$extraHead = '
     <style>
-        body {
-            background: #fbf6f4ff;
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .navbar {
-            font-size: 0.95rem;
-            backdrop-filter: blur(12px);
-            background-color: #F57B39;
-        }
-
-        .navbar-brand {
-            font-size: 1.9rem;
-        }
-
-        .nav-link {
-            transition: 0.3s;
-            font-size: 1.1rem;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 0.5rem;
-            padding-inline: 1rem;
-        }
-
         .btn-main {
             background-color: #F57B39;
             border: 0;
@@ -40,17 +9,14 @@
             padding: .6rem 1.8rem;
             color: #fff;
         }
-
         .btn-main:hover {
             opacity: .9;
             color: #fff;
         }
-
         .hero {
             padding: 4rem 0 3rem;
             text-align: center;
         }
-
         .step-card {
             border-radius: 1rem;
             background: #fff;
@@ -58,6 +24,14 @@
             border: 0;
         }
     </style>
+';
+
+?>
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <?php include 'partials/head_user.php'; ?>
 </head>
 
 <body>
