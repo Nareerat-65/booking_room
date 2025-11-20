@@ -153,20 +153,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'กรอกรายชื่อผู้เข้าพัก';
-$extraHead = '
-    <style>
-        .btn {
-            background-color: #F57B39;
-            border: 0;
-        }
-    </style>';
+$extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
 
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include 'partials/head_user.php'; ?>
+    <?php include '../partials/head_user.php'; ?>
 </head>
 
 <body class="bg-light">
@@ -265,5 +259,4 @@ $extraHead = '
         </form>
     </div>
 </body>
-
 </html>

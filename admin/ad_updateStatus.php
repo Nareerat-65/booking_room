@@ -179,7 +179,6 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         $mail->Password   = 'gwfq rtik mszl bjhl';       // 👉 App Password (อย่าใช้รหัสจริง)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-
         $mail->CharSet = 'UTF-8';
 
         // ผู้ส่ง / ผู้รับ
@@ -187,7 +186,6 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         $mail->addAddress($email, $fullName);
 
         $mail->isHTML(true); 
-        $mail->CharSet = 'UTF-8';
         $mail->Encoding = 'base64';
         $subject = '';
         $body    = '';
@@ -281,7 +279,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
                                 <p>
                                     คำขอจองห้องพักของคุณไม่ได้รับการอนุมัติ
-                                    เนื่องจาก <b>' . $reason . '</b>.
+                                    เนื่องจาก <b>' . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . '</b>.
                                     หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่เพื่อสอบถามข้อมูลเพิ่มเติม
                                 </p>
 

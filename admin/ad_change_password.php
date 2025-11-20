@@ -6,13 +6,13 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $pageTitle = 'เปลี่ยนรหัสผ่านผู้ดูแลระบบ';
-$extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่มทีหลังได้
+$extraHead = '';
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include 'partials/head_admin.php'; ?>
+    <?php include '../partials/head_admin.php'; ?>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -56,7 +56,7 @@ $extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่ม�
             <div class="sidebar">
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image"><i class="fas fa-user-circle fa-2x text-white"></i></div>
-                    <div class="info"><span class="d-block text-white">ผู้ดูแลระบบ</span></div>
+                    <div class="info"><span class="d-block text-white"><?= htmlspecialchars($_SESSION['admin_name']) ?></span></div>
                 </div>
 
                 <nav class="mt-2">
@@ -160,18 +160,7 @@ $extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่ม�
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-    <script>
-        // ตรวจสอบรหัสผ่านใหม่ว่าตรงกันหรือไม่
-        $("#changePassForm").on("submit", function(e) {
-            let newPass = $("#new_password").val();
-            let confirmPass = $("#confirm_password").val();
-
-            if (newPass !== confirmPass) {
-                e.preventDefault();
-                alert("รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน กรุณาลองอีกครั้ง");
-            }
-        });
-    </script>
+    <script src="/assets/js/admin/ad_change_password.js"></script>
 
 </body>
 

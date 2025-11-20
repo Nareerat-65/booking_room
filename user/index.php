@@ -1,37 +1,13 @@
 <?php
 $pageTitle = 'ระบบจองห้องพัก';
-$extraHead = '
-    <style>
-        .btn-main {
-            background-color: #F57B39;
-            border: 0;
-            border-radius: 999px;
-            padding: .6rem 1.8rem;
-            color: #fff;
-        }
-        .btn-main:hover {
-            opacity: .9;
-            color: #fff;
-        }
-        .hero {
-            padding: 4rem 0 3rem;
-            text-align: center;
-        }
-        .step-card {
-            border-radius: 1rem;
-            background: #fff;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
-            border: 0;
-        }
-    </style>
-';
+$extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
 
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include 'partials/head_user.php'; ?>
+    <?php include '../partials/head_user.php'; ?>
 </head>
 
 <body>

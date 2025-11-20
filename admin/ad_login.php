@@ -1,9 +1,6 @@
 <?php
 session_start();
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'booking_system';
+require_once '../db.php';
 
 $conn = new mysqli($host, $user, $password, $dbname);
 if ($conn->connect_error) {
@@ -35,89 +32,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'ไม่พบบัญชีผู้ใช้';
     }
 }
+$pageTitle = 'เข้าสู่ระบบผู้ดูแลระบบ';
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; // ตอนนี้ยังไม่มีอะไรเพิ่มเฉพาะหน้านี้
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบผู้ดูแลระบบ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #fbf6f4ff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .login-card {
-            background: #fff;
-            border-radius: 1.2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 420px;
-            padding: 2rem;
-        }
-
-        .login-card h1 {
-            font-size: 1.4rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #F57B39;
-        }
-
-        .form-control {
-            border-radius: 0.6rem;
-        }
-
-        .btn-primary {
-            border-radius: 999px;
-            width: 100%;
-            padding: 0.75rem;
-            font-weight: 600;
-            background-color: #F57B39;
-            border: 0;
-        }
-
-        .alert {
-            border-radius: 0.6rem;
-        }
-    </style>
+    <?php include '../partials/head_admin.php'; ?>
 </head>
 
-<body>
+<body class="login-body">
 
-    <div class="login-card">
-        <h1>เข้าสู่ระบบผู้ดูแลระบบ</h1>
+    <div class="login-overlay"></div>
 
-        <?php if ($error): ?>
-            <div class="alert alert-danger py-2">
-                <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
-            </div>
-        <?php endif; ?>
+    <div class="login-container">
+        <div class="login-card shadow-lg">
 
-        <form method="POST">
-            <div class="mb-3">
-                <label for="username" class="form-label">ชื่อผู้ใช้</label>
-                <input type="text" class="form-control" id="username" name="username" required placeholder="ชื่อผู้ใช้...">
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">รหัสผ่าน</label>
-                <input type="password" class="form-control" id="password" name="password" required placeholder="รหัสผ่าน...">
+            <!-- โลโก้ + หัวข้อ -->
+            <div class="login-header text-center">
+                <div class="login-logo-wrap mb-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png"
+                        alt="Logo"
+                        class="login-logo img-fluid">
+                </div>
+                <h1 class="login-title mb-1">ระบบจองห้องพัก</h1>
+                <p class="login-subtitle mb-0">เข้าสู่ระบบสำหรับผู้ดูแลระบบ</p>
             </div>
 
-            <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
-        </form>
+            <!-- แสดง Error -->
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger py-2 mb-3">
+                    <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
 
-        <p class="text-center text-muted mt-3 mb-0">
-            <small>© ระบบจองห้องพัก - ผู้ดูแลเท่านั้น</small>
-        </p>
+            <!-- ฟอร์ม Login -->
+            <form method="POST" class="login-form">
+                <div class="form-group mb-3">
+                    <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0">
+                                <i class="fas fa-user text-muted"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="text"
+                            class="form-control border-left-0"
+                            id="username"
+                            name="username"
+                            required
+                            autocomplete="username"
+                            placeholder="กรอกชื่อผู้ใช้...">
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="password" class="form-label">รหัสผ่าน</label>
+                    <div class="input-group" id="passwordWrapper">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-right-0">
+                                <i class="fas fa-lock text-muted"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="password"
+                            class="form-control border-left-0"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            placeholder="กรอกรหัสผ่าน...">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary border-left-0 toggle-password" type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login btn-block mb-2">
+                    เข้าสู่ระบบ
+                </button>
+
+                <p class="text-center text-muted mb-0">
+                    <small>© <?= date('Y') ?> ระบบจองห้องพัก - สำหรับผู้ดูแลเท่านั้น</small>
+                </p>
+            </form>
+        </div>
     </div>
+
+    <!-- JS พื้นฐาน (ใช้ของ AdminLTE เดิมได้) -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <script>
+        // toggle แสดง/ซ่อนรหัสผ่าน
+        $(function() {
+            $('.toggle-password').on('click', function() {
+                const $input = $('#password');
+                const type = $input.attr('type') === 'password' ? 'text' : 'password';
+                $input.attr('type', type);
+
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+        });
+    </script>
 
 </body>
 

@@ -1,31 +1,12 @@
 <?php
 $pageTitle = 'ติดต่อเรา - ระบบจองห้องพัก';
-$extraHead = '
-    <style>
-        .contact-card {
-            border-radius: 1.25rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-        .contact-header {
-            background-color: #F57B39;
-            color: white;
-            padding: 1.2rem;
-        }
-        .btn-primary {
-            background-color: #F57B39;
-            border: none;
-            border-radius: 999px;
-        }
-        .btn-primary:hover { opacity: 0.9; }
-    </style>
-';
+$extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include 'partials/head_user.php'; ?>
+    <?php include '../partials/head_user.php'; ?>
 </head>
 
 <body>

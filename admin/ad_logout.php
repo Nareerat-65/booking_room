@@ -1,7 +1,6 @@
 <?php
-session_start();  // เริ่มต้น session เพื่อให้สามารถทำลายได้
+session_start();  
 
-// ล้างค่า session ทั้งหมด
 $_SESSION = array();
 
 // ถ้ามี cookie ของ session อยู่ → ลบทิ้งด้วย
