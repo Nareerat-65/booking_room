@@ -75,7 +75,7 @@ $extraHead = '
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="../img/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
+                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
@@ -139,7 +139,7 @@ $extraHead = '
             <!-- Header -->
             <section class="content-header">
                 <div class="container-fluid text-center">
-                    <h3 class="my-3">📅 ปฏิทินการใช้ห้องพัก</h3>
+                    <h2 class="my-3">📅 ปฏิทินการใช้ห้องพัก</h2>
                     <p class="text-muted mb-2">
                         แสดงช่วงวันที่เข้าพักจริง + 3 วันสำหรับทำความสะอาด
                     </p>

@@ -52,7 +52,7 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="../img/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
+                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
@@ -116,7 +116,7 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
             <!-- Header -->
             <section class="content-header">
                 <div class="container-fluid text-center ">
-                    <h1 class="my-3">📋 รายการคำขอจองห้องพัก</h1>
+                    <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
                 </div>
             </section>
 

@@ -49,7 +49,7 @@ $extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่ม�
         <!-- SIDEBAR -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="../img/Medicine_Naresuan.png" class="brand-image img-circle elevation-3" style="opacity:.9">
+                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" class="brand-image img-circle elevation-3" style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
 
@@ -106,7 +106,7 @@ $extraHead = ''; // ถ้ามี style เฉพาะก็เพิ่ม�
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid">
-                    <h3>🔑 เปลี่ยนรหัสผ่าน</h3>
+                    <h2>🔑 เปลี่ยนรหัสผ่าน</h2>
                 </div>
             </section>
 
