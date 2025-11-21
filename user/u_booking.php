@@ -44,7 +44,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
         <h2 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h2>
 
         <form id="bookingForm" method="post" action="u_booking_process.php">
-            <!-- ชื่อ / เบอร์ / LINE / Email -->
             <div class="mb-3">
                 <label for="fullName" class="form-label">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
                 <input type="text" class="form-control" id="fullName" name="fullName" required />
@@ -65,11 +64,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 <input type="email" class="form-control" id="email" name="email" required />
             </div>
 
-            <!-- ตำแหน่ง -->
             <fieldset class="mb-3">
                 <legend class="fs-6">ตำแหน่ง</legend>
 
-                <!-- นักศึกษาแพทย์ชั้นปีที่ ... -->
                 <div class="form-check mb-2 d-flex align-items-center gap-2">
                     <input
                         class="form-check-input mt-0"
@@ -89,7 +86,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                         style="max-width: 120px;" />
                 </div>
 
-                <!-- แพทย์ -->
                 <div class="form-check mb-2">
                     <input
                         class="form-check-input mt-0"
@@ -102,7 +98,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                     </label>
                 </div>
 
-                <!-- เจ้าหน้าที่ -->
                 <div class="form-check mb-2">
                     <input
                         class="form-check-input"
@@ -115,7 +110,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                     </label>
                 </div>
 
-                <!-- อื่น ๆ -->
                 <div class="form-check d-flex align-items-center gap-2">
                     <input
                         class="form-check-input mt-0"
@@ -135,7 +129,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 </div>
             </fieldset>
 
-            <!-- ชื่อหน่วยงาน / สังกัด -->
             <div class="mb-3">
                 <label for="department" class="form-label">ชื่อหน่วยงานต้นสังกัด</label>
                 <input
@@ -146,7 +139,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                     required
                     placeholder="พิมพ์เพื่อค้นหา หรือกรอกใหม่" />
                 <datalist id="departmentList">
-                    <!-- ตัวอย่าง option -->
                     <option value="คณะแพทยศาสตร์">
                     <option value="โรงพยาบาลมหาวิทยาลัย">
                     <option value="ภาควิชาอายุรศาสตร์">
@@ -155,11 +147,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 </datalist>
             </div>
 
-            <!-- วัตถุประสงค์ -->
             <fieldset class="mb-4">
                 <legend class="fs-6">วัตถุประสงค์การเข้าพัก</legend>
 
-                <!-- มาศึกษารายวิชา -->
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="radio" name="purpose" id="purposeStudy" value="study" required>
                     <label class="form-check-label fw-semibold" for="purposeStudy">มาศึกษารายวิชา</label>
@@ -198,7 +188,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                     </div>
                 </div>
 
-                <!-- ทำ Elective -->
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="purpose" id="purposeElective" value="elective">
                     <label class="form-check-label fw-semibold" for="purposeElective">ทำ Elective ภาควิชา</label>
@@ -234,7 +223,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 </div>
             </fieldset>
 
-            <!-- วันเข้า / วันออก -->
             <div class="row g-3 mb-3" id="dateRangePicker">
                 <div class="col-md-6">
                     <label for="checkInDate" class="form-label">วันที่ย้ายเข้าพัก</label>
@@ -246,7 +234,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 </div>
             </div>
 
-            <!-- จำนวนผู้เข้าพัก -->
             <div class="mb-4">
                 <label class="form-label">จำนวนผู้เข้าพัก</label>
                 <div class="row g-3">
@@ -261,7 +248,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
                 </div>
             </div>
 
-            <!-- ปุ่ม -->
             <div class="d-flex justify-content-between">
                 <button type="reset" class="btn btn-outline-secondary">ล้างฟอร์ม</button>
                 <button type="submit" class="btn btn-primary">ส่งคำขอ</button>
@@ -283,7 +269,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
         </div>
     </footer>
 
-    <!-- Modal: ส่งคำขอสำเร็จ -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -304,7 +289,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
         </div>
     </div>
 
-    <!-- Modal โหลดสำหรับผู้จอง -->
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">

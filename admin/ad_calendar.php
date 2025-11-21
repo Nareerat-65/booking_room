@@ -19,10 +19,7 @@ $extraHead = '
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
-
-        <!-- TOP NAVBAR -->
         <nav class="main-header navbar navbar-expand navbar-dark">
-            <!-- Left: ปุ่ม toggle sidebar + title -->
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button">
@@ -33,8 +30,6 @@ $extraHead = '
                     <span class="nav-link font-weight-bold">ปฏิทินการจองห้องพัก</span>
                 </li>
             </ul>
-
-            <!-- Right: admin name + logout -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item d-flex align-items-center">
                     <span class="navbar-text mr-3">
@@ -48,20 +43,15 @@ $extraHead = '
                 </li>
             </ul>
         </nav>
-        <!-- /TOP NAVBAR -->
 
-        <!-- SIDEBAR -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
 
-            <!-- Sidebar -->
             <div class="sidebar">
-                <!-- User info -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
                         <i class="fas fa-user-circle fa-2x text-white"></i>
@@ -71,12 +61,10 @@ $extraHead = '
                     </div>
                 </div>
 
-                <!-- Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
                         <li class="nav-item">
                             <a href="ad_dashboard.php" class="nav-link">
-                                <!-- แนะนำเปลี่ยนเป็น icon ที่มีจริงใน Font Awesome -->
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -109,13 +97,10 @@ $extraHead = '
                     </ul>
                 </nav>
             </div>
-            <!-- /Sidebar -->
+            
         </aside>
-        <!-- /SIDEBAR -->
-
-        <!-- CONTENT WRAPPER -->
+        
         <div class="content-wrapper">
-            <!-- Header -->
             <section class="content-header">
                 <div class="container-fluid text-center">
                     <h2 class="my-3">📅 ปฏิทินการใช้ห้องพัก</h2>
@@ -125,16 +110,13 @@ $extraHead = '
                 </div>
             </section>
 
-            <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
                     <div id="calendar"></div>
                 </div>
             </section>
         </div>
-        <!-- /CONTENT WRAPPER -->
 
-        <!-- FOOTER -->
         <footer class="main-footer text-sm">
             <div class="float-right d-none d-sm-inline">
                 ระบบจองห้องพัก
@@ -144,7 +126,6 @@ $extraHead = '
 
     </div>
 
-    <!-- Modal: รายละเอียดการเข้าพัก -->
     <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">

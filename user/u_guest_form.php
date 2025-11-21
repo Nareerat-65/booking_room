@@ -7,7 +7,6 @@ if ($token === '') {
     die('ลิงก์ไม่ถูกต้อง');
 }
 
-// ดึงข้อมูลการจองจาก token
 $stmt = $conn->prepare("
     SELECT id, full_name, check_in_date, check_out_date,
            woman_count, man_count
@@ -26,8 +25,6 @@ if (!$stmt->fetch()) {
 }
 $stmt->close();
 
-
-// ดึงรายการห้องที่จัดให้ booking นี้จาก room_allocations
 $sqlAlloc = "
     SELECT 
         a.id AS allocation_id,
@@ -40,7 +37,7 @@ $sqlAlloc = "
     WHERE a.booking_id = ?
     ORDER BY r.id, a.id
 ";
-$allocs = []; // [allocation_id] => ข้อมูลแถว
+$allocs = [];
 
 $stmt = $conn->prepare($sqlAlloc);
 $stmt->bind_param('i', $bookingId);
@@ -56,8 +53,6 @@ if (empty($allocs)) {
     die('ยังไม่ได้จัดสรรห้องสำหรับการจองนี้ กรุณาติดต่อเจ้าหน้าที่');
 }
 
-
-// ดึงรายชื่อผู้เข้าพักเดิม (ถ้ามี) จาก room_guests
 $sqlGuests = "
     SELECT allocation_id, guest_name
     FROM room_guests
@@ -81,11 +76,9 @@ $stmt->close();
 
 $saveMessage = '';
 
-
-// ถ้ามีการ submit ฟอร์ม (POST) → บันทึกรายชื่อ
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $posted = $_POST['guests'] ?? [];
-    $phones = $_POST['guest_phones'] ?? [];  // ⭐ รับเบอร์มาด้วย
+    $phones = $_POST['guest_phones'] ?? []; 
 
     foreach ($allocs as $aid => $a) {
         $aid = (int)$aid;
@@ -94,12 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $gender = ((int)$a['woman_count'] > 0 && (int)$a['man_count'] === 0) ? 'F' : 'M';
 
         $names  = $posted[$aid] ?? [];
-        $phonesPerAlloc = $phones[$aid] ?? [];   // ⭐ เบอร์ของห้องนี้
+        $phonesPerAlloc = $phones[$aid] ?? []; 
 
         if (!is_array($names)) $names = [];
         if (!is_array($phonesPerAlloc)) $phonesPerAlloc = [];
 
-        // ทำความสะอาดชื่อ
         $cleanNames = [];
         $cleanPhones = [];
 
@@ -107,17 +99,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $n = trim((string)$n);
             if ($n !== '') {
                 $cleanNames[]  = $n;
-                $cleanPhones[] = trim($phonesPerAlloc[$idx] ?? ''); // ⭐ แมปเบอร์ตาม index
+                $cleanPhones[] = trim($phonesPerAlloc[$idx] ?? '');
             }
         }
 
-        // จำกัดจำนวนตาม maxGuests
         if (count($cleanNames) > $maxGuests) {
             $cleanNames  = array_slice($cleanNames, 0, $maxGuests);
             $cleanPhones = array_slice($cleanPhones, 0, $maxGuests);
         }
 
-        // ลบข้อมูลเดิม
         $del = $conn->prepare("
             DELETE FROM room_guests
             WHERE booking_id = ? AND allocation_id = ?
@@ -126,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $del->execute();
         $del->close();
 
-        // insert ใหม่
         if (!empty($cleanNames)) {
             $ins = $conn->prepare("
                 INSERT INTO room_guests (booking_id, allocation_id, guest_name, guest_phone, gender)

@@ -10,12 +10,8 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
-/**
- * จัดสรรห้องพักให้ booking ที่อนุมัติแล้ว
- */
 function allocateRooms(mysqli $conn, int $bookingId): void
 {
-    // ถ้ามี allocation อยู่แล้ว ไม่ทำซ้ำ (กันอนุมัติซ้ำ)
     $stmt = $conn->prepare("SELECT COUNT(*) FROM room_allocations WHERE booking_id = ?");
     $stmt->bind_param('i', $bookingId);
     $stmt->execute();
@@ -27,7 +23,6 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         return;
     }
 
-    // ดึงข้อมูล booking
     $stmt = $conn->prepare("
         SELECT woman_count, man_count, check_in_date, check_out_date
         FROM bookings
@@ -45,12 +40,6 @@ function allocateRooms(mysqli $conn, int $bookingId): void
 
     $startDate = $checkIn;
     $endDate   = $checkOut;
-
-    // -------------------------------
-    // ดึง "ห้องที่ยังว่าง" ในช่วงนี้
-    //   - ห้องไม่ว่าง = มี room_allocations ที่ช่วงวันทับซ้อนกัน
-    //   - เราให้ถือว่าห้องเดิมต้องว่างหลังจาก end_date + 3 วัน (ทำความสะอาด)
-    // -------------------------------
     $rooms = [];
 
     $sqlRooms = "
@@ -76,7 +65,6 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     }
     $stmt->close();
 
-    // ถ้าไม่มีห้องว่างเลย ก็ออกไป (จะเลือกไป up สถานะ booking เพิ่มทีหลังก็ได้)
     if (empty($rooms)) {
         return;
     }
@@ -89,12 +77,11 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         VALUES (?, ?, ?, ?, ?, ?)
     ");
 
-    // 1) จัดผู้หญิงก่อน (ห้องหนึ่งไม่เกิน capacity และแยกเพศ)
     $remainW = (int)$womanCount;
     while ($remainW > 0 && $roomIndex < count($rooms)) {
         $roomId = (int)$rooms[$roomIndex]['id'];
         $cap    = (int)$rooms[$roomIndex]['capacity'];
-        $num    = min($cap, $remainW);   // จำนวนคนลงห้องนี้
+        $num    = min($cap, $remainW);  
 
         $zero = 0;
         $insert->bind_param(
@@ -103,8 +90,8 @@ function allocateRooms(mysqli $conn, int $bookingId): void
             $roomId,
             $startDate,
             $endDate,
-            $num,   // woman_count
-            $zero   // man_count
+            $num,   
+            $zero   
         );
         $insert->execute();
 
@@ -112,7 +99,6 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         $roomIndex += 1;
     }
 
-    // 2) จัดผู้ชายต่อ (ใช้ห้องถัดไปเสมอ → ไม่ปนห้องกับผู้หญิง)
     $remainM = (int)$manCount;
     while ($remainM > 0 && $roomIndex < count($rooms)) {
         $roomId = (int)$rooms[$roomIndex]['id'];
@@ -126,8 +112,8 @@ function allocateRooms(mysqli $conn, int $bookingId): void
             $roomId,
             $startDate,
             $endDate,
-            $zero,  // woman_count
-            $num    // man_count
+            $zero,  
+            $num    
         );
         $insert->execute();
 
@@ -138,21 +124,13 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     $insert->close();
 }
 
-/**
- * สร้าง token แบบสุ่ม เอาไว้ใส่ในลิงก์อีเมล
- */
 function generateToken(int $length = 32): string
 {
     return bin2hex(random_bytes($length / 2));
 }
 
-/**
- * ส่งเมลแจ้งผลการจอง
- * $status: 'approved' หรือ 'rejected'
- */
 function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string $reason = null): void
 {
-    // ดึงข้อมูลการจอง
     $stmt = $conn->prepare("
         SELECT full_name, email, check_in_date, check_out_date,
                woman_count, man_count, confirm_token
@@ -171,28 +149,22 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
     $mail = new PHPMailer(true);
 
     try {
-        // ===== ตั้งค่า SMTP สำหรับ Gmail =====
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';    // Gmail SMTP
+        $mail->Host       = 'smtp.gmail.com';    
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'nareerats65@nu.ac.th';      // 👉 Gmail ของเธอ
-        $mail->Password   = 'gwfq rtik mszl bjhl';       // 👉 App Password (อย่าใช้รหัสจริง)
+        $mail->Username   = 'nareerats65@nu.ac.th';      
+        $mail->Password   = 'gwfq rtik mszl bjhl';       
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet = 'UTF-8';
-
-        // ผู้ส่ง / ผู้รับ
         $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
         $mail->addAddress($email, $fullName);
-
         $mail->isHTML(true); 
         $mail->Encoding = 'base64';
         $subject = '';
         $body    = '';
 
         if ($status === 'approved') {
-            // ลิงก์ให้ผู้จองเข้าไปกรอกรายชื่อผู้เข้าพัก
-
             $link = 'http://localhost:3000/user/u_guest_form.php?token=' . urlencode((string)$token);
 
             $subject = 'ผลการจองห้องพัก: อนุมัติ';
@@ -309,12 +281,9 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
         $mail->send();
     } catch (Exception $e) {
-        // ไม่ต้อง echo ให้ user เห็น แค่ log ไว้พอ
         error_log('Mail error: ' . $mail->ErrorInfo);
     }
 }
-
-// ---------- รับค่าจาก Ajax ----------
 $id     = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 $status = $_POST['status'] ?? '';
 $reason = $_POST['reason'] ?? null;
@@ -326,8 +295,6 @@ if (!$id || !in_array($status, ['approved', 'rejected', 'pending'], true)) {
 }
 
 if ($status === 'approved') {
-
-    // 1) สร้าง token + กำหนดวันหมดอายุ (เช่น 7 วัน)
     $token  = generateToken();
     $expire = date('Y-m-d H:i:s', strtotime('+7 days'));
 
@@ -344,12 +311,8 @@ if ($status === 'approved') {
     $stmt->close();
 
     if ($ok) {
-        // จัดสรรห้องพักตาม booking นี้
         allocateRooms($conn, $id);
-
-        // ส่งเมลแจ้งผล (แบบอนุมัติ + มีลิงก์กรอกชื่อ)
         sendBookingEmail($conn, $id, 'approved', null);
-
         echo 'success';
     } else {
         echo 'error';
@@ -366,13 +329,11 @@ if ($status === 'approved') {
     $stmt->close();
 
     if ($ok) {
-        // ส่งเมลแจ้งว่าไม่อนุมัติ
         sendBookingEmail($conn, $id, 'rejected', $reason);
     }
 
     echo $ok ? 'success' : 'error';
 } else {
-    // reset เป็น pending (ถ้ามีในอนาคต)
     $stmt = $conn->prepare("
         UPDATE bookings
         SET status = 'pending', reject_reason = NULL

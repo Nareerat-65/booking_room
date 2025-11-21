@@ -1,0 +1,65 @@
+/* ===== STYLE A — MODERN FLAT ORANGE ===== */
+
+/* Card */
+.card {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.08);
+}
+
+/* Card Header */
+.card-header {
+    background: #f57b39;
+    border-radius: 1rem 1rem 0 0 !important;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+/* Table */
+.table-requests {
+    border-radius: 0 0 1rem 1rem;
+    overflow: hidden;
+}
+
+.table-requests thead th {
+    background: #ff8d4a;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    white-space: nowrap;
+}
+
+.table-requests tbody tr:nth-child(even) {
+    background: #ffffff;
+}
+
+.table-requests tbody tr:hover {
+    background: #ffe2c9;
+    cursor: pointer;
+}
+
+/* Cells */
+.table-requests td {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+/* Badges */
+.badge-warning {
+    background: #ffd580;
+    color: #8a5200;
+}
+.badge-success {
+    background: #34c759;
+}
+.badge-danger {
+    background: #ff4f4f;
+}
+
+/* Buttons */
+.table-requests .btn {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+}

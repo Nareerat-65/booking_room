@@ -7,7 +7,7 @@ if (!isset($_SESSION['admin_id'])) {
 require_once '../db.php';
 
 $pageTitle = 'รายการคำขอจองห้องพัก';
-$extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.php แล้ว
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -18,10 +18,7 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
-
-        <!-- TOP NAVBAR -->
         <nav class="main-header navbar navbar-expand navbar-dark">
-            <!-- Left: ปุ่ม toggle sidebar + title -->
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button">
@@ -33,7 +30,6 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                 </li>
             </ul>
 
-            <!-- Right: admin name + logout -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item d-flex align-items-center">
                     <span class="navbar-text mr-3">
@@ -47,20 +43,15 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                 </li>
             </ul>
         </nav>
-        <!-- /TOP NAVBAR -->
-
-        <!-- SIDEBAR -->
+       
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
                 <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
             </a>
 
-            <!-- Sidebar -->
             <div class="sidebar">
-                <!-- User info -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
                         <i class="fas fa-user-circle fa-2x text-white"></i>
@@ -70,12 +61,10 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                     </div>
                 </div>
 
-                <!-- Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
                         <li class="nav-item">
                             <a href="ad_dashboard.php" class="nav-link">
-                                <!-- แนะนำเปลี่ยนเป็น icon ที่มีจริงใน Font Awesome -->
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -108,20 +97,16 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                     </ul>
                 </nav>
             </div>
-            <!-- /Sidebar -->
         </aside>
-        <!-- /SIDEBAR -->
-
-        <!-- CONTENT WRAPPER -->
+        
         <div class="content-wrapper">
-            <!-- Header -->
             <section class="content-header">
                 <div class="container-fluid text-center ">
                     <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
+                     <p class="text-muted mb-2">ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้</p>
                 </div>
             </section>
 
-            <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
 
@@ -130,7 +115,7 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                             <h1 class="card-title mb-0">รายการคำขอ</h1>
                         </div>
                         <div class="card-body">
-                            <table id="bookingsTable" class="table table-bordered table-striped">
+                            <table id="bookingsTable" class="table table-bordered table-striped table-requests">
                                 <thead>
                                     <tr>
                                         <th>ลำดับ</th>
@@ -257,9 +242,7 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                 </div>
             </section>
         </div>
-        <!-- /CONTENT WRAPPER -->
-
-        <!-- FOOTER -->
+        
         <footer class="main-footer text-sm">
             <div class="float-right d-none d-sm-inline">
                 ระบบจองห้องพัก
@@ -269,8 +252,6 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
 
     </div>
 
-    <!-- MODALS จากไฟล์เดิมของคุณ -->
-    <!-- Modal: เหตุผลการไม่อนุมัติ -->
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -297,7 +278,6 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
         </div>
     </div>
 
-    <!-- Modal: รายละเอียด -->
     <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -308,13 +288,11 @@ $extraHead = ''; // ใช้ DataTables ผ่าน CSS จาก head_admin.p
                     </button>
                 </div>
                 <div class="modal-body" id="detailBody">
-                    <!-- เติมด้วย JS -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal โหลด -->
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true"
         data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-sm modal-dialog-centered">

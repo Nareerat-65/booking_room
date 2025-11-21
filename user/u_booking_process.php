@@ -14,7 +14,7 @@ $studyCourse = $_POST['studyCourse'] ?? '';
 $studyDept  = $_POST['studyDept'] ?? '';
 $electiveDept = $_POST['electiveDept'] ?? '';
 
-//แปลงวันที่จากรูปแบบ d-m-Y หรือ Y-m-d เป็น Y-m-d
+
 function toSqlDate($d)
 {
     if (!$d) return null;
@@ -29,7 +29,7 @@ $manCount   = isset($_POST['manCount'])   ? (int)$_POST['manCount']   : 0;
 
 $adminUrl = 'http://localhost:3000/admin/ad_dashboard.php';
 
-//เพิ่มข้อมูล
+
 $sql = "INSERT INTO bookings
         (full_name, phone, line_id, email,
          position, student_year, position_other,
@@ -44,7 +44,7 @@ if (!$stmt) {
     die('Prepare failed: ' . $conn->error);
 }
 
-// แปลง student_year ถ้าเป็นค่าว่างให้เป็น null
+
 $studentYear = ($studentYear === '') ? null : (int)$studentYear;
 
 $stmt->bind_param(
@@ -77,25 +77,24 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
-// สร้าง object
+
 $mail = new PHPMailer(true);
 
 try {
-    // ตั้งค่า SMTP
+    
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';  // ใช้ Gmail SMTP
+    $mail->Host = 'smtp.gmail.com';  
     $mail->SMTPAuth = true;
-    $mail->Username = 'nareerats65@nu.ac.th';     // 👉 Gmail ของคุณ
-    $mail->Password = 'gwfq rtik mszl bjhl';       // 👉 รหัสผ่านแอป (App Password)
+    $mail->Username = 'nareerats65@nu.ac.th';     
+    $mail->Password = 'gwfq rtik mszl bjhl';       
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
 
-    // ผู้ส่ง
+    
     $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
-    // ผู้รับ (Admin)
     $mail->addAddress('nareeerat28012547@gmail.com', 'Admin');
 
-    // เนื้อหาอีเมล
+    
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
     $mail->Subject = 'มีคำขอจองห้องพักใหม่เข้ามา';
@@ -153,7 +152,6 @@ try {
 } catch (Exception $e) {
     echo "MAIL ERROR: " . $mail->ErrorInfo;
 }
-// echo "OK";
 
 $stmt->close();
 $conn->close();

@@ -1,5 +1,4 @@
 <?php
-// ad_calendar_events.php
 header('Content-Type: application/json; charset=utf-8');
 require_once '../db.php';
 
@@ -51,14 +50,14 @@ $sql = "
     ORDER BY a.start_date, r.id
 ";
 
-// สีประจำห้อง
+
 $roomColors = [
-    1 => '#e57373',   // ห้อง 1
-    2 => '#64b5f6',   // ห้อง 2
-    3 => '#81c784',   // ห้อง 3
-    4 => '#ffb74d',   // ห้อง 4
-    5 => '#ba68c8',   // ห้อง 5
-    6 => '#ff65c4',   // ห้อง 6
+    1 => '#e57373',   
+    2 => '#64b5f6',   
+    3 => '#81c784',   
+    4 => '#ffb74d',   
+    5 => '#ba68c8',   
+    6 => '#ff65c4',   
 ];
 
 $result = $conn->query($sql);
@@ -68,23 +67,20 @@ if ($result) {
     while ($row = $result->fetch_assoc()) {
         $roomName   = $row['room_name'];
         $roomId     = (int)$row['room_id'];
-        $startDate  = $row['start_date'];   // วันที่เข้าพัก
-        $endDateRaw = $row['end_date'];     // วันที่ออกจริง (คืนสุดท้าย)
+        $startDate  = $row['start_date'];   
+        $endDateRaw = $row['end_date'];     
 
-        // ช่วงทำความสะอาด: 3 วันถัดจากวันออก
         $cleanStart = date('Y-m-d', strtotime($endDateRaw . ' +1 day'));
         $cleanEnd   = date('Y-m-d', strtotime($endDateRaw . ' +3 day'));
 
         $w = (int)$row['woman_count'];
         $m = (int)$row['man_count'];
 
-        // title หลักของช่วงเข้าพัก: แสดงห้อง + จำนวนหญิง/ชาย
         $pieces = [$roomName];
         if ($w > 0) $pieces[] = "หญิง {$w}";
         if ($m > 0) $pieces[] = "ชาย {$m}";
         $titleMain = implode(' • ', $pieces);
 
-        // tooltip เวลา hover
         $tooltip = "ผู้จอง: {$row['full_name']}\n"
             . "{$roomName}\n"
             . "วันเข้าพัก: {$startDate}\n"
@@ -93,18 +89,16 @@ if ($result) {
 
         $color = $roomColors[$roomId] ?? '#0d6efd';
 
-        // รายชื่อเต็มไว้โชว์ใน modal
         $guestList = $row['guest_list'] ?? '';
         if ($guestList === null || $guestList === '') {
             $guestList = 'ยังไม่มีรายชื่อผู้เข้าพัก';
         }
 
-        // 🔹 Event 1: ช่วงเข้าพักจริง
         $events[] = [
-            'id'      => $row['id'],   // id ของ allocation
+            'id'      => $row['id'],   
             'title'   => $titleMain,
             'start'   => $startDate,
-            'end'     => date('Y-m-d', strtotime($endDateRaw . ' +1 day')), // end exclusive
+            'end'     => date('Y-m-d', strtotime($endDateRaw . ' +1 day')), 
             'allDay'  => true,
             'color'   => $color,
             'extendedProps' => [
@@ -118,13 +112,11 @@ if ($result) {
                 'type'       => 'stay',
             ],
         ];
-
-        // 🔹 Event 2: ช่วงทำความสะอาด (3 วันถัดไป)
         $events[] = [
             'id'      => 'clean-' . $row['id'],
             'title'   => "{$roomName} (ทำความสะอาด)",
             'start'   => $cleanStart,
-            'end'     => date('Y-m-d', strtotime($cleanEnd . ' +1 day')), // end exclusive
+            'end'     => date('Y-m-d', strtotime($cleanEnd . ' +1 day')), 
             'allDay'  => true,
             'color'   => '#999999',
             'textColor' => '#ffffff',

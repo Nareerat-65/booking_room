@@ -34,7 +34,7 @@ $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- ชื่อระบบ -->
     <div class="container hero">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
         <p class="text-muted mb-4">
@@ -95,7 +95,7 @@ $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
             - หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่ผ่านหน้า “ติดต่อเรา”
         </div>
     </div>
-
+    <!-- footer -->
     <footer class="py-3 border-top bg-white text-center">
         <div class="container small text-muted">
             <div class="mb-2">

@@ -10,8 +10,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 </head>
 
 <body>
-
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold py-2 d-flex align-items-center" href="#">
@@ -35,10 +33,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 
     <div class="container py-5">
         <h2 class="text-center mb-4">ติดต่อเรา</h2>
-
         <div class="row g-4">
-
-            <!-- ช่องทางติดต่อ -->
             <div class="col-md-4">
                 <div class="contact-card bg-white p-4">
                     <h5><b>ข้อมูลการติดต่อ</b></h5>
@@ -57,7 +52,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
                 </div>
             </div>
 
-            <!-- แผนที่ -->
             <div class="col-md-8">
                 <div class="contact-card">
                     <div class="contact-header">
@@ -71,7 +65,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 
         </div>
 
-        <!-- ฟอร์มส่งข้อความ -->
         <div class="contact-card bg-white p-4 mt-5">
             <h5><b>ส่งข้อความถึงเรา</b></h5>
             <form>
