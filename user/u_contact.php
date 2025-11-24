@@ -2,6 +2,7 @@
 $pageTitle = 'ติดต่อเรา - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 
@@ -10,6 +11,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 </head>
 
 <body>
+    <!-- navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold py-2 d-flex align-items-center" href="#">
@@ -31,6 +33,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
         </div>
     </nav>
 
+    <!-- main content -->
     <div class="container py-5">
         <h2 class="text-center mb-4">ติดต่อเรา</h2>
         <div class="row g-4">
@@ -90,9 +93,23 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
                 </div>
             </form>
         </div>
-
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- footer -->
+    <footer class="py-3 border-top bg-white text-center">
+        <div class="container small text-muted">
+            <div class="mb-2">
+                หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร
+            </div>
+            <div class="mb-2">
+                เลขที่ 99 หมู่ 9 ตำบลท่าโพธิ์ อำเภอเมืองพิษณุโลก จังหวัดพิษณุโลก รหัสไปรษณีย์ 65000
+            </div>
+            <div class="mb-2">
+                โทร 0-5596-7847 | Email: example@example.com
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>

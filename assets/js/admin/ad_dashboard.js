@@ -4,9 +4,9 @@ const womanData = window.womanData || [];
 
 console.log(genderLabels, manData, womanData); // test
 
-const ctx = document.getElementById('genderLineChart').getContext('2d');
+const ctx = document.getElementById('genderBarChart').getContext('2d');
 
-const genderLineChart = new Chart(ctx, {
+const genderBarChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: genderLabels,

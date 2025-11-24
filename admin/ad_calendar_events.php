@@ -2,6 +2,7 @@
 header('Content-Type: application/json; charset=utf-8');
 require_once '../db.php';
 
+// ดึงข้อมูลการจองที่ได้รับการอนุมัติทั้งหมด
 $sql = "
     SELECT 
         a.id,
@@ -50,7 +51,7 @@ $sql = "
     ORDER BY a.start_date, r.id
 ";
 
-
+//สีห้องพัก
 $roomColors = [
     1 => '#e57373',   
     2 => '#64b5f6',   
@@ -63,16 +64,15 @@ $roomColors = [
 $result = $conn->query($sql);
 $events = [];
 
+// สร้าง events สำหรับแต่ละการจอง
 if ($result) {
     while ($row = $result->fetch_assoc()) {
         $roomName   = $row['room_name'];
         $roomId     = (int)$row['room_id'];
         $startDate  = $row['start_date'];   
         $endDateRaw = $row['end_date'];     
-
         $cleanStart = date('Y-m-d', strtotime($endDateRaw . ' +1 day'));
         $cleanEnd   = date('Y-m-d', strtotime($endDateRaw . ' +3 day'));
-
         $w = (int)$row['woman_count'];
         $m = (int)$row['man_count'];
 
@@ -86,14 +86,14 @@ if ($result) {
             . "วันเข้าพัก: {$startDate}\n"
             . "วันออก: {$endDateRaw}\n";
 
-
         $color = $roomColors[$roomId] ?? '#0d6efd';
 
+        // เพิ่มข้อมูลรายชื่อผู้เข้าพักใน tooltip
         $guestList = $row['guest_list'] ?? '';
         if ($guestList === null || $guestList === '') {
             $guestList = 'ยังไม่มีรายชื่อผู้เข้าพัก';
         }
-
+        // สร้าง event สำหรับการเข้าพัก
         $events[] = [
             'id'      => $row['id'],   
             'title'   => $titleMain,
@@ -112,6 +112,7 @@ if ($result) {
                 'type'       => 'stay',
             ],
         ];
+        // สร้าง event สำหรับการทำความสะอาด
         $events[] = [
             'id'      => 'clean-' . $row['id'],
             'title'   => "{$roomName} (ทำความสะอาด)",

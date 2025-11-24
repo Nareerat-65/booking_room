@@ -1,3 +1,8 @@
+document.getElementById("phone").addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, "")       // กันตัวอักษร
+        .slice(0, 10);                // จำกัด 10 ตัว
+});
+
 // เปลี่ยนข้อความปุ่มตามที่เลือกใน dropdown
 document.querySelectorAll('.dropdown').forEach(drop => {
     const btn = drop.querySelector('.dropdown-toggle');

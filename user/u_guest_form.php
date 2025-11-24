@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $saveMessage = 'บันทึกรายชื่อผู้เข้าพักเรียบร้อยแล้ว';
 }
 
-$pageTitle = 'กรอกรายชื่อผู้เข้าพัก';
+$pageTitle = 'กรอกรายชื่อผู้เข้าพัก - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
 
 ?>

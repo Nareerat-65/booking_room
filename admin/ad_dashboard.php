@@ -7,9 +7,11 @@ if (!isset($_SESSION['admin_id'])) {
 
 require_once '../db.php';
 
+//คำขอที่ยังไม่อนุมัติ
 $sqlPending = "SELECT COUNT(*) AS c FROM bookings WHERE status = 'pending'";
 $pending = (int) ($conn->query($sqlPending)->fetch_assoc()['c'] ?? 0);
 
+// คำขอที่จะเข้าพักใน 7 วันข้างหน้า
 $sqlUpcoming = "
     SELECT COUNT(*) AS c
     FROM bookings
@@ -18,6 +20,7 @@ $sqlUpcoming = "
 ";
 $upcoming = (int) ($conn->query($sqlUpcoming)->fetch_assoc()['c'] ?? 0);
 
+// จำนวนผู้เข้าพักตอนนี้
 $sqlGuestsNow = "
     SELECT COALESCE(SUM(ra.woman_count + ra.man_count), 0) AS c
     FROM room_allocations ra
@@ -27,9 +30,9 @@ $sqlGuestsNow = "
 ";
 $guests_now = (int) ($conn->query($sqlGuestsNow)->fetch_assoc()['c'] ?? 0);
 
+// จำนวนห้องว่างตอนนี้
 $sqlTotalRooms = "SELECT COUNT(*) AS c FROM rooms";
 $total_rooms = (int) ($conn->query($sqlTotalRooms)->fetch_assoc()['c'] ?? 0);
-
 $sqlRoomsInUse = "
     SELECT COUNT(DISTINCT ra.room_id) AS c
     FROM room_allocations ra
@@ -43,6 +46,7 @@ $rooms_in_use = (int) ($conn->query($sqlRoomsInUse)->fetch_assoc()['c'] ?? 0);
 $available_rooms = $total_rooms - $rooms_in_use;
 if ($available_rooms < 0) $available_rooms = 0;
 
+// ข้อมูลสถิติผู้เข้าพักแยกตามเพศ
 $sqlGenderChart = "
     SELECT 
         DATE_FORMAT(ra.start_date, '%Y-%m') AS m,
@@ -82,6 +86,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
+        <!-- navbar -->
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -94,11 +99,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item d-flex align-items-center">
-                    <span class="navbar-text mr-3">
-                        <?= htmlspecialchars($_SESSION['admin_name']) ?>
-                    </span>
-                </li>
                 <li class="nav-item">
                     <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
@@ -106,12 +106,12 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                 </li>
             </ul>
         </nav>
-
+        <!-- sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
+                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
             </a>
 
             <div class="sidebar">
@@ -162,17 +162,19 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
             </div>
         </aside>
 
+        <!-- main content -->
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid text-center">
                     <h2 class="my-3">👋 สวัสดีคุณ <?= htmlspecialchars($_SESSION['admin_name']) ?></h2>
-                    <p class="text-muted mb-1">ภาพรวมสถานะห้องพักและคำขอ ณ วันนี้</p>
+                    <p class="text-muted mb-3">ภาพรวมสถานะห้องพักและคำขอ ณ วันนี้</p>
                 </div>
             </section>
-
+            <!-- การ์ดข้อมูล -->
             <section class="content">
                 <div class="container-fluid">
                     <div class="row dashboard-metrics">
+                        <!-- การ์ดคำขอที่รออนุมัติ -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-pending">
                                 <div class="inner">
@@ -187,7 +189,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-
+                        <!-- การ์ดรายการจะเข้าพักใน 7 วันข้างหน้า -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-upcoming">
                                 <div class="inner">
@@ -202,7 +204,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-
+                        <!-- การ์ดจำนวนผู้เข้าพักตอนนี้ -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-guests">
                                 <div class="inner">
@@ -217,7 +219,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-
+                        <!-- การ์ดจำนวนห้องว่างตอนนี้ -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-available">
                                 <div class="inner">
@@ -233,14 +235,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-4 align-items-center">
-                        <div class="col-md-6 ">
+                    <!-- กราฟสถิติผู้เข้าพักแยกตามเพศ -->
+                    <div class="row mt-4">
+                        <div class="col-md-6 mx-auto">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">สถิติผู้เข้าพัก (ชาย / หญิง รายเดือน)</h3>
+                                    <h3 class="card-title text-white">สถิติผู้เข้าพัก (ชาย / หญิง รายเดือน)</h3>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="genderLineChart" style="height: 350px;"></canvas>
+                                    <canvas id="genderBarChart" style="height: 350px;"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -248,6 +251,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                 </div>
             </section>
         </div>
+        <!-- footer -->
         <footer class="main-footer text-sm">
             <div class="float-right d-none d-sm-inline">
                 ระบบจองห้องพัก

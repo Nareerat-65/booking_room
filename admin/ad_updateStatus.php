@@ -10,8 +10,10 @@ require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
 
+// ฟังก์ชันจัดห้องพักอัตโนมัติ
 function allocateRooms(mysqli $conn, int $bookingId): void
-{
+{   
+    // ตรวจสอบว่ามีการห้องหรือยัง
     $stmt = $conn->prepare("SELECT COUNT(*) FROM room_allocations WHERE booking_id = ?");
     $stmt->bind_param('i', $bookingId);
     $stmt->execute();
@@ -23,6 +25,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         return;
     }
 
+   // ดึงข้อมูลการจอง
     $stmt = $conn->prepare("
         SELECT woman_count, man_count, check_in_date, check_out_date
         FROM bookings
@@ -42,6 +45,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     $endDate   = $checkOut;
     $rooms = [];
 
+    // ดึงรายการห้องว่างในช่วงวันที่ต้องการ
     $sqlRooms = "
         SELECT r.id, r.capacity
         FROM rooms r
@@ -56,6 +60,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         ORDER BY r.id ASC
     ";
 
+    // ดึงห้องว่าง
     $stmt = $conn->prepare($sqlRooms);
     $stmt->bind_param('ss', $startDate, $endDate);
     $stmt->execute();
@@ -70,13 +75,13 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     }
 
     $roomIndex = 0;
-
     $insert = $conn->prepare("
         INSERT INTO room_allocations
             (booking_id, room_id, start_date, end_date, woman_count, man_count)
         VALUES (?, ?, ?, ?, ?, ?)
     ");
 
+    // จัดห้องให้ผู้หญิง
     $remainW = (int)$womanCount;
     while ($remainW > 0 && $roomIndex < count($rooms)) {
         $roomId = (int)$rooms[$roomIndex]['id'];
@@ -98,7 +103,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         $remainW   -= $num;
         $roomIndex += 1;
     }
-
+    // จัดห้องให้ผู้ชาย
     $remainM = (int)$manCount;
     while ($remainM > 0 && $roomIndex < count($rooms)) {
         $roomId = (int)$rooms[$roomIndex]['id'];
@@ -124,13 +129,16 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     $insert->close();
 }
 
+// ฟังก์ชันสร้างโทเค็นสุ่ม
 function generateToken(int $length = 32): string
 {
     return bin2hex(random_bytes($length / 2));
 }
 
+// ฟังก์ชันส่งอีเมลแจ้งผลการอนุมัติหรือปฏิเสธการจอง
 function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string $reason = null): void
 {
+    // ดึงข้อมูลการจอง
     $stmt = $conn->prepare("
         SELECT full_name, email, check_in_date, check_out_date,
                woman_count, man_count, confirm_token
@@ -146,6 +154,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
     }
     $stmt->close();
 
+    // ส่งอีเมลแจ้งผล
     $mail = new PHPMailer(true);
 
     try {
@@ -157,8 +166,12 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet = 'UTF-8';
+
+        // คนส่งและผู้รับ
         $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
         $mail->addAddress($email, $fullName);
+
+        // เนื้อหาอีเมล
         $mail->isHTML(true); 
         $mail->Encoding = 'base64';
         $subject = '';
@@ -284,6 +297,8 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         error_log('Mail error: ' . $mail->ErrorInfo);
     }
 }
+
+// รับค่าจาก AJAXและอัปเดตสถานะการจอง
 $id     = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 $status = $_POST['status'] ?? '';
 $reason = $_POST['reason'] ?? null;
@@ -318,7 +333,6 @@ if ($status === 'approved') {
         echo 'error';
     }
 } elseif ($status === 'rejected') {
-
     $stmt = $conn->prepare("
         UPDATE bookings
         SET status = 'rejected', reject_reason = ?
@@ -331,7 +345,6 @@ if ($status === 'approved') {
     if ($ok) {
         sendBookingEmail($conn, $id, 'rejected', $reason);
     }
-
     echo $ok ? 'success' : 'error';
 } else {
     $stmt = $conn->prepare("

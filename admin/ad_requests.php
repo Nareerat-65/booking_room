@@ -4,6 +4,44 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: ad_login.php');
     exit;
 }
+
+function formatDate(string $dateStr): string
+{
+    $date = new DateTime($dateStr);
+    return $date->format('d/m/Y');
+}
+
+function formatPosition(array $row): string
+{
+    $pos = $row['position'] ?? '';
+    switch ($pos) {
+        case 'student':
+            $year = isset($row['student_year']) && $row['student_year'] !== ''
+                ? $row['student_year'] : '–';
+            return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
+        case 'doctor':
+            return 'แพทย์';
+        case 'staff':
+            return 'เจ้าหน้าที่';
+        case 'other':
+            $other = trim($row['position_other'] ?? '');
+            return $other !== '' ? $other : 'อื่น ๆ';
+        default:
+            return '–';
+    }
+}
+
+function formatPurpose(array $row): string
+{
+    if (($row['purpose'] ?? '') === 'study') {
+        $course = trim($row['study_course'] ?? '');
+        return $course !== ''
+            ? "ศึกษารายวิชา {$course}"
+            : "ศึกษารายวิชา (ไม่ระบุชื่อวิชา)";
+    }
+    return $row['purpose'] ? $row['purpose'] : '-';
+}
+
 require_once '../db.php';
 
 $pageTitle = 'รายการคำขอจองห้องพัก';
@@ -18,6 +56,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
+        <!-- navbar -->
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -31,11 +70,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
             </ul>
 
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item d-flex align-items-center">
-                    <span class="navbar-text mr-3">
-                        <?= htmlspecialchars($_SESSION['admin_name']) ?>
-                    </span>
-                </li>
                 <li class="nav-item">
                     <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
@@ -43,12 +77,12 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
                 </li>
             </ul>
         </nav>
-       
+        <!-- sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
+                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
             </a>
 
             <div class="sidebar">
@@ -98,24 +132,25 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
                 </nav>
             </div>
         </aside>
-        
+
+        <!-- main content -->
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid text-center ">
                     <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
-                     <p class="text-muted mb-2">ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้</p>
+                    <p class="text-muted mb-2">ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้</p>
                 </div>
             </section>
 
             <section class="content">
                 <div class="container-fluid">
-
+                    <!-- รายการคำขอจองห้องพัก -->
                     <div class="card">
                         <div class="card-header text-white">
                             <h1 class="card-title mb-0">รายการคำขอ</h1>
                         </div>
                         <div class="card-body">
-                            <table id="bookingsTable" class="table table-bordered table-striped table-requests">
+                            <table id="bookingsTable" class="table table-bordered table-striped table-requests text-center">
                                 <thead>
                                     <tr>
                                         <th>ลำดับ</th>
@@ -140,40 +175,11 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
                                     $result = $conn->query($sql);
                                     if ($result && $result->num_rows > 0) {
                                         $i = 1;
-                                        function formatPosition(array $row): string
-                                        {
-                                            $pos = $row['position'] ?? '';
-                                            switch ($pos) {
-                                                case 'student':
-                                                    $year = isset($row['student_year']) && $row['student_year'] !== ''
-                                                        ? $row['student_year'] : '–';
-                                                    return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
-                                                case 'doctor':
-                                                    return 'แพทย์';
-                                                case 'staff':
-                                                    return 'เจ้าหน้าที่';
-                                                case 'other':
-                                                    $other = trim($row['position_other'] ?? '');
-                                                    return $other !== '' ? $other : 'อื่น ๆ';
-                                                default:
-                                                    return '–';
-                                            }
-                                        }
-
-                                        function formatPurpose(array $row): string
-                                        {
-                                            if (($row['purpose'] ?? '') === 'study') {
-                                                $course = trim($row['study_course'] ?? '');
-                                                return $course !== ''
-                                                    ? "ศึกษารายวิชา {$course}"
-                                                    : "ศึกษารายวิชา (ไม่ระบุชื่อวิชา)";
-                                            }
-                                            return $row['purpose'] ? $row['purpose'] : '-';
-                                        }
 
                                         while ($row = $result->fetch_assoc()) {
                                             $status = $row['status'] ?? 'pending';
                                             $reason = $row['reject_reason'] ?? '';
+                                            $docPath = $row['document_path'] ?? '';
                                             echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
                                             echo "<td>{$i}</td>";
                                             echo "<td>" . htmlspecialchars($row['full_name'], ENT_QUOTES, 'UTF-8') . "</td>";
@@ -183,13 +189,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
                                             echo "<td>" . htmlspecialchars(formatPosition($row), ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars($row['department'], ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars(formatPurpose($row), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars(
-                                                $row['study_dept'] ?: ($row['elective_dept'] ?: '-'),
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) . "</td>";
-                                            echo "<td>{$row['check_in_date']}</td>";
-                                            echo "<td>{$row['check_out_date']}</td>";
+                                            echo "<td>" . htmlspecialchars($row['study_dept'] ?: ($row['elective_dept'] ?: '-'), ENT_QUOTES, 'UTF-8') . "</td>";
+                                            echo "<td>" . htmlspecialchars(formatDate($row['check_in_date']), ENT_QUOTES, 'UTF-8') . "</td>";
+                                            echo "<td>" . htmlspecialchars(formatDate($row['check_out_date']), ENT_QUOTES, 'UTF-8') . "</td>";
 
                                             $w = (int)$row['woman_count'];
                                             $m = (int)$row['man_count'];
@@ -210,19 +212,43 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
 
                                             echo '<td>';
                                             if ($status === 'pending') {
+                                                // รออนุมัติ → แสดงปุ่มอนุมัติ / ไม่อนุมัติ
                                                 echo "
-                                            <button class='btn btn-success btn-sm btn-approve'>อนุมัติ</button>
-                                            <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
-                                        ";
+                                                    <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
+                                                    <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
+                                                ";
+                                            } elseif ($status === 'approved') {
+                                                if ($docPath) {
+                                                    $safePath = htmlspecialchars($docPath, ENT_QUOTES, 'UTF-8');
+                                                    echo "
+                                                        <button class='btn btn-primary btn-sm btn-view-doc mb-1'
+                                                                data-doc='{$safePath}'>
+                                                            <i class='fas fa-file-alt'></i> ดูเอกสาร
+                                                        </button>
+                                                        <button class='btn btn-warning btn-sm btn-upload-doc ml-1'
+                                                                data-id='{$row['id']}'>
+                                                            <i class='fas fa-cog'></i> แก้ไข
+                                                        </button>
+                                                    ";
+                                                } else {
+                                                    // 🟢 ยังไม่มีเอกสาร → ให้ปุ่มอัปโหลดอย่างเดียว
+                                                    echo "
+                                                        <button class='btn btn-success btn-sm btn-upload-doc'
+                                                                data-id='{$row['id']}'>
+                                                            <i class='fas fa-upload'></i> อัปโหลด
+                                                        </button>
+                                                    ";
+                                                }
                                             } else {
+                                                // ❌ ไม่อนุมัติ → ยังใช้ปุ่มรายละเอียดเหมือนเดิม
                                                 echo "
-                                            <button class='btn btn-outline-secondary btn-sm btn-detail'
-                                                    data-id='{$row['id']}'
-                                                    data-status='{$status}'
-                                                    data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-                                                <i class='fas fa-info-circle'></i> รายละเอียด
-                                            </button>
-                                        ";
+                                                    <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                                            data-id='{$row['id']}'
+                                                            data-status='{$status}'
+                                                            data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                                        <i class='fas fa-info-circle'></i> รายละเอียด
+                                                    </button>
+                                                ";
                                             }
                                             echo '</td>';
 
@@ -242,7 +268,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
                 </div>
             </section>
         </div>
-        
+        <!-- footer -->
         <footer class="main-footer text-sm">
             <div class="float-right d-none d-sm-inline">
                 ระบบจองห้องพัก
@@ -251,7 +277,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
         </footer>
 
     </div>
-
+    <!-- Modals ระบุเหตุผลไม่อนุมัติ -->
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -277,7 +303,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
             </div>
         </div>
     </div>
-
+    <!-- Modal รายละเอียดคำขอ -->
     <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -292,7 +318,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
             </div>
         </div>
     </div>
-
+    <!-- Modal กำลังโหลด -->
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true"
         data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -302,6 +328,71 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
             </div>
         </div>
     </div>
+
+    <!-- Modal อัปโหลดเอกสาร -->
+    <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="uploadForm" action="ad_upload_document.php" method="post" enctype="multipart/form-data">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            อัปโหลดเอกสารประกอบการจอง
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="booking_id" id="uploadBookingId">
+
+                        <div class="mb-3">
+                            <label class="form-label">คำขอจอง:</label>
+                            <div id="uploadBookingInfo" class="font-weight-bold text-primary"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="document" class="form-label">เลือกไฟล์เอกสาร</label>
+                            <input type="file" name="document" id="document" class="form-control-file" required
+                                accept=".pdf,.jpg,.jpeg,.png">
+                            <small class="form-text text-muted">
+                                รองรับไฟล์ .pdf, .jpg, .jpeg, .png ขนาดไม่เกิน 5MB
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-success">อัปโหลด</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ดูเอกสาร -->
+    <div class="modal fade" id="viewDocModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">เอกสารที่อัปโหลด</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <iframe id="docFrame" src="" width="100%" height="600" style="border:0;"></iframe>
+                    <div class="mt-2">
+                        <a id="docDownload" href="" target="_blank" class="btn btn-outline-primary btn-sm">
+                            ดาวน์โหลด / เปิดในแท็บใหม่
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

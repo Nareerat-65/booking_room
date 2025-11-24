@@ -13,12 +13,14 @@ $extraHead = '
 ?>
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <?php include '../partials/head_admin.php'; ?>
 </head>
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
+        <!-- navbar -->
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -31,24 +33,19 @@ $extraHead = '
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item d-flex align-items-center">
-                    <span class="navbar-text mr-3">
-                        <?= htmlspecialchars($_SESSION['admin_name']) ?>
-                    </span>
-                </li>
                 <li class="nav-item">
-                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm ">
+                        <i class="fas fa-sign-out-alt "></i> ออกจากระบบ
                     </a>
                 </li>
             </ul>
         </nav>
-
+        <!-- sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
                 <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
                     style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">Admin Dashboard</span>
+                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
             </a>
 
             <div class="sidebar">
@@ -99,7 +96,7 @@ $extraHead = '
             </div>
             
         </aside>
-        
+        <!-- main content -->
         <div class="content-wrapper">
             <section class="content-header">
                 <div class="container-fluid text-center">
@@ -116,7 +113,8 @@ $extraHead = '
                 </div>
             </section>
         </div>
-
+        
+        <!-- footer -->
         <footer class="main-footer text-sm">
             <div class="float-right d-none d-sm-inline">
                 ระบบจองห้องพัก
@@ -126,6 +124,7 @@ $extraHead = '
 
     </div>
 
+    <!-- Modal รายละเอียดผู้เข้าพัก -->
     <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">

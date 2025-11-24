@@ -14,9 +14,7 @@
         background: #fbf6f4;
         font-family: 'Kanit', sans-serif;
     }
-    /* พื้นหลังทั้งหน้าให้ดูซอฟต์ขึ้น */
 
-    /* เมนู active สีส้ม */
     .nav-sidebar .nav-link.active {
         background-color: #F57B39 !important;
         color: #fff !important;

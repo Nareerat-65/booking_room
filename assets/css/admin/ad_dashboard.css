@@ -84,3 +84,25 @@
 .dashboard-metrics .small-box-footer:hover {
     text-decoration: underline;
 }
+
+/* Card */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: none;
+}
+
+/* Header (ธีมส้ม) */
+.card-header {
+    background: linear-gradient(45deg, #ff7b29, #ff9f4a);
+    padding: 18px;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+

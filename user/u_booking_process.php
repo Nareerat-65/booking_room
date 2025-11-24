@@ -14,7 +14,7 @@ $studyCourse = $_POST['studyCourse'] ?? '';
 $studyDept  = $_POST['studyDept'] ?? '';
 $electiveDept = $_POST['electiveDept'] ?? '';
 
-
+//แปลงรูปแบบวันที่
 function toSqlDate($d)
 {
     if (!$d) return null;
@@ -29,7 +29,7 @@ $manCount   = isset($_POST['manCount'])   ? (int)$_POST['manCount']   : 0;
 
 $adminUrl = 'http://localhost:3000/admin/ad_dashboard.php';
 
-
+//เพิ่มข้อมูล
 $sql = "INSERT INTO bookings
         (full_name, phone, line_id, email,
          position, student_year, position_other,
@@ -43,10 +43,7 @@ $stmt = $conn->prepare($sql);
 if (!$stmt) {
     die('Prepare failed: ' . $conn->error);
 }
-
-
 $studentYear = ($studentYear === '') ? null : (int)$studentYear;
-
 $stmt->bind_param(
     'sssssissssssssii',
     $fullName,
@@ -70,6 +67,7 @@ if (!$stmt->execute()) {
     die('Execute failed: ' . $stmt->error);
 }
 
+// ส่งอีเมลแจ้งเตือนถึงแอดมิน
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -90,11 +88,11 @@ try {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
 
-    
+    //คนส่งและผู้รับ
     $mail->setFrom('nareerats65@nu.ac.th', 'ระบบจองห้องพัก');
     $mail->addAddress('nareeerat28012547@gmail.com', 'Admin');
 
-    
+    //เนื้อหาอีเมล
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
     $mail->Subject = 'มีคำขอจองห้องพักใหม่เข้ามา';
@@ -146,12 +144,10 @@ try {
     </div>
 </div>';
 
-
     $mail->send();
     echo "OK";
 } catch (Exception $e) {
     echo "MAIL ERROR: " . $mail->ErrorInfo;
 }
-
 $stmt->close();
 $conn->close();

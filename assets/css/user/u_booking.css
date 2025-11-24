@@ -1,3 +1,12 @@
+.bookingForm {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 50px ;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+    background-color: #ffffff;
+}
+
 .booking-wrapper {
     min-height: 100vh;
 }
@@ -22,4 +31,10 @@
 .btn-primary {
     background-color: #F57B39;
     border: none;
+}
+
+.btn-primary:hover {
+    background-color: #ffffff;
+    color: #F57B39;
+    border: 1px solid #F57B39;
 }

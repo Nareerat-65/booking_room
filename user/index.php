@@ -25,7 +25,7 @@ $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav gap-2">
                     <li class="nav-item"><a class="nav-link active" href="index.php">หน้าแรก</a></li>
                     <li class="nav-item"><a class="nav-link" href="u_booking.php">จองห้องพัก</a></li>
                     <li class="nav-item"><a class="nav-link" href="u_contact.php">ติดต่อเรา</a></li>
@@ -110,7 +110,7 @@ $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>
