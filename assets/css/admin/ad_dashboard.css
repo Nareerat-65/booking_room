@@ -1,4 +1,3 @@
-
 /* กล่อง metric ทั้งแถว */
 .dashboard-metrics .small-box {
     border-radius: 1rem;
@@ -22,6 +21,22 @@
 .dashboard-metrics .small-box:hover {
     transform: translateY(-3px);
     box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2);
+}
+
+/* ======== ปรับตำแหน่งไอคอนของ small-box ให้เหมือน AdminLTE 4 ======== */
+.dashboard-metrics .small-box .icon {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    font-size: 70px;
+    opacity: 0.25;
+    transition: transform 0.2s ease;
+}
+
+/* ขยับไอคอนตอน hover */
+.dashboard-metrics .small-box:hover .icon {
+    transform: scale(1.1);
+    opacity: 0.35;
 }
 
 /* Pending – ส้มหลัก */
@@ -104,5 +119,6 @@
     font-size: 1.2rem;
     font-weight: 600;
 }
+
 
 

@@ -149,7 +149,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
 <html lang="th">
 
 <head>
-    <?php include '../partials/head_user.php'; ?>
+    <?php include '../partials/user/head_user.php'; ?>
 </head>
 
 <body class="bg-light">

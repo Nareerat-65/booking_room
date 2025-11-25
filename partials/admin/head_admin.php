@@ -21,7 +21,7 @@
         font-family: 'Kanit', sans-serif;
     }
 
-    .nav-sidebar .nav-link.active {
+    .app-header {
         background-color: #F57B39 !important;
         color: #fff !important;
     }

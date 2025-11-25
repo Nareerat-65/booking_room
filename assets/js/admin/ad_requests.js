@@ -109,7 +109,7 @@ $(function () {
                     // ✅ ถ้าอนุมัติแล้ว → เปลี่ยนเป็นปุ่มอัปโหลดเอกสาร
                     $actionCell.html(`
                         <button class="btn btn-success btn-sm btn-upload-doc" data-id="${id}">
-                            <i class="fas fa-upload"></i> อัปโหลดเอกสาร
+                            <i class="fas fa-upload"></i> อัปโหลด
                         </button>
                     `);
                 } else if (status === 'rejected') {
