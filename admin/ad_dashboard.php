@@ -39,7 +39,6 @@ $sqlRoomsInUse = "
     JOIN bookings b ON ra.booking_id = b.id
     WHERE b.status = 'approved'
       AND CURDATE() BETWEEN ra.start_date AND DATE_ADD(ra.end_date, INTERVAL 3 DAY)
-      -- +3 วันหลัง end_date = ช่วงทำความสะอาด
 ";
 $rooms_in_use = (int) ($conn->query($sqlRoomsInUse)->fetch_assoc()['c'] ?? 0);
 
@@ -71,110 +70,37 @@ if ($resultGender && $resultGender->num_rows > 0) {
         $data_woman[]    = (int)$row['total_woman'];
     }
 }
-
-
+$activeMenu = 'dashboard';
 $pageTitle = 'แดชบอร์ดผู้ดูแล';
 $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">';
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include '../partials/head_admin.php'; ?>
+    <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
-        <!-- navbar -->
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <span class="nav-link font-weight-bold">แดชบอร์ดผู้ดูแล</span>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
-                    style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
-            </a>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
+        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
 
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <i class="fas fa-user-circle fa-2x text-white"></i>
-                    </div>
-                    <div class="info">
-                        <span class="d-block text-white"><?= htmlspecialchars($_SESSION['admin_name']) ?></span>
-                    </div>
-                </div>
+        <!-- ===== Main Content ===== -->
+        <main class="app-main">
 
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
-                        <li class="nav-item">
-                            <a href="ad_dashboard.php" class="nav-link active">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_requests.php" class="nav-link">
-                                <i class="nav-icon fas fa-list"></i>
-                                <p>รายการคำขอจองห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_calendar.php" class="nav-link">
-                                <i class="nav-icon fas fa-calendar-alt"></i>
-                                <p>ปฏิทินห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_change_password.php" class="nav-link">
-                                <i class="nav-icon fas fa-key"></i>
-                                <p>เปลี่ยนรหัสผ่าน</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_logout.php" class="nav-link">
-                                <i class="nav-icon fas fa-sign-out-alt"></i>
-                                <p>ออกจากระบบ</p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- main content -->
-        <div class="content-wrapper">
-            <section class="content-header">
+            <div class="app-content-header py-3">
                 <div class="container-fluid text-center">
                     <h2 class="my-3">👋 สวัสดีคุณ <?= htmlspecialchars($_SESSION['admin_name']) ?></h2>
                     <p class="text-muted mb-3">ภาพรวมสถานะห้องพักและคำขอ ณ วันนี้</p>
                 </div>
-            </section>
-            <!-- การ์ดข้อมูล -->
-            <section class="content">
+            </div>
+
+            <div class="app-content">
                 <div class="container-fluid">
-                    <div class="row dashboard-metrics">
-                        <!-- การ์ดคำขอที่รออนุมัติ -->
+
+                    <div class="row dashboard-metrics g-3">
+                        <!-- Pending -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-pending">
                                 <div class="inner">
@@ -189,7 +115,8 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-                        <!-- การ์ดรายการจะเข้าพักใน 7 วันข้างหน้า -->
+
+                        <!-- Upcoming -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-upcoming">
                                 <div class="inner">
@@ -204,7 +131,8 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-                        <!-- การ์ดจำนวนผู้เข้าพักตอนนี้ -->
+
+                        <!-- Guests now -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-guests">
                                 <div class="inner">
@@ -219,7 +147,8 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 </a>
                             </div>
                         </div>
-                        <!-- การ์ดจำนวนห้องว่างตอนนี้ -->
+
+                        <!-- Available rooms -->
                         <div class="col-lg-3 col-6">
                             <div class="small-box box-available">
                                 <div class="inner">
@@ -235,12 +164,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                             </div>
                         </div>
                     </div>
-                    <!-- กราฟสถิติผู้เข้าพักแยกตามเพศ -->
+
+                    <!-- Chart -->
                     <div class="row mt-4">
                         <div class="col-md-6 mx-auto">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title text-white">สถิติผู้เข้าพัก (ชาย / หญิง รายเดือน)</h3>
+                                    <h3 class="card-title text-white mb-0">
+                                        สถิติผู้เข้าพัก (ชาย / หญิง รายเดือน)
+                                    </h3>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="genderBarChart" style="height: 350px;"></canvas>
@@ -248,22 +180,21 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                             </div>
                         </div>
                     </div>
+
                 </div>
-            </section>
-        </div>
-        <!-- footer -->
-        <footer class="main-footer text-sm">
-            <div class="float-right d-none d-sm-inline">
-                ระบบจองห้องพัก
             </div>
+        </main>
+
+        <!-- ===== Footer ===== -->
+        <footer class="app-footer text-sm">
+            <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
             <strong>&copy; <?= date('Y'); ?> คณะ/หน่วยงานของคุณ</strong> สงวนลิขสิทธิ์
         </footer>
 
     </div>
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
         window.genderLabels = <?= json_encode($labels_gender); ?>;

@@ -4,7 +4,7 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: ad_login.php');
     exit;
 }
-
+$activeMenu = 'calendar';
 $pageTitle = 'ปฏิทินการจองห้องพัก';
 $extraHead = '
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
@@ -15,126 +15,54 @@ $extraHead = '
 <html lang="th">
 
 <head>
-    <?php include '../partials/head_admin.php'; ?>
+    <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
-        <!-- navbar -->
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <span class="nav-link font-weight-bold">ปฏิทินการจองห้องพัก</span>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm ">
-                        <i class="fas fa-sign-out-alt "></i> ออกจากระบบ
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
-                    style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
-            </a>
+<!-- ✅ ใช้ body class แบบ AdminLTE4 เหมือนหน้า requests/dashboard -->
 
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <i class="fas fa-user-circle fa-2x text-white"></i>
-                    </div>
-                    <div class="info">
-                        <span class="d-block text-white"><?= htmlspecialchars($_SESSION['admin_name']) ?></span>
-                    </div>
-                </div>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <!-- ✅ wrapper แบบ v4 -->
+    <div class="app-wrapper">
+        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
+        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
 
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
-                        <li class="nav-item">
-                            <a href="ad_dashboard.php" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_requests.php" class="nav-link">
-                                <i class="nav-icon fas fa-list"></i>
-                                <p>รายการคำขอจองห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_calendar.php" class="nav-link active">
-                                <i class="nav-icon fas fa-calendar-alt"></i>
-                                <p>ปฏิทินห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_change_password.php" class="nav-link">
-                                <i class="nav-icon fas fa-key"></i>
-                                <p>เปลี่ยนรหัสผ่าน</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_logout.php" class="nav-link">
-                                <i class="nav-icon fas fa-sign-out-alt"></i>
-                                <p>ออกจากระบบ</p>
-                            </a>
-                        </li>
+        <!-- ✅ main ของ v4 จะถูก sidebar ดันอัตโนมัติ -->
+        <main class="app-main">
 
-                    </ul>
-                </nav>
-            </div>
-            
-        </aside>
-        <!-- main content -->
-        <div class="content-wrapper">
-            <section class="content-header">
+            <div class="app-content-header py-3">
                 <div class="container-fluid text-center">
                     <h2 class="my-3">📅 ปฏิทินการใช้ห้องพัก</h2>
                     <p class="text-muted mb-2">
-                        แสดงช่วงวันที่เข้าพักจริง + 3 วันสำหรับทำความสะอาด
+                        แสดงช่วงเข้าพักจริง + 3 วันทำความสะอาด
                     </p>
                 </div>
-            </section>
+            </div>
 
-            <section class="content">
+            <div class="app-content">
                 <div class="container-fluid">
                     <div id="calendar"></div>
                 </div>
-            </section>
-        </div>
-        
-        <!-- footer -->
-        <footer class="main-footer text-sm">
-            <div class="float-right d-none d-sm-inline">
-                ระบบจองห้องพัก
             </div>
+
+        </main>
+
+        <!-- ===== Footer ===== -->
+        <footer class="app-footer text-sm">
+            <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
             <strong>&copy; <?= date('Y'); ?> คณะ/หน่วยงานของคุณ</strong> สงวนลิขสิทธิ์
         </footer>
 
     </div>
 
-    <!-- Modal รายละเอียดผู้เข้าพัก -->
+    <!-- =================== MODAL (Bootstrap5) =================== -->
     <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">รายละเอียดผู้เข้าพัก</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-left">
+                <div class="modal-body text-start">
                     <p><strong>ห้อง:</strong> <span id="eventRoom"></span></p>
                     <p><strong>ผู้จอง:</strong> <span id="eventBooker"></span></p>
                     <p><strong>ช่วงเข้าพัก:</strong> <span id="eventDates"></span></p>
@@ -146,15 +74,13 @@ $extraHead = '
         </div>
     </div>
 
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-
+    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
     <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 
+    <!-- JS เดิมของคุณ -->
     <script src="/assets/js/admin/ad_calendar.js"></script>
+
 
 </body>
 

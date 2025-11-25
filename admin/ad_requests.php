@@ -43,366 +43,287 @@ function formatPurpose(array $row): string
 }
 
 require_once '../db.php';
-
+$activeMenu = 'requests';
 $pageTitle = 'รายการคำขอจองห้องพัก';
-$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_requests.css">';
+$extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/assets/css/admin/ad_requests.css">
+';
 ?>
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <?php include '../partials/head_admin.php'; ?>
+    <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
-        <!-- navbar -->
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <span class="nav-link font-weight-bold"> รายการคำขอจองห้องพัก </span>
-                </li>
-            </ul>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
 
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" class="brand-image img-circle elevation-3"
-                    style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
-            </a>
+    <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
+    <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
 
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <i class="fas fa-user-circle fa-2x text-white"></i>
-                    </div>
-                    <div class="info">
-                        <span class="d-block text-white"><?= htmlspecialchars($_SESSION['admin_name']) ?></span>
-                    </div>
-                </div>
-
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
-                        <li class="nav-item">
-                            <a href="ad_dashboard.php" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_requests.php" class="nav-link active">
-                                <i class="nav-icon fas fa-list"></i>
-                                <p>รายการคำขอจองห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_calendar.php" class="nav-link ">
-                                <i class="nav-icon fas fa-calendar-alt"></i>
-                                <p>ปฏิทินห้องพัก</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_change_password.php" class="nav-link">
-                                <i class="nav-icon fas fa-key"></i>
-                                <p>เปลี่ยนรหัสผ่าน</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_logout.php" class="nav-link">
-                                <i class="nav-icon fas fa-sign-out-alt"></i>
-                                <p>ออกจากระบบ</p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
+    <!-- ===== Main Content (v4) ===== -->
+    <main class="app-main">
+        <div class="app-content-header py-3">
+            <div class="container-fluid text-center">
+                <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
+                <p class="text-muted mb-2">
+                    ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้
+                </p>
             </div>
-        </aside>
+        </div>
 
-        <!-- main content -->
-        <div class="content-wrapper">
-            <section class="content-header">
-                <div class="container-fluid text-center ">
-                    <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
-                    <p class="text-muted mb-2">ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้</p>
-                </div>
-            </section>
+        <div class="app-content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header text-white">
+                        <h1 class="card-title mb-0">รายการคำขอ</h1>
+                    </div>
 
-            <section class="content">
-                <div class="container-fluid">
-                    <!-- รายการคำขอจองห้องพัก -->
-                    <div class="card">
-                        <div class="card-header text-white">
-                            <h1 class="card-title mb-0">รายการคำขอ</h1>
-                        </div>
-                        <div class="card-body">
-                            <table id="bookingsTable" class="table table-bordered table-striped table-requests text-center">
-                                <thead>
-                                    <tr>
-                                        <th>ลำดับ</th>
-                                        <th>ชื่อผู้จอง</th>
-                                        <th>เบอร์โทร</th>
-                                        <th>ID Line</th>
-                                        <th>Email</th>
-                                        <th>ตำแหน่ง</th>
-                                        <th>หน่วยงาน</th>
-                                        <th>วัตถุประสงค์</th>
-                                        <th>ภาควิชา</th>
-                                        <th>วันที่เข้าพัก</th>
-                                        <th>วันที่ออก</th>
-                                        <th>จำนวนคน</th>
-                                        <th>สถานะ</th>
-                                        <th>จัดการ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $sql = "SELECT * FROM bookings ORDER BY id DESC";
-                                    $result = $conn->query($sql);
-                                    if ($result && $result->num_rows > 0) {
-                                        $i = 1;
+                    <div class="card-body">
+                        <table id="bookingsTable" class="table table-bordered table-striped table-requests text-center align-middle">
+                            <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>ชื่อผู้จอง</th>
+                                <th>เบอร์โทร</th>
+                                <th>ID Line</th>
+                                <th>Email</th>
+                                <th>ตำแหน่ง</th>
+                                <th>หน่วยงาน</th>
+                                <th>วัตถุประสงค์</th>
+                                <th>ภาควิชา</th>
+                                <th>วันที่เข้าพัก</th>
+                                <th>วันที่ออก</th>
+                                <th>จำนวนคน</th>
+                                <th>สถานะ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            $sql = "SELECT * FROM bookings ORDER BY id DESC";
+                            $result = $conn->query($sql);
+                            if ($result && $result->num_rows > 0) {
+                                $i = 1;
 
-                                        while ($row = $result->fetch_assoc()) {
-                                            $status = $row['status'] ?? 'pending';
-                                            $reason = $row['reject_reason'] ?? '';
-                                            $docPath = $row['document_path'] ?? '';
-                                            echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
-                                            echo "<td>{$i}</td>";
-                                            echo "<td>" . htmlspecialchars($row['full_name'], ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['phone'], ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['line_id'], ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars(formatPosition($row), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['department'], ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars(formatPurpose($row), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['study_dept'] ?: ($row['elective_dept'] ?: '-'), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars(formatDate($row['check_in_date']), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars(formatDate($row['check_out_date']), ENT_QUOTES, 'UTF-8') . "</td>";
+                                while ($row = $result->fetch_assoc()) {
+                                    $status = $row['status'] ?? 'pending';
+                                    $reason = $row['reject_reason'] ?? '';
+                                    $docPath = $row['document_path'] ?? '';
 
-                                            $w = (int)$row['woman_count'];
-                                            $m = (int)$row['man_count'];
-                                            $people = [];
-                                            if ($w > 0) $people[] = "หญิง {$w}";
-                                            if ($m > 0) $people[] = "ชาย {$m}";
-                                            if (empty($people)) $people[] = "-";
-                                            echo "<td>" . implode(" ", $people) . "</td>";
+                                    echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
+                                    echo "<td>{$i}</td>";
+                                    echo "<td>" . htmlspecialchars($row['full_name'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['phone'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['line_id'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars(formatPosition($row), ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['department'], ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars(formatPurpose($row), ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['study_dept'] ?: ($row['elective_dept'] ?: '-'), ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars(formatDate($row['check_in_date']), ENT_QUOTES, 'UTF-8') . "</td>";
+                                    echo "<td>" . htmlspecialchars(formatDate($row['check_out_date']), ENT_QUOTES, 'UTF-8') . "</td>";
 
-                                            if ($status == 'approved') {
-                                                $badge = '<span class="badge badge-success">อนุมัติแล้ว</span>';
-                                            } elseif ($status == 'rejected') {
-                                                $badge = '<span class="badge badge-danger">ไม่อนุมัติ</span>';
-                                            } else {
-                                                $badge = '<span class="badge badge-warning text-dark">รออนุมัติ</span>';
-                                            }
-                                            echo "<td>{$badge}</td>";
+                                    $w = (int)$row['woman_count'];
+                                    $m = (int)$row['man_count'];
+                                    $people = [];
+                                    if ($w > 0) $people[] = "หญิง {$w}";
+                                    if ($m > 0) $people[] = "ชาย {$m}";
+                                    if (empty($people)) $people[] = "-";
+                                    echo "<td>" . implode(" ", $people) . "</td>";
 
-                                            echo '<td>';
-                                            if ($status === 'pending') {
-                                                // รออนุมัติ → แสดงปุ่มอนุมัติ / ไม่อนุมัติ
-                                                echo "
-                                                    <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
-                                                    <button class='btn btn-danger btn-sm btn-reject' data-toggle='modal' data-target='#rejectModal'>ไม่อนุมัติ</button>
-                                                ";
-                                            } elseif ($status === 'approved') {
-                                                if ($docPath) {
-                                                    $safePath = htmlspecialchars($docPath, ENT_QUOTES, 'UTF-8');
-                                                    echo "
-                                                        <button class='btn btn-primary btn-sm btn-view-doc mb-1'
-                                                                data-doc='{$safePath}'>
-                                                            <i class='fas fa-file-alt'></i> ดูเอกสาร
-                                                        </button>
-                                                        <button class='btn btn-warning btn-sm btn-upload-doc ml-1'
-                                                                data-id='{$row['id']}'>
-                                                            <i class='fas fa-cog'></i> แก้ไข
-                                                        </button>
-                                                    ";
-                                                } else {
-                                                    // 🟢 ยังไม่มีเอกสาร → ให้ปุ่มอัปโหลดอย่างเดียว
-                                                    echo "
-                                                        <button class='btn btn-success btn-sm btn-upload-doc'
-                                                                data-id='{$row['id']}'>
-                                                            <i class='fas fa-upload'></i> อัปโหลด
-                                                        </button>
-                                                    ";
-                                                }
-                                            } else {
-                                                // ❌ ไม่อนุมัติ → ยังใช้ปุ่มรายละเอียดเหมือนเดิม
-                                                echo "
-                                                    <button class='btn btn-outline-secondary btn-sm btn-detail'
-                                                            data-id='{$row['id']}'
-                                                            data-status='{$status}'
-                                                            data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-                                                        <i class='fas fa-info-circle'></i> รายละเอียด
-                                                    </button>
-                                                ";
-                                            }
-                                            echo '</td>';
+                                    if ($status == 'approved') {
+                                        $badge = '<span class="badge text-bg-success">อนุมัติแล้ว</span>';
+                                    } elseif ($status == 'rejected') {
+                                        $badge = '<span class="badge text-bg-danger">ไม่อนุมัติ</span>';
+                                    } else {
+                                        $badge = '<span class="badge text-bg-warning text-dark">รออนุมัติ</span>';
+                                    }
+                                    echo "<td>{$badge}</td>";
 
-                                            echo "</tr>";
-                                            $i++;
+                                    echo '<td>';
+                                    if ($status === 'pending') {
+                                        echo "
+                                            <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
+                                            <button class='btn btn-danger btn-sm btn-reject'
+                                                    data-bs-toggle='modal' data-bs-target='#rejectModal'>
+                                                ไม่อนุมัติ
+                                            </button>
+                                        ";
+                                    } elseif ($status === 'approved') {
+                                        if ($docPath) {
+                                            $safePath = htmlspecialchars($docPath, ENT_QUOTES, 'UTF-8');
+                                            echo "
+                                                <button class='btn btn-primary btn-sm btn-view-doc mb-1'
+                                                        data-doc='{$safePath}'>
+                                                    <i class='fas fa-file-alt'></i> ดูเอกสาร
+                                                </button>
+                                                <button class='btn btn-warning btn-sm btn-upload-doc ms-1'
+                                                        data-id='{$row['id']}'>
+                                                    <i class='fas fa-cog'></i> แก้ไข
+                                                </button>
+                                            ";
+                                        } else {
+                                            echo "
+                                                <button class='btn btn-success btn-sm btn-upload-doc'
+                                                        data-id='{$row['id']}'>
+                                                    <i class='fas fa-upload'></i> อัปโหลด
+                                                </button>
+                                            ";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='13' class='text-center text-muted'>ไม่มีข้อมูลการจอง</td></tr>";
+                                        echo "
+                                            <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                                    data-id='{$row['id']}'
+                                                    data-status='{$status}'
+                                                    data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                                <i class='fas fa-info-circle'></i> รายละเอียด
+                                            </button>
+                                        ";
                                     }
-                                    $conn->close();
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                    echo '</td>';
+
+                                    echo "</tr>";
+                                    $i++;
+                                }
+                            } else {
+                                echo "<tr><td colspan='14' class='text-center text-muted'>ไม่มีข้อมูลการจอง</td></tr>";
+                            }
+                            ?>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-                </div>
-            </section>
-        </div>
-        <!-- footer -->
-        <footer class="main-footer text-sm">
-            <div class="float-right d-none d-sm-inline">
-                ระบบจองห้องพัก
-            </div>
-            <strong>&copy; <?= date('Y'); ?> คณะ/หน่วยงานของคุณ</strong> สงวนลิขสิทธิ์
-        </footer>
+    <!-- ===== Footer (v4) ===== -->
+    <footer class="app-footer text-sm">
+        <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
+        <strong>&copy; <?= date('Y'); ?> คณะ/หน่วยงานของคุณ</strong> สงวนลิขสิทธิ์
+    </footer>
 
-    </div>
-    <!-- Modals ระบุเหตุผลไม่อนุมัติ -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">ระบุเหตุผลที่ไม่อนุมัติ</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="rejectForm">
-                        <div class="mb-3">
-                            <label for="reason" class="form-label">เหตุผล:</label>
-                            <textarea class="form-control" id="reason" name="reason" rows="4"
-                                placeholder="กรอกเหตุผลที่ไม่อนุมัติ..."></textarea>
-                        </div>
-                        <div class="text-right">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-                            <button type="submit" class="btn btn-danger">ส่งเหตุผล</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal รายละเอียดคำขอ -->
-    <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-secondary text-white" id="detailHeader">
-                    <h5 class="modal-title" id="detailTitle">รายละเอียดคำขอ</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="detailBody">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal กำลังโหลด -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true"
-        data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
-                <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
-                <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <!-- Modal อัปโหลดเอกสาร -->
-    <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="uploadForm" action="ad_upload_document.php" method="post" enctype="multipart/form-data">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title">
-                            อัปโหลดเอกสารประกอบการจอง
-                        </h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+<!-- ===== Modals (Bootstrap 5) ===== -->
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">ระบุเหตุผลที่ไม่อนุมัติ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectForm">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">เหตุผล:</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="4"
+                                  placeholder="กรอกเหตุผลที่ไม่อนุมัติ..."></textarea>
                     </div>
-
-                    <div class="modal-body">
-                        <input type="hidden" name="booking_id" id="uploadBookingId">
-
-                        <div class="mb-3">
-                            <label class="form-label">คำขอจอง:</label>
-                            <div id="uploadBookingInfo" class="font-weight-bold text-primary"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="document" class="form-label">เลือกไฟล์เอกสาร</label>
-                            <input type="file" name="document" id="document" class="form-control-file" required
-                                accept=".pdf,.jpg,.jpeg,.png">
-                            <small class="form-text text-muted">
-                                รองรับไฟล์ .pdf, .jpg, .jpeg, .png ขนาดไม่เกิน 5MB
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-                        <button type="submit" class="btn btn-success">อัปโหลด</button>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-danger">ส่งเหตุผล</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal ดูเอกสาร -->
-    <div class="modal fade" id="viewDocModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">เอกสารที่อัปโหลด</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white" id="detailHeader">
+                <h5 class="modal-title" id="detailTitle">รายละเอียดคำขอ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailBody"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
+            <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
+            <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Doc Modal -->
+<div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="uploadForm" action="ad_upload_document.php" method="post" enctype="multipart/form-data">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">อัปโหลดเอกสารประกอบการจอง</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <iframe id="docFrame" src="" width="100%" height="600" style="border:0;"></iframe>
-                    <div class="mt-2">
-                        <a id="docDownload" href="" target="_blank" class="btn btn-outline-primary btn-sm">
-                            ดาวน์โหลด / เปิดในแท็บใหม่
-                        </a>
+                    <input type="hidden" name="booking_id" id="uploadBookingId">
+
+                    <div class="mb-3">
+                        <label class="form-label">คำขอจอง:</label>
+                        <div id="uploadBookingInfo" class="fw-bold text-primary"></div>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="document" class="form-label">เลือกไฟล์เอกสาร</label>
+                        <input type="file" name="document" id="document" class="form-control" required
+                               accept=".pdf,.jpg,.jpeg,.png">
+                        <small class="form-text text-muted">
+                            รองรับไฟล์ .pdf, .jpg, .jpeg, .png ขนาดไม่เกิน 5MB
+                        </small>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="submit" class="btn btn-success">อัปโหลด</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Doc Modal -->
+<div class="modal fade" id="viewDocModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">เอกสารที่อัปโหลด</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <iframe id="docFrame" src="" width="100%" height="600" style="border:0;"></iframe>
+                <div class="mt-2">
+                    <a id="docDownload" href="" target="_blank" class="btn btn-outline-primary btn-sm">
+                        ดาวน์โหลด / เปิดในแท็บใหม่
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
+<!-- ===== Scripts ===== -->
+<?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
+<!-- DataTables BS5 -->
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
-    <script src="/assets/js/admin/ad_requests.js"></script>
+<!-- JS เดิมของคุณ -->
+<script src="/assets/js/admin/ad_requests.js"></script>
 
 </body>
-
 </html>

@@ -19,10 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
 
     if ($result && $row = $result->fetch_assoc()) {
-        // ตรวจสอบรหัสผ่าน
-        if (hash('sha256', $password) === $row['password']) {
+        if (password_verify($password, $row['password'])) {
+
             $_SESSION['admin_id'] = $row['id'];
             $_SESSION['admin_name'] = $row['full_name'];
+
             header('Location: ad_dashboard.php');
             exit;
         } else {
@@ -39,7 +40,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
 <html lang="th">
 
 <head>
-    <?php include '../partials/head_admin.php'; ?>
+    <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
 <body class="login-body">
@@ -69,17 +70,16 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
 
             <!-- ฟอร์ม Login -->
             <form method="POST" class="login-form">
-                <div class="form-group mb-3">
+
+                <div class="mb-3">
                     <label for="username" class="form-label">ชื่อผู้ใช้</label>
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-right-0">
-                                <i class="fas fa-user text-muted"></i>
-                            </span>
-                        </div>
+                        <span class="input-group-text bg-white">
+                            <i class="fas fa-user text-muted"></i>
+                        </span>
                         <input
                             type="text"
-                            class="form-control border-left-0"
+                            class="form-control"
                             id="username"
                             name="username"
                             required
@@ -88,31 +88,27 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
                     </div>
                 </div>
 
-                <div class="form-group mb-4">
+                <div class="mb-4">
                     <label for="password" class="form-label">รหัสผ่าน</label>
                     <div class="input-group" id="passwordWrapper">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-right-0">
-                                <i class="fas fa-lock text-muted"></i>
-                            </span>
-                        </div>
+                        <span class="input-group-text bg-white">
+                            <i class="fas fa-lock text-muted"></i>
+                        </span>
                         <input
                             type="password"
-                            class="form-control border-left-0"
+                            class="form-control"
                             id="password"
                             name="password"
                             required
                             autocomplete="current-password"
                             placeholder="กรอกรหัสผ่าน...">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary border-left-0 toggle-password" type="button">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-login btn-block mb-2">
+                <button type="submit" class="btn btn-login w-100 mb-2">
                     เข้าสู่ระบบ
                 </button>
 
@@ -123,11 +119,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
         </div>
     </div>
 
-    <!-- JS พื้นฐาน (ใช้ของ AdminLTE เดิมได้) -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-
+    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
     <script>
         // toggle แสดง/ซ่อนรหัสผ่าน
         $(function() {

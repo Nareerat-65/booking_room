@@ -1,21 +1,30 @@
-.contact-card {
-    border-radius: 1.25rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+.contact-divider {
+    width: 100px;
+    height: 4px;
+    background: #F57B39;
+    border-radius: 10px;
 }
 
-.contact-header {
-    background-color: #F57B39;
-    color: white;
-    padding: 1.2rem;
+.contact-box {
+    min-height: 260px; 
+    border-radius: 12px;
+    transition: 0.3s;
 }
 
-.btn-primary {
-    background-color: #F57B39;
-    border: none;
-    border-radius: 999px;
+.contact-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
-.btn-primary:hover {
-    opacity: 0.9;
+.icon-lg {
+    font-size: 50px;
+    color: #F57B39;
+}
+
+.map-box {
+    border-radius: 12px;
+}
+
+.contact-section {
+    background: #fffdfc;
 }

@@ -4,157 +4,117 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: ad_login.php');
     exit;
 }
-
+$activeMenu = 'change_password';
 $pageTitle = 'เปลี่ยนรหัสผ่านผู้ดูแลระบบ';
-$extraHead = '';
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <?php include '../partials/head_admin.php'; ?>
+    <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
 
-        <!-- NAVBAR -->
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <span class="nav-link font-weight-bold">เปลี่ยนรหัสผ่านผู้ดูแลระบบ</span>
-                </li>
-            </ul>
+        <!-- Navbar + Sidebar -->
+        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
+        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
 
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- /NAVBAR -->
+        <!-- MAIN -->
+        <main class="app-main">
 
-        <!-- SIDEBAR -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="ad_dashboard.php" class="brand-link d-flex align-items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" class="brand-image img-circle elevation-3" style="opacity:.9">
-                <span class="brand-text font-weight-light ml-2">ระบบจองห้องพัก</span>
-            </a>
+            <div class="app-content-header py-3">
+                <div class="container-fluid text-center">
+                    <h2 class="my-3">🔑 เปลี่ยนรหัสผ่าน</h2>
+                    <p class="text-muted mb-4">
+                        กรุณากรอกรหัสผ่านเดิมและรหัสผ่านใหม่ที่ต้องการเปลี่ยนแปลง
+                    </p>
 
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image"><i class="fas fa-user-circle fa-2x text-white"></i></div>
-                    <div class="info"><span class="d-block text-white"><?= htmlspecialchars($_SESSION['admin_name']) ?></span></div>
+                    <?php if (!empty($_GET['msg'])): ?>
+                        <div class="alert alert-<?=
+                                                $_GET['msg'] === 'ok' ? 'success' : ($_GET['msg'] === 'mismatch' ? 'warning' : ($_GET['msg'] === 'too_short' ? 'warning' : ($_GET['msg'] === 'old_wrong' ? 'danger' : 'danger')))
+                                                ?> w-50 mx-auto">
+                            <?=
+                            $_GET['msg'] === 'ok' ? 'เปลี่ยนรหัสผ่านสำเร็จ' : ($_GET['msg'] === 'mismatch' ? 'รหัสผ่านใหม่ไม่ตรงกัน' : ($_GET['msg'] === 'too_short' ? 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร' : ($_GET['msg'] === 'old_wrong' ? 'รหัสผ่านเดิมไม่ถูกต้อง' :
+                                            'ไม่สามารถเปลี่ยนรหัสผ่านได้')))
+                            ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column">
-                        <li class="nav-item">
-                            <a href="ad_dashboard.php" class="nav-link ">
-                                <!-- แนะนำเปลี่ยนเป็น icon ที่มีจริงใน Font Awesome -->
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="ad_requests.php" class="nav-link">
-                                <i class="nav-icon fas fa-list"></i>
-                                <p>รายการคำขอจองห้องพัก</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="ad_calendar.php" class="nav-link">
-                                <i class="nav-icon fas fa-calendar"></i>
-                                <p>ปฏิทินห้องพัก</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="ad_change_password.php" class="nav-link active">
-                                <i class="nav-icon fas fa-key"></i>
-                                <p>เปลี่ยนรหัสผ่าน</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="ad_logout.php" class="nav-link">
-                                <i class="nav-icon fas fa-sign-out-alt"></i>
-                                <p>ออกจากระบบ</p>
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
             </div>
-        </aside>
-        <!-- /SIDEBAR -->
 
-        <!-- CONTENT -->
-        <div class="content-wrapper">
-            <section class="content-header">
-                <div class="container-fluid">
-                    <h2>🔑 เปลี่ยนรหัสผ่าน</h2>
-                </div>
-            </section>
+            <div class="app-content">
+                <div class="container d-flex justify-content-center">
 
-            <section class="content">
-                <div class="container">
+                    <div class="changepass-card shadow-lg p-4">
 
-                    <div class="card col-md-6 mx-auto">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">เปลี่ยนรหัสผ่าน</h5>
-                        </div>
+                        <form method="POST" action="ad_change_password_process.php" class="changepass-form">
 
-                        <div class="card-body">
-                            <form id="changePassForm" method="POST" action="ad_change_password_process.php">
-
-                                <div class="form-group">
-                                    <label>รหัสผ่านเดิม:</label>
-                                    <input type="password" name="old_password" class="form-control" required>
+                            <!-- Old password -->
+                            <div class="mb-3">
+                                <label class="form-label">รหัสผ่านเดิม</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" name="old_password" required class="form-control">
+                                    <button type="button" class="btn btn-outline-secondary toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>รหัสผ่านใหม่:</label>
-                                    <input type="password" id="new_password" name="new_password" class="form-control" required>
+                            <!-- New password -->
+                            <div class="mb-3">
+                                <label class="form-label">รหัสผ่านใหม่</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-key text-muted"></i>
+                                    </span>
+                                    <input type="password" name="new_password" required class="form-control">
+                                    <button type="button" class="btn btn-outline-secondary toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>ยืนยันรหัสผ่านใหม่:</label>
-                                    <input type="password" id="confirm_password" class="form-control" required>
+                            <!-- Confirm password -->
+                            <div class="mb-4">
+                                <label class="form-label">ยืนยันรหัสผ่านใหม่</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-check-circle text-muted"></i>
+                                    </span>
+                                    <input type="password" name="confirm_password" required class="form-control">
+                                    <button type="button" class="btn btn-outline-secondary toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
+                            </div>
 
-                                <button type="submit" class="btn btn-primary btn-block">
-                                    บันทึกการเปลี่ยนแปลง
-                                </button>
+                            <button type="submit" class="btn btn-changepass w-100 py-2">
+                                บันทึกการเปลี่ยนแปลง
+                            </button>
 
-                            </form>
-                        </div>
+                        </form>
+
                     </div>
 
                 </div>
-            </section>
-        </div>
+            </div>
 
-        <!-- FOOTER -->
-        <footer class="main-footer text-sm">
-            <div class="float-right d-none d-sm-inline">ระบบจองห้องพัก</div>
+        </main>
+
+        <footer class="app-footer text-sm">
+            <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
             <strong>&copy; <?= date('Y') ?> คณะ/หน่วยงานของคุณ</strong>
         </footer>
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-
+    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
     <script src="/assets/js/admin/ad_change_password.js"></script>
 
 </body>

@@ -27,7 +27,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
             </button>
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav gap-2">
                     <li class="nav-item">
                         <a class="nav-link " href="index.php">หน้าแรก</a>
                     </li>
@@ -47,7 +47,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
         <h2 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h2>
         <div class="bookingForm">
             <form id="bookingForm" method="post" action="u_booking_process.php">
-
                 <!-- ชื่อ-นามสกุล, เบอร์, ID LINE, Email -->
                 <div class="mb-3">
                     <label for="fullName" class="form-label">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
