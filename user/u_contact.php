@@ -1,6 +1,7 @@
 <?php
 $pageTitle = 'ติดต่อเรา - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
+$activeMenu = 'contact';
 ?>
 
 <!DOCTYPE html>

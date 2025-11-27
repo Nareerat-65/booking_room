@@ -1,6 +1,7 @@
 <?php
 $pageTitle = 'แบบฟอร์มขอจองห้องพัก - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
+$activeMenu = 'booking';
 ?>
 
 <!DOCTYPE html>

@@ -92,11 +92,11 @@ $(function () {
                 const $statusCell = $tr.find('td').eq(12);
 
                 if (status === 'approved') {
-                    $statusCell.html('<span class="badge badge-success">อนุมัติแล้ว</span>');
+                    $statusCell.html('<span class="badge bg-success">อนุมัติแล้ว</span>');
                 } else if (status === 'rejected') {
-                    $statusCell.html('<span class="badge badge-danger">ไม่อนุมัติ</span>');
+                    $statusCell.html('<span class="badge bg-danger">ไม่อนุมัติ</span>');
                 } else {
-                    $statusCell.html('<span class="badge badge-warning text-dark">รออนุมัติ</span>');
+                    $statusCell.html('<span class="badge bg-warning text-dark">รออนุมัติ</span>');
                 }
 
                 $tr.attr('data-status', status);

@@ -315,14 +315,10 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
     </div>
 </div>
 
-
 <!-- ===== Scripts ===== -->
 <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
-<!-- DataTables BS5 -->
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
-<!-- JS เดิมของคุณ -->
 <script src="/assets/js/admin/ad_requests.js"></script>
 
 </body>

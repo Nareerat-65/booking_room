@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
-
+$activeMenu = 'index';
 ?>
 <!DOCTYPE html>
 <html lang="th">

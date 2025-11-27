@@ -45,18 +45,6 @@
     font-size: 0.9rem;
 }
 
-/* Badges */
-.badge-warning {
-    background: #ffd580;
-    color: #8a5200;
-}
-.badge-success {
-    background: #34c759;
-}
-.badge-danger {
-    background: #ff4f4f;
-}
-
 /* Buttons */
 .table-requests .btn {
     font-size: 0.75rem;

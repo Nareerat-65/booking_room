@@ -12,9 +12,9 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav gap-2">
-                <li class="nav-item"><a class="nav-link active" href="index.php">หน้าแรก</a></li>
-                <li class="nav-item"><a class="nav-link" href="u_booking.php">จองห้องพัก</a></li>
-                <li class="nav-item"><a class="nav-link" href="u_contact.php">ติดต่อเรา</a></li>
+                <li class="nav-item"><a class="nav-link <?= ($activeMenu ?? '')==='index' ? 'active' : '' ?>" href="index.php">หน้าแรก</a></li>
+                <li class="nav-item"><a class="nav-link <?= ($activeMenu ?? '')==='booking' ? 'active' : '' ?>" href="u_booking.php">จองห้องพัก</a></li>
+                <li class="nav-item"><a class="nav-link <?= ($activeMenu ?? '')==='contact' ? 'active' : '' ?>" href="u_contact.php">ติดต่อเรา</a></li>
             </ul>
         </div>
     </div>

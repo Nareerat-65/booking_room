@@ -194,7 +194,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
     </div>
 
     <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
         window.genderLabels = <?= json_encode($labels_gender); ?>;
