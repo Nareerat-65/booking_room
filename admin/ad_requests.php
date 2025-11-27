@@ -198,11 +198,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
         </div>
     </main>
 
-    <!-- ===== Footer (v4) ===== -->
-    <footer class="app-footer text-sm">
-        <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
-        <strong>&copy; <?= date('Y'); ?> คณะ/หน่วยงานของคุณ</strong> สงวนลิขสิทธิ์
-    </footer>
+    <?php include_once __DIR__ . '/../partials/admin/footer_admin.php'; ?>
 
 </div>
 

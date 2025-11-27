@@ -107,10 +107,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.
 
         </main>
 
-        <footer class="app-footer text-sm">
-            <div class="float-end d-none d-sm-inline">ระบบจองห้องพัก</div>
-            <strong>&copy; <?= date('Y') ?> คณะ/หน่วยงานของคุณ</strong>
-        </footer>
+        <?php include_once __DIR__ . '/../partials/admin/footer_admin.php'; ?>
 
     </div>
 

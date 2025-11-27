@@ -2,17 +2,9 @@
 <meta charset="UTF-8">
 <title><?= $pageTitle ?? 'แดชบอร์ดผู้ดูแล'; ?></title>
 
-<!-- CSS หลักของฝั่ง Admin -->
-<!-- Bootstrap 5 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-<!-- AdminLTE 4 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc3/dist/css/adminlte.min.css">
-
-<!-- Font Awesome (ใช้ไอคอน fas เดิมได้ต่อ) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- Kanit -->
 <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet">
 
 <style>

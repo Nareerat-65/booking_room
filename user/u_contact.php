@@ -21,8 +21,8 @@ $activeMenu = 'contact';
         <div class="row g-4 justify-content-center">
             <!-- การ์ด 1 -->
             <div class="col-md-3 ">
-                <div class="contact-box text-center p-4 bg-white shadow-sm">
-                    <i class="bi bi-geo-alt icon-lg"></i>
+                <div class="contact-box text-center p-4  bg-white shadow-sm">
+                    <i class="fas fa-map-marker-alt icon-lg mb-3"></i>
                     <h5 class="mt-3 fw-bold">ที่ตั้ง</h5>
                     <p class="text-muted small">
                         เลขที่ 99 หมู่ 9 ถนนพิษณุโลก–นครสวรรค์<br>
@@ -35,7 +35,7 @@ $activeMenu = 'contact';
             <!-- การ์ด 2 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
-                    <i class="bi bi-telephone icon-lg"></i>
+                    <i class="fas fa-phone icon-lg mb-3"></i>
                     <h5 class="mt-3 fw-bold">โทรศัพท์</h5>
                     <p class="text-muted small">
                         0-5596-7847
@@ -46,7 +46,7 @@ $activeMenu = 'contact';
             <!-- การ์ด 3 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
-                    <i class="bi bi-envelope icon-lg"></i>
+                    <i class="fas fa-envelope icon-lg mb-3"></i>
                     <h5 class="mt-3 fw-bold">E-Mail</h5>
                     <p class="text-muted small">
                         dormitory@nu.ac.th
@@ -57,7 +57,7 @@ $activeMenu = 'contact';
             <!-- การ์ด 4 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
-                    <i class="bi bi-chat-dots icon-lg"></i>
+                    <i class="fas fa-comments icon-lg mb-3"></i>
                     <h5 class="mt-3 fw-bold">Q&A</h5>
                     <p class="text-muted small">Messenger</p>
                 </div>
@@ -77,19 +77,7 @@ $activeMenu = 'contact';
     </div>
 
     <!-- footer -->
-    <footer class="py-3 border-top bg-white text-center">
-        <div class="container small text-muted">
-            <div class="mb-2">
-                หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร
-            </div>
-            <div class="mb-2">
-                เลขที่ 99 หมู่ 9 ตำบลท่าโพธิ์ อำเภอเมืองพิษณุโลก จังหวัดพิษณุโลก รหัสไปรษณีย์ 65000
-            </div>
-            <div class="mb-2">
-                โทร 0-5596-7847 | Email: example@example.com
-            </div>
-        </div>
-    </footer>
+    <?php include '../partials/user/footer_user.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
