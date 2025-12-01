@@ -12,7 +12,7 @@ require '../PHPMailer/src/SMTP.php';
 
 // ฟังก์ชันจัดห้องพักอัตโนมัติ
 function allocateRooms(mysqli $conn, int $bookingId): void
-{   
+{
     // ตรวจสอบว่ามีการห้องหรือยัง
     $stmt = $conn->prepare("SELECT COUNT(*) FROM room_allocations WHERE booking_id = ?");
     $stmt->bind_param('i', $bookingId);
@@ -25,7 +25,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
         return;
     }
 
-   // ดึงข้อมูลการจอง
+    // ดึงข้อมูลการจอง
     $stmt = $conn->prepare("
         SELECT woman_count, man_count, check_in_date, check_out_date
         FROM bookings
@@ -86,7 +86,7 @@ function allocateRooms(mysqli $conn, int $bookingId): void
     while ($remainW > 0 && $roomIndex < count($rooms)) {
         $roomId = (int)$rooms[$roomIndex]['id'];
         $cap    = (int)$rooms[$roomIndex]['capacity'];
-        $num    = min($cap, $remainW);  
+        $num    = min($cap, $remainW);
 
         $zero = 0;
         $insert->bind_param(
@@ -95,8 +95,8 @@ function allocateRooms(mysqli $conn, int $bookingId): void
             $roomId,
             $startDate,
             $endDate,
-            $num,   
-            $zero   
+            $num,
+            $zero
         );
         $insert->execute();
 
@@ -117,8 +117,8 @@ function allocateRooms(mysqli $conn, int $bookingId): void
             $roomId,
             $startDate,
             $endDate,
-            $zero,  
-            $num    
+            $zero,
+            $num
         );
         $insert->execute();
 
@@ -154,15 +154,24 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
     }
     $stmt->close();
 
+    function toSqlDate($d)
+    {
+        if (!$d) return null;
+        $dt = DateTime::createFromFormat('Y-m-d', $d) ?: DateTime::createFromFormat('d-m-Y', $d);
+        return $dt ? $dt->format('d-m-Y') : null;
+    }
+    $checkIn  = toSqlDate($checkIn);
+    $checkOut = toSqlDate($checkOut);
+
     // ส่งอีเมลแจ้งผล
     $mail = new PHPMailer(true);
 
     try {
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';    
+        $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'nareerats65@nu.ac.th';      
-        $mail->Password   = 'gwfq rtik mszl bjhl';       
+        $mail->Username   = 'nareerats65@nu.ac.th';
+        $mail->Password   = 'gwfq rtik mszl bjhl';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet = 'UTF-8';
@@ -172,7 +181,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
         $mail->addAddress($email, $fullName);
 
         // เนื้อหาอีเมล
-        $mail->isHTML(true); 
+        $mail->isHTML(true);
         $mail->Encoding = 'base64';
         $subject = '';
         $body    = '';

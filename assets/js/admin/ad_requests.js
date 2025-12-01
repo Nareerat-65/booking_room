@@ -37,11 +37,16 @@ $(function () {
         e.preventDefault();
         const reason = $('#reason').val().trim();
         if (!reason) {
-            alert('กรุณากรอกเหตุผลก่อนส่ง');
+            Swal.fire({
+                icon: 'warning',
+                title: 'กรุณากรอกเหตุผล',
+            });
             return;
         }
-        updateStatus(selectedId, 'rejected', reason);
+
         $('#rejectModal').modal('hide');
+
+        updateStatus(selectedId, 'rejected', reason);
         $('#reason').val('');
     });
 
@@ -80,7 +85,14 @@ $(function () {
 
 
     function updateStatus(id, status, reason = null) {
-        $('#loadingModal').modal('show');
+        // 🔸 SweetAlert2 Loading
+        Swal.fire({
+            title: 'กำลังบันทึก...',
+            text: 'กรุณารอสักครู่',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => Swal.showLoading()
+        });
 
         $.post('ad_updateStatus.php', {
             id,
@@ -104,40 +116,53 @@ $(function () {
 
                 const $actionCell = $tr.find('td').last();
 
-                // สร้างปุ่มในคอลัมน์ "จัดการ" ใหม่ตามสถานะ
                 if (status === 'approved') {
-                    // ✅ ถ้าอนุมัติแล้ว → เปลี่ยนเป็นปุ่มอัปโหลดเอกสาร
                     $actionCell.html(`
-                        <button class="btn btn-success btn-sm btn-upload-doc" data-id="${id}">
-                            <i class="fas fa-upload"></i> อัปโหลด
-                        </button>
-                    `);
+                    <button class="btn btn-success btn-sm btn-upload-doc" data-id="${id}">
+                        <i class="fas fa-upload"></i> อัปโหลด
+                    </button>
+                `);
                 } else if (status === 'rejected') {
-                    // ❌ ถ้าไม่อนุมัติ → แสดงปุ่มรายละเอียด
                     $actionCell.html(`
-                        <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
-                            <i class="fas fa-info-circle"></i> รายละเอียด
-                        </button>
-                    `);
+                    <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
+                        <i class="fas fa-info-circle"></i> รายละเอียด
+                    </button>
+                `);
                 } else {
-                    // กรณีอื่น ๆ (กันเหนียว)
                     $actionCell.html(`
-                        <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
-                            <i class="fas fa-info-circle"></i> รายละเอียด
-                        </button>
-                    `);
+                    <button class="btn btn-outline-secondary btn-sm btn-detail" data-id="${id}">
+                        <i class="fas fa-info-circle"></i> รายละเอียด
+                    </button>
+                `);
                 }
 
-                // ถ้าอยากให้ยังเปิดรายละเอียดหลังอัปเดตอยู่ ก็ปล่อยบรรทัดนี้ไว้ได้
+                // ถ้าอยากเปิด modal รายละเอียดต่อก็ปล่อยไว้
                 openDetailModalFromRow($tr);
 
+                // ✅ แจ้งเตือนสำเร็จ
+                Swal.fire({
+                    icon: 'success',
+                    title: (status === 'approved') ? 'อนุมัติสำเร็จ' : 'บันทึกเหตุผลสำเร็จ',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
             } else {
-                alert('เกิดข้อผิดพลาดในการอัปเดต');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถอัปเดตสถานะได้'
+                });
             }
         }).fail(function () {
-            alert('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ');
+            Swal.fire({
+                icon: 'error',
+                title: 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ',
+                text: 'กรุณาลองใหม่อีกครั้ง'
+            });
         }).always(function () {
-            $('#loadingModal').modal('hide');
+            // ปิดโหลด (ถ้ายังไม่ถูกปิด)
+            // ถ้า Swl.fire success มี timer ก็ไม่ต้อง close เพิ่ม
         });
     }
 

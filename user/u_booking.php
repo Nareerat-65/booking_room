@@ -236,35 +236,6 @@ $activeMenu = 'booking';
     </div>
 
     <?php include '../partials/user/footer_user.php'; ?>
-    <!-- Modals ส่งคำขอสำเร็จ -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">ส่งคำขอสำเร็จ</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>ระบบได้รับคำขอจองห้องพักของคุณเรียบร้อยแล้ว</p>
-                    <p class="mb-0 text-muted" style="font-size: 0.9rem;">
-                        กรุณารอการติดต่อกลับจากเจ้าหน้าที่เพื่อยืนยันการจอง
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">ตกลง</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modals กำลังส่งข้อมูล -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
-                <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
-                <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
-            </div>
-        </div>
-    </div>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 
@@ -272,6 +243,7 @@ $activeMenu = 'booking';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepair.js/0.2.2/jquery.datepair.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="/assets/js/user/u_booking.js"></script>
 </body>

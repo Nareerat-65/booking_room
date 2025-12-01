@@ -20,7 +20,7 @@ function formatPosition(array $row): string
                 ? $row['student_year'] : '–';
             return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
         case 'doctor':
-            return 'แพทย์ใช้ทุน, แพทย์เพิ่มพูนทักษะ, แพทย์ประจำบ้าน, แพทย์ประจำบ้านต่อยอด';
+            return 'แพทย์ใช้ทุน/แพทย์เพิ่มพูนทักษะ/แพทย์ประจำบ้าน/แพทย์ประจำบ้านต่อยอด';
         case 'staff':
             return 'เจ้าหน้าที่';
         case 'other':
@@ -238,17 +238,6 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="detailBody"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content d-flex flex-column justify-content-center align-items-center p-4">
-            <div class="spinner-border text-primary mb-3 mx-auto" role="status"></div>
-            <div class="text-center">กำลังส่งข้อมูล...<br>กรุณารอสักครู่</div>
         </div>
     </div>
 </div>

@@ -27,7 +27,7 @@ $activeMenu = 'index';
     </div>
 
     <!-- ขั้นตอนการจอง -->
-    <div id="steps" class="container pb-4">
+    <div id="steps" class="container pb-4 " >
         <h2 class="h4 mb-3">ขั้นตอนการใช้งาน</h2>
         <div class="row g-3">
             <div class="col-md-3">

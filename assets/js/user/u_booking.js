@@ -42,42 +42,65 @@ $('#checkOutDate').datepicker({
     startDate: today
 });
 
-//ส่งฟอร์มแบบ AJAX
-const bookingForm = document.getElementById('bookingForm');
+// ===== ส่งฟอร์มแบบ AJAX + SweetAlert2 =====
+$(function () {
+    const form = $('#bookingForm');
 
-bookingForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+    form.on('submit', function (e) {
+        e.preventDefault(); // กันไม่ให้ submit ปกติ
 
-    $('#loadingModal').modal('show'); // แสดง modal โหลด
-    const formData = new FormData(bookingForm); // สร้าง FormData จากฟอร์ม
+        // 🔸 เปิด SweetAlert Loading แทน loadingModal
+        Swal.fire({
+            title: 'กำลังส่งคำขอ...',
+            text: 'กรุณารอสักครู่',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-    fetch('u_booking_process.php', {
-        method: 'POST',
-        body: formData
-    })
-        .then(res => res.text())
-        .then(text => {
-            $('#loadingModal').modal('hide'); // ซ่อน modal โหลด
+        $.ajax({
+            url: 'u_booking_process.php',
+            method: 'POST',
+            data: form.serialize(),
+            dataType: 'json'
+        }).done(function (res) {
+            // ปิด loading ก่อน
+            Swal.close();
 
-            // ถ้า u_booking_process.php ส่ง echo "OK" ตอนทำสำเร็จ
-            if (text.trim() === 'OK') {
-                // เคลียร์ฟอร์ม
-                bookingForm.reset();
+            if (res.status === 'success') {
+                // ล้างฟอร์ม
+                form.trigger('reset');
                 $('#checkInDate').datepicker('update', '');
                 $('#checkOutDate').datepicker('update', '');
 
-                // แสดง modal success
-                const modalEl = document.getElementById('successModal');
-                const successModal = new bootstrap.Modal(modalEl);
-                successModal.show();
+                // 🔸 แสดง SweetAlert Success แทน successModal
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งคำขอสำเร็จ',
+                    html: `
+                        ระบบได้รับคำขอจองห้องพักของคุณเรียบร้อยแล้ว<br>
+                        <span style="font-size:0.9rem;color:#666;">
+                          กรุณารอการติดต่อกลับจากเจ้าหน้าที่เพื่อยืนยันการจอง
+                        </span>
+                    `,
+                    confirmButtonText: 'ตกลง'
+                });
             } else {
-                // ถ้าฝั่ง PHP ส่ง error text กลับมา
-                alert('เกิดข้อผิดพลาด: ' + text);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: res.message || 'ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง'
+                });
             }
-        })
-        .catch(err => {
-            $('#loadingModal').modal('hide'); // ปิดตอน error ด้วย
-            console.error(err);
-            alert('ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง');
+        }).fail(function () {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง'
+            });
         });
+    });
 });
