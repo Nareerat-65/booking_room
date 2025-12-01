@@ -20,7 +20,7 @@ function formatPosition(array $row): string
                 ? $row['student_year'] : '–';
             return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
         case 'doctor':
-            return 'แพทย์';
+            return 'แพทย์ใช้ทุน, แพทย์เพิ่มพูนทักษะ, แพทย์ประจำบ้าน, แพทย์ประจำบ้านต่อยอด';
         case 'staff':
             return 'เจ้าหน้าที่';
         case 'other':

@@ -2,7 +2,7 @@
 <meta charset="UTF-8">
 <title><?= $pageTitle ?? 'แดชบอร์ดผู้ดูแล'; ?></title>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc3/dist/css/adminlte.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css?family=Kanit&subset=thai,latin" rel="stylesheet">
@@ -16,37 +16,16 @@
     .app-header {
         background-color: #F57B39 !important;
         color: #fff !important;
+        font-size: 20px;
     }
 
-    .nav-sidebar .nav-link.active i {
+    .nav-link.active i {
         color: #fff !important;
     }
+    
 
-    .main-header {
-        background-color: #F57B39 !important;
-    }
-
-    .main-header .nav-link,
-    .main-header .navbar-brand,
-    .main-header .navbar-text {
+    .main-header .nav-link{
         color: #fff !important;
-    }
-
-    .brand-link {
-        background-color: #111827;
-    }
-
-    .card-title {
-        font-size: 1.4rem;
-    }
-
-    .card-header {
-        background-color: #F57B39;
-        opacity: 0.9;
-    }
-
-    .badge {
-        font-size: 0.9rem;
     }
 </style>
 

@@ -18,15 +18,11 @@ $extraHead = '
     <?php include '../partials/admin/head_admin.php'; ?>
 </head>
 
-<!-- ✅ ใช้ body class แบบ AdminLTE4 เหมือนหน้า requests/dashboard -->
-
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <!-- ✅ wrapper แบบ v4 -->
     <div class="app-wrapper">
         <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
         <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
 
-        <!-- ✅ main ของ v4 จะถูก sidebar ดันอัตโนมัติ -->
         <main class="app-main">
 
             <div class="app-content-header py-3">
@@ -50,7 +46,6 @@ $extraHead = '
 
     </div>
 
-    <!-- =================== MODAL (Bootstrap5) =================== -->
     <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
