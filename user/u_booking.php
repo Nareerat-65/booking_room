@@ -22,29 +22,29 @@ $activeMenu = 'booking';
             <form id="bookingForm" method="post" action="u_booking_process.php">
                 <!-- ชื่อ-นามสกุล, เบอร์, ID LINE, Email -->
                 <div class="mb-3">
-                    <label for="fullName" class="form-label">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
+                    <label for="fullName" class="form-label required">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
                     <input type="text" class="form-control" id="fullName" name="fullName" required />
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone" class="form-label">เบอร์โทรศัพท์มือถือ</label>
+                    <label for="phone" class="form-label required">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" class="form-control" id="phone" name="phone"
                         maxlength="10" inputmode="numeric" pattern="[0-9]{10}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="lineId" class="form-label">ID LINE</label>
+                    <label for="lineId" class="form-label required">ID LINE</label>
                     <input type="text" class="form-control" id="lineId" name="lineId" required />
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label required">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required />
                 </div>
 
                 <!-- ตำแหน่ง -->
                 <fieldset class="mb-3">
-                    <legend class="fs-6">ตำแหน่ง</legend>
+                    <legend class="fs-6 required">ตำแหน่ง</legend>
 
                     <div class="form-check mb-2 d-flex align-items-center gap-2">
                         <input
@@ -70,10 +70,22 @@ $activeMenu = 'booking';
                             class="form-check-input mt-0"
                             type="radio"
                             name="position"
-                            id="positionDoctor"
-                            value="doctor" />
-                        <label class="form-check-label me-2" for="positionDoctor">
-                            แพทย์ใช้ทุน / แพทย์เพิ่มพูนทักษะ / แพทย์ประจำบ้าน / แพทย์ประจำบ้านต่อยอด
+                            id="positionIntern"
+                            value="intern" />
+                        <label class="form-check-label me-2" for="positionIntern">
+                            แพทย์ใช้ทุน
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input
+                            class="form-check-input mt-0"
+                            type="radio"
+                            name="position"
+                            id="positionResident"
+                            value="resident" />
+                        <label class="form-check-label me-2" for="positionResident">
+                            แพทย์ประจำบ้าน
                         </label>
                     </div>
 
@@ -109,7 +121,7 @@ $activeMenu = 'booking';
                 </fieldset>
                 <!-- หน่วยงานต้นสังกัด -->
                 <div class="mb-3">
-                    <label for="department" class="form-label">ชื่อหน่วยงานต้นสังกัด</label>
+                    <label for="department" class="form-label required">ชื่อหน่วยงานต้นสังกัด</label>
                     <input
                         class="form-control"
                         list="departmentList"
@@ -127,7 +139,7 @@ $activeMenu = 'booking';
                 </div>
                 <!-- วัตถุประสงค์ -->
                 <fieldset class="mb-4">
-                    <legend class="fs-6">วัตถุประสงค์การเข้าพัก</legend>
+                    <legend class="fs-6 required">วัตถุประสงค์การเข้าพัก</legend>
 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="purpose" id="purposeStudy" value="study" required>
@@ -204,17 +216,17 @@ $activeMenu = 'booking';
                 <!-- ช่วงวันที่เข้าพัก -->
                 <div class="row g-3 mb-3" id="dateRangePicker">
                     <div class="col-md-6">
-                        <label for="checkInDate" class="form-label">วันที่ย้ายเข้าพัก</label>
-                        <input type="text" class="form-control date start" id="checkInDate" name="checkInDate" required placeholder="DD-MM-YYYY" />
+                        <label for="checkInDate" class="form-label required">วันที่ย้ายเข้าพัก</label>
+                        <input type="text" class="form-control date start" id="checkInDate" name="checkInDate" required placeholder="วว-ดด-ปปปป" />
                     </div>
                     <div class="col-md-6">
-                        <label for="checkOutDate" class="form-label">วันที่ย้ายออก</label>
-                        <input type="text" class="form-control date end" id="checkOutDate" name="checkOutDate" required placeholder="DD-MM-YYYY" />
+                        <label for="checkOutDate" class="form-label required">วันที่ย้ายออก</label>
+                        <input type="text" class="form-control date end" id="checkOutDate" name="checkOutDate" required placeholder="วว-ดด-ปปปป" />
                     </div>
                 </div>
                 <!-- จำนวนผู้เข้าพัก -->
                 <div class="mb-4">
-                    <label class="form-label">จำนวนผู้เข้าพัก</label>
+                    <label class="form-label required">จำนวนผู้เข้าพัก</label>
                     <div class="row g-3">
                         <div class="col-md-2 col-sm-4">
                             <label for="womanCount" class="form-label small">ผู้หญิง</label>
@@ -241,6 +253,7 @@ $activeMenu = 'booking';
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepair.js/0.2.2/jquery.datepair.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

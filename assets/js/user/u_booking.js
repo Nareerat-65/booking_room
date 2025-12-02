@@ -16,16 +16,20 @@ document.querySelectorAll('.dropdown').forEach(drop => {
 });
 
 const today = new Date();
+today.setHours(0, 0, 0, 0);  
+
+const minCheckIn = new Date(today);
+minCheckIn.setDate(minCheckIn.getDate() + 14);
 
 // datepicker ช่องวันเข้า
 $('#checkInDate').datepicker({
     format: 'dd-mm-yyyy',
     autoclose: true,
-    startDate: today
+    startDate: minCheckIn,
+    language: 'th',      
+    thaiyear: true       
 }).on('changeDate', function (e) {
     const start = e.date; // วันที่ย้ายเข้า
-
-    // อัปเดตให้วันออกเลือกได้ไม่น้อยกว่าวันเข้า
     $('#checkOutDate').datepicker('setStartDate', start);
 
     // ถ้าตอนนี้มีค่าในช่องวันออก แล้ว < วันเข้า ให้ดันขึ้นมาเท่ากับวันเข้า
@@ -39,7 +43,9 @@ $('#checkInDate').datepicker({
 $('#checkOutDate').datepicker({
     format: 'dd-mm-yyyy',
     autoclose: true,
-    startDate: today
+    startDate: minCheckIn,
+    language: 'th',      
+    thaiyear: true  
 });
 
 // ===== ส่งฟอร์มแบบ AJAX + SweetAlert2 =====

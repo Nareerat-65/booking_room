@@ -19,8 +19,10 @@ function formatPosition(array $row): string
             $year = isset($row['student_year']) && $row['student_year'] !== ''
                 ? $row['student_year'] : '–';
             return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
-        case 'doctor':
-            return 'แพทย์ใช้ทุน/แพทย์เพิ่มพูนทักษะ/แพทย์ประจำบ้าน/แพทย์ประจำบ้านต่อยอด';
+        case 'intern':
+            return 'แพทย์ใช้ทุน';
+        case 'resident':
+            return 'แพทย์ประจำบ้าน';
         case 'staff':
             return 'เจ้าหน้าที่';
         case 'other':

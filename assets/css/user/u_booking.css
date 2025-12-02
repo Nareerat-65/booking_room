@@ -38,3 +38,9 @@
     color: #F57B39;
     border: 1px solid #F57B39;
 }
+label.required::after,
+legend.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}
