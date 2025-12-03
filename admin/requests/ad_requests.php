@@ -44,7 +44,7 @@ function formatPurpose(array $row): string
     return $row['purpose'] ? $row['purpose'] : '-';
 }
 
-require_once '../db.php';
+require_once '../../db.php';
 $activeMenu = 'requests';
 $pageTitle = 'รายการคำขอจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
@@ -55,14 +55,14 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
 <html lang="th">
 
 <head>
-    <?php include '../partials/admin/head_admin.php'; ?>
+    <?php include '../../partials/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
 
-        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
-        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once '../../partials/admin/nav_admin.php'; ?>
+        <?php include_once '../../partials/admin/sidebar_admin.php'; ?>
 
         <!-- ===== Main Content (v4) ===== -->
         <main class="app-main">
@@ -214,7 +214,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
             </div>
         </main>
 
-        <?php include_once __DIR__ . '/../partials/admin/footer_admin.php'; ?>
+        <?php include_once '../../partials/admin/footer_admin.php'; ?>
 
     </div>
 
@@ -317,7 +317,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
     </div>
 
     <!-- ===== Scripts ===== -->
-    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
+    <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="/assets/js/admin/ad_requests.js"></script>

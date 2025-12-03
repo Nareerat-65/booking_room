@@ -5,7 +5,7 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
-require_once '../db.php';
+require_once '../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ad_change_password.php");

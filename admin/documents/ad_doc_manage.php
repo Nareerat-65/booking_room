@@ -1,0 +1,169 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ad_login.php');
+    exit;
+}
+require_once '../../db.php';
+
+$booking_id = (int)($_GET['booking_id'] ?? 0);
+if ($booking_id <= 0) {
+    header("Location: ad_doc_bookings.php");
+    exit;
+}
+
+// ข้อมูลการจอง
+$bookingRes = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
+$bookingRes->bind_param("i", $booking_id);
+$bookingRes->execute();
+$bookingResult = $bookingRes->get_result();
+$booking = $bookingResult->fetch_assoc();
+if (!$booking) {
+    header("Location: ad_doc_bookings.php");
+    exit;
+}
+
+// เอกสารของรายการนี้
+$sqlDocs = "
+    SELECT d.*, 
+           CASE 
+             WHEN d.uploaded_by = 'admin' THEN a.full_name
+             ELSE d.uploaded_by
+           END AS uploader_name
+    FROM booking_documents d
+    LEFT JOIN admins a 
+      ON d.uploaded_by = 'admin' AND d.uploader_id = a.id
+    WHERE d.booking_id = ?
+    ORDER BY d.uploaded_at DESC
+";
+$docRes = $conn->prepare($sqlDocs);
+$docRes->bind_param("i", $booking_id);
+$docRes->execute();
+$docResult = $docRes->get_result();
+
+$pageTitle  = "เอกสารของรายการ #" . $booking['id'];
+$activeMenu = "documents";
+?>
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <?php include '../../partials/admin/head_admin.php'; ?>
+</head>
+
+<body class="layout-fixed">
+    <div class="app-wrapper">
+        <?php include '../../partials/admin/nav_admin.php'; ?>
+        <?php include '../../partials/admin/sidebar_admin.php'; ?>
+
+        <main class="app-main">
+            <div class="app-content-header py-3">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <h1>เอกสารของรายการ #<?= (int)$booking['id'] ?></h1>
+                    <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
+                </div>
+                <div class="container-fluid mt-2">
+                    <p>
+                        ชื่อผู้จอง: <?= htmlspecialchars($booking['full_name']) ?><br>
+                        เข้าพัก: <?= htmlspecialchars($booking['check_in_date']) ?>
+                        ถึง <?= htmlspecialchars($booking['check_out_date']) ?><br>
+                        สถานะ: <?= htmlspecialchars($booking['status']) ?>
+                    </p>
+                </div>
+            </div>
+
+            <div class="app-content">
+                <div class="container-fluid">
+
+                    <!-- ฟอร์มอัปโหลด -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">อัปโหลดเอกสารใหม่</h3>
+                        </div>
+                        <form action="ad_doc_upload.php" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="booking_id" value="<?= (int)$booking_id ?>">
+                            <div class="card-body row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">ประเภทเอกสาร (doc_type)</label>
+                                    <input type="text" name="doc_type" class="form-control" placeholder="เช่น หนังสืออนุมัติ">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label">ไฟล์</label>
+                                    <input type="file" name="file" class="form-control" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">แสดงให้ผู้ใช้เห็นหรือไม่</label>
+                                    <select name="is_visible_to_user" class="form-select">
+                                        <option value="1">แสดงให้ user เห็น</option>
+                                        <option value="0">เฉพาะ admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button type="submit" class="btn btn-primary">บันทึกเอกสาร</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ตารางเอกสาร -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">รายการเอกสารทั้งหมด</h3>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-striped" id="docListTable">
+                                <thead>
+                                    <tr>
+                                        <th>ประเภทเอกสาร</th>
+                                        <th>ชื่อไฟล์เดิม</th>
+                                        <th>อัปโดย</th>
+                                        <th>ขนาด</th>
+                                        <th>แสดงให้ user</th>
+                                        <th>วันที่อัป</th>
+                                        <th>จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($doc = $docResult->fetch_assoc()): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($doc['doc_type'] ?? '-') ?></td>
+                                            <td><?= htmlspecialchars($doc['original_name']) ?></td>
+                                            <td><?= htmlspecialchars($doc['uploader_name'] ?? '-') ?></td>
+                                            <td><?= number_format($doc['file_size'] / 1024, 2) ?> KB</td>
+                                            <td><?= $doc['is_visible_to_user'] ? 'ใช่' : 'ไม่' ?></td>
+                                            <td><?= htmlspecialchars($doc['uploaded_at']) ?></td>
+                                            <td>
+                                                <a href="ad_doc_download.php?id=<?= (int)$doc['id'] ?>"
+                                                    class="btn btn-sm btn-outline-info">
+                                                    ดู/ดาวน์โหลด
+                                                </a>
+                                                <a href="ad_doc_delete.php?id=<?= (int)$doc['id'] ?>&booking_id=<?= (int)$booking_id ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('ลบเอกสารนี้แน่ใจหรือไม่?');">
+                                                    ลบ
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <?php include '../../partials/admin/footer_admin.php'; ?>
+    </div>
+    <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.jQuery && $.fn.DataTable) {
+                $('#docListTable').DataTable();
+            }
+        });
+    </script>
+</body>
+
+</html>

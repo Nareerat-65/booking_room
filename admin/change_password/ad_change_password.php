@@ -12,15 +12,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.
 <html lang="th">
 
 <head>
-    <?php include '../partials/admin/head_admin.php'; ?>
+    <?php include '../../partials/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
 
         <!-- Navbar + Sidebar -->
-        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
-        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once '../../partials/admin/nav_admin.php'; ?>
+        <?php include_once '../../partials/admin/sidebar_admin.php'; ?>
 
         <!-- MAIN -->
         <main class="app-main">
@@ -107,12 +107,12 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.
 
         </main>
 
-        <?php include_once __DIR__ . '/../partials/admin/footer_admin.php'; ?>
+        <?php include_once '../../partials/admin/footer_admin.php'; ?>
 
     </div>
 
-    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
-    <script src="/assets/js/admin/ad_change_password.js"></script>
+    <?php include_once '../../partials/admin/script_admin.php'; ?>
+    <script src="../../assets/js/admin/ad_change_password.js"></script>
 
 </body>
 
