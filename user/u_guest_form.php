@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 require_once '../db.php';
+require_once '../utils/booking_helper.php';
 
 $token = $_GET['token'] ?? '';
 if ($token === '') {
@@ -8,7 +9,7 @@ if ($token === '') {
 }
 
 $stmt = $conn->prepare("
-    SELECT id, full_name, check_in_date, check_out_date,
+    SELECT id, full_name, department, check_in_date, check_out_date,
            woman_count, man_count
     FROM bookings
     WHERE confirm_token = ?
@@ -17,13 +18,22 @@ $stmt = $conn->prepare("
 ");
 $stmt->bind_param('s', $token);
 $stmt->execute();
-$stmt->bind_result($bookingId, $bookerName, $checkIn, $checkOut, $totalW, $totalM);
+$booking = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-if (!$stmt->fetch()) {
-    $stmt->close();
+if (!$booking) {
     die('ลิงก์หมดอายุหรือไม่พบข้อมูลการจอง');
 }
-$stmt->close();
+
+$bookingId = (int)$booking['id'];
+$fullName  = $booking['full_name'] ?? '';
+$department= $booking['department'] ?? ''; 
+$checkIn   = $booking['check_in_date'] ?? '';
+$checkOut  = $booking['check_out_date'] ?? '';
+$totalW    = (int)($booking['woman_count'] ?? 0);
+$totalM    = (int)($booking['man_count'] ?? 0);
+
+$bookingCode = formatBookingCode($bookingId, $checkIn);
 
 $sqlAlloc = "
     SELECT 
@@ -78,7 +88,7 @@ $saveMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $posted = $_POST['guests'] ?? [];
-    $phones = $_POST['guest_phones'] ?? []; 
+    $phones = $_POST['guest_phones'] ?? [];
 
     foreach ($allocs as $aid => $a) {
         $aid = (int)$aid;
@@ -87,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $gender = ((int)$a['woman_count'] > 0 && (int)$a['man_count'] === 0) ? 'F' : 'M';
 
         $names  = $posted[$aid] ?? [];
-        $phonesPerAlloc = $phones[$aid] ?? []; 
+        $phonesPerAlloc = $phones[$aid] ?? [];
 
         if (!is_array($names)) $names = [];
         if (!is_array($phonesPerAlloc)) $phonesPerAlloc = [];
@@ -168,13 +178,17 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
 
         <div class="card mb-4">
             <div class="card-body">
-                <p class="mb-1"><b>ผู้จอง:</b> <?= htmlspecialchars($bookerName, ENT_QUOTES, 'UTF-8') ?></p>
-                <p class="mb-1"><b>ช่วงเข้าพัก:</b>
-                    <?= htmlspecialchars($checkIn, ENT_QUOTES, 'UTF-8') ?>
+                <h4 class="card-title mb-1">
+                    <b>คำขอจองห้องพักหมายเลข #<?= htmlspecialchars($bookingCode) ?></b>
+                </h4>
+                <p class="mb-1"><b>ผู้จอง :</b> <?= htmlspecialchars($fullName) ?></p>
+                <p class="mb-1"><b>ชื่อหน่วยงานต้นสังกัด :</b> <?= htmlspecialchars($department ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                <p class="mb-1"><b>ช่วงวันที่เข้าพัก :</b>
+                    <?= htmlspecialchars($checkIn ?? '', ENT_QUOTES, 'UTF-8') ?>
                     ถึง
-                    <?= htmlspecialchars($checkOut, ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars($checkOut ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </p>
-                <p class="mb-0"><b>จำนวนทั้งหมด:</b>
+                <p class="mb-0"><b>จำนวนทั้งหมด :</b>
                     หญิง <?= (int)$totalW ?> คน,
                     ชาย <?= (int)$totalM ?> คน
                 </p>
@@ -211,14 +225,16 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
                             ?>
                             <div class="row g-2 align-items-center mb-2">
                                 <div class="mb-2">
-                                    <label class="form-label">
+                                    <label class="form-label required">
                                         ชื่อคนที่ <?= $i + 1 ?>:
                                     </label>
                                     <input
                                         type="text"
                                         name="guests[<?= $aid ?>][]"
                                         class="form-control"
-                                        value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>">
+                                        value="<?= htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ?>"
+                                        <?php if ($i === 0): ?>required<?php endif; ?>>
+
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label small">
@@ -229,23 +245,23 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
                                         name="guest_phones[<?= $aid ?>][]"
                                         class="form-control"
                                         placeholder="เช่น 0812345678">
-
                                 </div>
                             </div>
-                            <?php endfor; ?>
+                        <?php endfor; ?>
 
-                            <p class="text-muted small mb-0">
-                                *ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริงและเบอร์โทรอย่างน้อย 1 คนต่อห้อง ที่เหลือปล่อยว่างไว้
-                            </p>
-                            </div>
+                        <p class="text-muted small mb-0">
+                            *ให้กรอกเฉพาะจำนวนคนที่เข้าพักจริงและเบอร์โทรอย่างน้อย 1 คนต่อห้อง ที่เหลือปล่อยว่างไว้
+                        </p>
                     </div>
+                </div>
 
-                <?php endforeach; ?>
+            <?php endforeach; ?>
 
-                <button type="submit" class="btn btn-primary">
-                    บันทึกรายชื่อผู้เข้าพัก
-                </button>
+            <button type="submit" class="btn btn-primary">
+                บันทึกรายชื่อผู้เข้าพัก
+            </button>
         </form>
     </div>
 </body>
+
 </html>

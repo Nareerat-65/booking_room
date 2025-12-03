@@ -13,13 +13,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $bookingId = (int)($_POST['booking_id'] ?? 0);
+$adminId   = (int)($_SESSION['admin_id'] ?? 0);
 
 if ($bookingId <= 0 || !isset($_FILES['document'])) {
     header('Location: ad_requests.php?msg=invalid');
     exit;
 }
 
-// โฟลเดอร์เก็บไฟล์
+// 1) เช็คว่า booking นี้อนุมัติแล้วหรือยัง
+$check = $conn->prepare("SELECT status FROM bookings WHERE id = ?");
+$check->bind_param("i", $bookingId);
+$check->execute();
+$statusRow = $check->get_result()->fetch_assoc();
+$check->close();
+
+if (($statusRow['status'] ?? '') !== 'approved') {
+    header('Location: ad_requests.php?msg=not_approved');
+    exit;
+}
+
+// 2) เตรียมโฟลเดอร์เก็บไฟล์
 $uploadDir = __DIR__ . '/../uploads/documents/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
@@ -34,44 +47,69 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
+// นามสกุลไฟล์
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-if (!in_array($ext, $allowed)) {
+if (!in_array($ext, $allowed, true)) {
     header('Location: ad_requests.php?msg=invalid_type');
     exit;
 }
 
-if ($file['size'] > $maxSize) {
+if ($file['size'] > $maxSize || $file['size'] <= 0) {
     header('Location: ad_requests.php?msg=too_big');
     exit;
 }
 
-// ตั้งชื่อไฟล์ใหม่
-$newName = 'booking_' . $bookingId . '_' . time() . '.' . $ext;
-$dest    = $uploadDir . $newName;
+// 3) ตั้งชื่อไฟล์ใหม่ + ย้ายไฟล์
+$originalName = $file['name'];
+$newName      = 'booking_' . $bookingId . '_' . time() . '.' . $ext;
+$dest         = $uploadDir . $newName;
 
 if (!move_uploaded_file($file['tmp_name'], $dest)) {
     header('Location: ad_requests.php?msg=move_failed');
     exit;
 }
 
-// path ที่เก็บในฐานข้อมูล (relative)
+// path สำหรับเก็บใน DB (relative)
 $relativePath = 'uploads/documents/' . $newName;
 
-$check = $conn->prepare("SELECT status FROM bookings WHERE id=?");
-$check->bind_param("i", $bookingId);
-$check->execute();
-$statusRow = $check->get_result()->fetch_assoc();
-$check->close();
+// 4) หา MIME type แบบง่าย (จากนามสกุลไฟล์)
+$mimeMap = [
+    'pdf'  => 'application/pdf',
+    'jpg'  => 'image/jpeg',
+    'jpeg' => 'image/jpeg',
+    'png'  => 'image/png',
+];
+$mime = $mimeMap[$ext] ?? ($file['type'] ?: 'application/octet-stream');
 
-if (($statusRow['status'] ?? '') !== 'approved') {
-    header('Location: ad_requests.php?msg=not_approved');
+$fileSize = (int)$file['size'];
+
+// 5) INSERT ลง booking_documents (admin อัปเอกสารตอบกลับ)
+$sql = "INSERT INTO booking_documents
+        (booking_id, uploaded_by, uploader_id, doc_type,
+         original_name, stored_name, file_path, mime_type, file_size,
+         is_visible_to_user, uploaded_at)
+        VALUES (?, 'admin', ?, 'admin_reply',
+                ?, ?, ?, ?, ?, 1, NOW())";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param(
+    'iissssi',
+    $bookingId,
+    $adminId,
+    $originalName,
+    $newName,
+    $relativePath,
+    $mime,
+    $fileSize
+);
+
+if (!$stmt->execute()) {
+    // ถ้า insert DB ไม่ผ่าน ลบไฟล์ทิ้ง
+    @unlink($dest);
+    header('Location: ad_requests.php?msg=db_error');
     exit;
 }
 
-// อย่าลืมเพิ่มคอลัมน์ เช่น bookings.document_path ใน DB ก่อนใช้งาน
-$stmt = $conn->prepare("UPDATE bookings SET document_path = ? WHERE id = ?");
-$stmt->bind_param('si', $relativePath, $bookingId);
-$stmt->execute();
 $stmt->close();
 
 header('Location: ad_requests.php?msg=uploaded');

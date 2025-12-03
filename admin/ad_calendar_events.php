@@ -76,13 +76,13 @@ if ($result) {
         $w = (int)$row['woman_count'];
         $m = (int)$row['man_count'];
 
-        $pieces = [$roomName];
+        $pieces = ["ห้อง {$roomName}"];
         if ($w > 0) $pieces[] = "หญิง {$w}";
         if ($m > 0) $pieces[] = "ชาย {$m}";
         $titleMain = implode(' • ', $pieces);
 
         $tooltip = "ผู้จอง: {$row['full_name']}\n"
-            . "{$roomName}\n"
+            . "ห้อง {$roomName}\n"
             . "วันเข้าพัก: {$startDate}\n"
             . "วันออก: {$endDateRaw}\n";
 
@@ -115,7 +115,7 @@ if ($result) {
         // สร้าง event สำหรับการทำความสะอาด
         $events[] = [
             'id'      => 'clean-' . $row['id'],
-            'title'   => "{$roomName} (ทำความสะอาด)",
+            'title'   => "ห้อง {$roomName} (ทำความสะอาด)",
             'start'   => $cleanStart,
             'end'     => date('Y-m-d', strtotime($cleanEnd . ' +1 day')), 
             'allDay'  => true,

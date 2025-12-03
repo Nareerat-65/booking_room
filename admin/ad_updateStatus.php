@@ -188,6 +188,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
         if ($status === 'approved') {
             $link = 'http://localhost:3000/user/u_guest_form.php?token=' . urlencode((string)$token);
+            $linkUpload = 'http://localhost:3000/user/u_upload_document.php ' . (int)$bookingId;
 
             $subject = 'ผลการจองห้องพัก: อนุมัติ';
 
@@ -233,12 +234,23 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
                                 display:inline-block;">
                                     กรอกรายชื่อผู้เข้าพัก
                                 </a>
+                                 <!-- ปุ่มอัปโหลดเอกสาร -->
+                                <a href="' . $linkUpload . '" style="background:#F5F5F5; color:#333333; padding:10px 22px;
+                                    border-radius:999px; text-decoration:none; font-weight:bold;
+                                    display:inline-block; font-size:14px;">
+                                    อัปโหลดเอกสารเพิ่มเติม
+                                </a>
                             </div>
 
                             <p style="font-size:13px; color:#777; margin-top:15px;">
                                 หากกดปุ่มไม่ได้ สามารถคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ได้เช่นกัน:<br>
+                                <b>กรอกรายชื่อผู้เข้าพัก:</b><br>
                                 <span style="word-break:break-all; color:#555;">
                                     ' . $link . '
+                                </span>
+                                <b>อัปโหลดเอกสารประกอบ:</b><br>
+                                <span style="word-break:break-all; color:#555;">
+                                    ' . $linkUpload . '
                                 </span>
                             </p>
 

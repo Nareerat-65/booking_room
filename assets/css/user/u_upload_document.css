@@ -4,20 +4,16 @@
     border-bottom: 0;
     font-size: 1.25rem;
 }
-
-label.required::after{
-    content: " *";
-    color: red;
-    font-weight: bold;
-}
-
 .btn {
     background-color: #F57B39;
+    color: #ffffff;
     border: 0;
-
 }
 .btn:hover {
     background-color: #ffffff;
     color: #F57B39;
     border: 1px solid #F57B39;
+}
+.badge {
+    font-size: 16px;
 }
