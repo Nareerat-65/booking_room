@@ -41,6 +41,7 @@ function formatPurpose(array $row): string
 }
 
 require_once '../../db.php';
+require_once '../../utils/booking_helper.php';
 $activeMenu = 'requests';
 $pageTitle = 'รายการคำขอ';
 $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
@@ -74,15 +75,17 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
             <div class="app-content">
                 <div class="container-fluid">
                     <div class="card">
-                        <div class="card-header text-white">
+                        <div class="card-header text-white d-flex justify-content-between align-items-center">
                             <h1 class="card-title mb-0">รายการคำขอ</h1>
+                            <a href="ad_month_report.php" class="btn btn-light btn-sm ms-auto fs-6">
+                                <i class="fas fa-file-alt me-1 fs-6"></i> รายงานประจำเดือน
+                            </a>
                         </div>
-
                         <div class="card-body">
                             <table id="bookingsTable" class="table table-bordered table-striped table-requests text-center align-middle">
                                 <thead>
                                     <tr>
-                                        <th>ลำดับ</th>
+                                        <th>เลขที่ใบจอง</th>
                                         <th>ชื่อผู้จอง</th>
                                         <th>เบอร์โทร</th>
                                         <th>ID Line</th>
@@ -122,9 +125,10 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                             $status = $row['status'] ?? 'pending';
                                             $reason = $row['reject_reason'] ?? '';
                                             $docPath = $row['admin_doc_path'] ?? '';
+                                            $bookingCode = formatBookingCode($row['id'] ?? null);
 
                                             echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
-                                            echo "<td>{$i}</td>";
+                                            echo "<td>{$bookingCode}</td>";
                                             echo "<td>" . htmlspecialchars($row['full_name'], ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars($row['phone'], ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars($row['line_id'], ENT_QUOTES, 'UTF-8') . "</td>";
@@ -156,45 +160,33 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                             echo '<td>';
                                             if ($status === 'pending') {
                                                 echo "
-                                            <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
-                                            <button class='btn btn-danger btn-sm btn-reject'
-                                                    data-bs-toggle='modal' data-bs-target='#rejectModal'>
-                                                ไม่อนุมัติ
-                                            </button>
-                                        ";
+                                                        <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
+                                                        <button class='btn btn-danger btn-sm btn-reject'
+                                                                data-bs-toggle='modal' data-bs-target='#rejectModal'>
+                                                            ไม่อนุมัติ
+                                                        </button>
+                                                    ";
                                             } elseif ($status === 'approved') {
-                                                if ($docPath) {
-                                                    $safePath = htmlspecialchars($docPath, ENT_QUOTES, 'UTF-8');
-                                                    echo "
-                                                <button class='btn btn-primary btn-sm btn-view-doc mb-1'
-                                                        data-doc='{$safePath}'>
-                                                    <i class='fas fa-file-alt'></i> ดูเอกสาร
-                                                </button>
-                                                <button class='btn btn-warning btn-sm btn-upload-doc ms-1'
-                                                        data-id='{$row['id']}'>
-                                                    <i class='fas fa-cog'></i> แก้ไข
-                                                </button>
-                                            ";
-                                                } else {
-                                                    echo "
-                                                <button class='btn btn-success btn-sm btn-upload-doc'
-                                                        data-id='{$row['id']}'>
-                                                    <i class='fas fa-upload'></i> อัปโหลด
-                                                </button>
-                                            ";
-                                                }
-                                            } else {
+                                                // ✅ เปลี่ยนให้ใช้ปุ่มรายละเอียดเหมือนของไม่อนุมัติ
                                                 echo "
-                                            <button class='btn btn-outline-secondary btn-sm btn-detail'
-                                                    data-id='{$row['id']}'
-                                                    data-status='{$status}'
-                                                    data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-                                                <i class='fas fa-info-circle'></i> รายละเอียด
-                                            </button>
-                                        ";
+                                                        <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                                                data-id='{$row['id']}'
+                                                                data-status='{$status}'
+                                                                data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                                            <i class='fas fa-info-circle'></i> รายละเอียด
+                                                        </button>
+                                                    ";
+                                            } else { // rejected
+                                                echo "
+                                                        <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                                                data-id='{$row['id']}'
+                                                                data-status='{$status}'
+                                                                data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                                            <i class='fas fa-info-circle'></i> รายละเอียด
+                                                        </button>
+                                                    ";
                                             }
                                             echo '</td>';
-
                                             echo "</tr>";
                                             $i++;
                                         }

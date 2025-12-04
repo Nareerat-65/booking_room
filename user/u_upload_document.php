@@ -24,7 +24,7 @@ if (!$booking) {
     echo "ไม่พบข้อมูลการจองห้องพักในระบบ";
     exit;
 }
-$bookingCode = formatBookingCode((int)$booking['id'], $booking['check_in_date'] ?? null);
+$bookingCode = formatBookingCode((int)$booking['id'] ?? null);
 
 $sqlDocs = "
     SELECT id, uploaded_by, doc_type, original_name, file_path, mime_type, file_size, uploaded_at
@@ -80,7 +80,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_upload_document.cs
         <div class="card mb-4">
             <div class="card-body ">
                 <h4 class="card-title mb-1">
-                    <b>คำขอจองห้องพักหมายเลข #<?= htmlspecialchars($bookingCode) ?></b>
+                    <b>เลขที่ใบจอง #<?= htmlspecialchars($bookingCode) ?></b>
                 </h4>
                 <p class="mb-1"><b>ชื่อผู้จอง:</b> <?= htmlspecialchars($booking['full_name']) ?></p>
                 <p class="mb-1"><b>ชื่อหน่วยงานต้นสังกัด :</b> <?= htmlspecialchars($booking['department'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>

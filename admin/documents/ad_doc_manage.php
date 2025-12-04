@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
+require_once '../../utils/booking_helper.php';
 
 $booking_id = (int)($_GET['booking_id'] ?? 0);
 if ($booking_id <= 0) {
@@ -37,7 +38,8 @@ $docRes->bind_param("i", $booking_id);
 $docRes->execute();
 $docResult = $docRes->get_result();
 
-$pageTitle  = "เอกสารของรายการ #" . $booking['id'];
+$bookingCode = formatBookingCode($booking['id']);
+$pageTitle  = "เอกสารของรายการ #" . $bookingCode;
 $activeMenu = "documents";
 ?>
 <!DOCTYPE html>
@@ -55,7 +57,7 @@ $activeMenu = "documents";
         <main class="app-main">
             <div class="app-content-header py-3">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
-                    <h1>เอกสารของรายการ #<?= (int)$booking['id'] ?></h1>
+                    <h1>เอกสารของรายการ #<?= $bookingCode ?></h1>
                     <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
                 </div>
                 <div class="container-fluid mt-2">
@@ -80,7 +82,7 @@ $activeMenu = "documents";
                             <input type="hidden" name="booking_id" value="<?= (int)$booking_id ?>">
                             <div class="card-body row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">ประเภทเอกสาร (doc_type)</label>
+                                    <label class="form-label">ชื่อไฟล์</label>
                                     <input type="text" name="doc_type" class="form-control" placeholder="เช่น หนังสืออนุมัติ">
                                 </div>
                                 <div class="col-md-5">

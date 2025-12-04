@@ -33,7 +33,7 @@ $checkOut  = $booking['check_out_date'] ?? '';
 $totalW    = (int)($booking['woman_count'] ?? 0);
 $totalM    = (int)($booking['man_count'] ?? 0);
 
-$bookingCode = formatBookingCode($bookingId, $checkIn);
+$bookingCode = formatBookingCode($bookingId);
 
 $sqlAlloc = "
     SELECT 
@@ -179,7 +179,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
         <div class="card mb-4">
             <div class="card-body">
                 <h4 class="card-title mb-1">
-                    <b>คำขอจองห้องพักหมายเลข #<?= htmlspecialchars($bookingCode) ?></b>
+                    <b>เลขที่ใบจอง #<?= htmlspecialchars($bookingCode) ?></b>
                 </h4>
                 <p class="mb-1"><b>ผู้จอง :</b> <?= htmlspecialchars($fullName) ?></p>
                 <p class="mb-1"><b>ชื่อหน่วยงานต้นสังกัด :</b> <?= htmlspecialchars($department ?? '', ENT_QUOTES, 'UTF-8') ?></p>

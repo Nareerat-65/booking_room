@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
+require_once '../../utils/booking_helper.php';
 
 // ดึงรายการจอง + นับจำนวนเอกสาร
 $sql = "
@@ -14,10 +15,12 @@ $sql = "
         COUNT(d.id) AS doc_count
     FROM bookings b
     LEFT JOIN booking_documents d ON d.booking_id = b.id
+    WHERE b.status = 'approved' 
     GROUP BY b.id
     ORDER BY b.created_at DESC
 ";
 $res = $conn->query($sql);
+
 
 $pageTitle  = "จัดการเอกสาร";
 $activeMenu = "documents";
@@ -64,9 +67,12 @@ $activeMenu = "documents";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php while ($row = $res->fetch_assoc()): ?>
+                                    <?php while ($row = $res->fetch_assoc()): 
+                                        $bookingCode = formatBookingCode($row['id'] ?? null);
+                                        ?>
+                                        
                                         <tr>
-                                            <td>#<?= (int)$row['id'] ?></td>
+                                            <td><?= $bookingCode ?></td>
                                             <td><?= htmlspecialchars($row['full_name']) ?></td>
                                             <td><?= htmlspecialchars($row['department']) ?></td>
                                             <td><?= htmlspecialchars($row['check_in_date']) ?></td>
