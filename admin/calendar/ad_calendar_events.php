@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once '../db.php';
+require_once __DIR__ . '/../../db.php';
 
 // ดึงข้อมูลการจองที่ได้รับการอนุมัติทั้งหมด
 $sql = "

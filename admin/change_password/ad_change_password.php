@@ -1,9 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ad_login.php');
-    exit;
-}
+require_once __DIR__ . '/../../utils/admin_guard.php';
+
 $activeMenu = 'change_password';
 $pageTitle = 'เปลี่ยนรหัสผ่านผู้ดูแลระบบ';
 $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.css">';

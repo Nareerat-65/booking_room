@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_id'])) {
-    header('Location: ad_login.php');
+    header('Location:  /admin/ad_login.php');
     exit;
 }
 $activeMenu = 'calendar';

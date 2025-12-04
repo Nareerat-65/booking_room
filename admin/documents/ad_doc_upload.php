@@ -1,10 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ad_login.php');
-    exit;
-}
-
+require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
 
 $booking_id = (int)($_POST['booking_id'] ?? 0);
@@ -51,7 +46,7 @@ $mime     = $file['type'];
 $size     = (int)$file['size'];
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iisssssisi", 
+$stmt->bind_param("iisssssii", 
     $booking_id,
     $admin_id,
     $doc_type,

@@ -188,7 +188,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
         if ($status === 'approved') {
             $link = 'http://localhost:3000/user/u_guest_form.php?token=' . urlencode((string)$token);
-            $linkUpload = 'http://localhost:3000/user/u_upload_document.php ' . (int)$bookingId;
+            $linkUpload = 'http://localhost:3000/user/u_upload_document.php?booking_id=' . (int)$bookingId;
 
             $subject = 'ผลการจองห้องพัก: อนุมัติ';
 

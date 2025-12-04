@@ -1,9 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: ad_login.php');
-    exit;
-}
+require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
 
 $booking_id = (int)($_GET['booking_id'] ?? 0);

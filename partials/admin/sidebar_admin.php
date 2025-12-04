@@ -44,7 +44,7 @@
 
                 <li class="nav-item">
                     <a href="/admin/documents/ad_doc_bookings.php" class="nav-link <?= ($activeMenu ?? '')==='documents' ? 'active' : '' ?>">
-                        <i class="nav-icon fas fa-calendar-alt"></i>
+                        <i class="nav-icon fas fa-file-text"></i>
                         <p>จัดการเอกสาร</p>
                     </a>
                 </li>
