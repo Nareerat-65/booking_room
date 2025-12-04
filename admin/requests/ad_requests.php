@@ -42,7 +42,7 @@ function formatPurpose(array $row): string
 
 require_once '../../db.php';
 $activeMenu = 'requests';
-$pageTitle = 'รายการคำขอจองห้องพัก';
+$pageTitle = 'รายการคำขอ';
 $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="/assets/css/admin/ad_requests.css">
 ';

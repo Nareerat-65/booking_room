@@ -11,16 +11,21 @@
             <li class="nav-item d-none d-sm-inline-block">
                 <span class="nav-link fw-bold text-white">
                     <?= htmlspecialchars($pageTitle ?? 'แดชบอร์ดผู้ดูแล') ?>
-                    </span>
+                </span>
 
             </li>
         </ul>
 
         <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-                <a href="ad_logout.php" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                </a>
+                <div class="user-panel mt-1 d-flex align-items-center gap-2 px-3">
+                    <i class="fas fa-user-circle fa-2x text-white"></i>
+                    <div class="info">
+                        <span class="d-block text-white fs-5">
+                            <?= htmlspecialchars($_SESSION['admin_name']) ?>
+                        </span>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>

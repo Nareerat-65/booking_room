@@ -22,10 +22,19 @@
     .nav-link.active i {
         color: #fff !important;
     }
-    
 
-    .main-header .nav-link{
+
+    .main-header .nav-link {
         color: #fff !important;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 1.2rem;
     }
 </style>
 
