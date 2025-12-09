@@ -178,15 +178,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_guest_form.css">';
 
         <div class="card mb-4">
             <div class="card-body">
-                <h4 class="card-title mb-1">
+                <h5 class="card-title mb-1">
                     <b>เลขที่ใบจอง #<?= htmlspecialchars($bookingCode) ?></b>
-                </h4>
+                </h5>
                 <p class="mb-1"><b>ผู้จอง :</b> <?= htmlspecialchars($fullName) ?></p>
                 <p class="mb-1"><b>ชื่อหน่วยงานต้นสังกัด :</b> <?= htmlspecialchars($department ?? '', ENT_QUOTES, 'UTF-8') ?></p>
                 <p class="mb-1"><b>ช่วงวันที่เข้าพัก :</b>
-                    <?= htmlspecialchars($checkIn ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars(formatDate($checkIn) ?? '', ENT_QUOTES, 'UTF-8') ?>
                     ถึง
-                    <?= htmlspecialchars($checkOut ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars(formatDate($checkOut) ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </p>
                 <p class="mb-0"><b>จำนวนทั้งหมด :</b>
                     หญิง <?= (int)$totalW ?> คน,

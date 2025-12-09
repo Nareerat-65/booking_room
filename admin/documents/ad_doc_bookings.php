@@ -24,6 +24,7 @@ $res = $conn->query($sql);
 
 $pageTitle  = "จัดการเอกสาร";
 $activeMenu = "documents";
+$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css">'
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -32,7 +33,7 @@ $activeMenu = "documents";
     <?php include '../../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="layout-fixed">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
         <?php include '../../partials/admin/nav_admin.php'; ?>
         <?php include '../../partials/admin/sidebar_admin.php'; ?>
@@ -57,7 +58,7 @@ $activeMenu = "documents";
                             <table id="docBookingTable" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>เลขที่รายการ</th>
+                                        <th>เลขที่ใบจอง</th>
                                         <th>ชื่อผู้จอง</th>
                                         <th>หน่วยงานต้นสังกัด</th>
                                         <th>วันที่เข้าพัก</th>
@@ -75,12 +76,12 @@ $activeMenu = "documents";
                                             <td><?= $bookingCode ?></td>
                                             <td><?= htmlspecialchars($row['full_name']) ?></td>
                                             <td><?= htmlspecialchars($row['department']) ?></td>
-                                            <td><?= htmlspecialchars($row['check_in_date']) ?></td>
-                                            <td><?= htmlspecialchars($row['check_out_date']) ?></td>
+                                            <td><?= htmlspecialchars(formatDate($row['check_in_date'])) ?></td>
+                                            <td><?= htmlspecialchars(formatDate($row['check_out_date'])) ?></td>
                                             <td><?= (int)$row['doc_count'] ?></td>
                                             <td>
                                                 <a href="ad_doc_manage.php?booking_id=<?= (int)$row['id'] ?>"
-                                                    class="btn btn-sm btn-primary">
+                                                    class="btn-manage">
                                                     จัดการเอกสาร
                                                 </a>
                                             </td>

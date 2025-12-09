@@ -28,7 +28,7 @@ $sqlDocs = "
              ELSE d.uploaded_by
            END AS uploader_name
     FROM booking_documents d
-    LEFT JOIN admins a 
+    LEFT JOIN admins a
       ON d.uploaded_by = 'admin' AND d.uploader_id = a.id
     WHERE d.booking_id = ?
     ORDER BY d.uploaded_at DESC
@@ -41,6 +41,7 @@ $docResult = $docRes->get_result();
 $bookingCode = formatBookingCode($booking['id']);
 $pageTitle  = "เอกสารของรายการ #" . $bookingCode;
 $activeMenu = "documents";
+$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">'
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -49,7 +50,7 @@ $activeMenu = "documents";
     <?php include '../../partials/admin/head_admin.php'; ?>
 </head>
 
-<body class="layout-fixed">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
         <?php include '../../partials/admin/nav_admin.php'; ?>
         <?php include '../../partials/admin/sidebar_admin.php'; ?>
@@ -63,9 +64,9 @@ $activeMenu = "documents";
                 <div class="container-fluid mt-2">
                     <p>
                         ชื่อผู้จอง: <?= htmlspecialchars($booking['full_name']) ?><br>
-                        เข้าพัก: <?= htmlspecialchars($booking['check_in_date']) ?>
-                        ถึง <?= htmlspecialchars($booking['check_out_date']) ?><br>
-                        สถานะ: <?= htmlspecialchars($booking['status']) ?>
+                        หน่วยงานต้นสังกัด: <?= htmlspecialchars($booking['department']) ?><br>
+                        เข้าพัก: <?= htmlspecialchars(formatDate($booking['check_in_date'])) ?>
+                        ถึง <?= htmlspecialchars(formatDate($booking['check_out_date'])) ?><br>
                     </p>
                 </div>
             </div>
@@ -98,7 +99,7 @@ $activeMenu = "documents";
                                 </div>
                             </div>
                             <div class="card-footer text-end">
-                                <button type="submit" class="btn btn-primary">บันทึกเอกสาร</button>
+                                <button type="submit" class="btn-save">บันทึกเอกสาร</button>
                             </div>
                         </form>
                     </div>
@@ -129,14 +130,14 @@ $activeMenu = "documents";
                                             <td><?= htmlspecialchars($doc['uploader_name'] ?? '-') ?></td>
                                             <td><?= number_format($doc['file_size'] / 1024, 2) ?> KB</td>
                                             <td><?= $doc['is_visible_to_user'] ? 'ใช่' : 'ไม่' ?></td>
-                                            <td><?= htmlspecialchars($doc['uploaded_at']) ?></td>
+                                            <td><?= htmlspecialchars(formatDate($doc['uploaded_at'])) ?></td>
                                             <td>
                                                 <a href="ad_doc_download.php?id=<?= (int)$doc['id'] ?>"
-                                                    class="btn btn-sm btn-outline-info">
+                                                    class="btn btn-sm btn-info text-light">
                                                     ดู/ดาวน์โหลด
                                                 </a>
                                                 <a href="ad_doc_delete.php?id=<?= (int)$doc['id'] ?>&booking_id=<?= (int)$booking_id ?>"
-                                                    class="btn btn-sm btn-outline-danger"
+                                                    class="btn btn-sm btn-danger"
                                                     onclick="return confirm('ลบเอกสารนี้แน่ใจหรือไม่?');">
                                                     ลบ
                                                 </a>

@@ -1,14 +1,16 @@
 <?php
 header('Content-Type: text/plain; charset=utf-8');
 
-require_once '../db.php';
+require_once __DIR__ . '/../../utils/admin_guard.php';
+require_once '../../db.php';
+require_once '../../utils/booking_helper.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../PHPMailer/src/Exception.php';
-require '../PHPMailer/src/PHPMailer.php';
-require '../PHPMailer/src/SMTP.php';
+require '../../PHPMailer/src/Exception.php';
+require '../../PHPMailer/src/PHPMailer.php';
+require '../../PHPMailer/src/SMTP.php';
 
 // ฟังก์ชันจัดห้องพักอัตโนมัติ
 function allocateRooms(mysqli $conn, int $bookingId): void
@@ -154,14 +156,9 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
     }
     $stmt->close();
 
-    function toSqlDate($d)
-    {
-        if (!$d) return null;
-        $dt = DateTime::createFromFormat('Y-m-d', $d) ?: DateTime::createFromFormat('d-m-Y', $d);
-        return $dt ? $dt->format('d-m-Y') : null;
-    }
     $checkIn  = toSqlDate($checkIn);
     $checkOut = toSqlDate($checkOut);
+    $bookingCode = formatBookingCode($bookingId);
 
     // ส่งอีเมลแจ้งผล
     $mail = new PHPMailer(true);
@@ -217,6 +214,7 @@ function sendBookingEmail(mysqli $conn, int $bookingId, string $status, ?string 
 
                             <div style="background:#fafafa; border-radius:8px; padding:12px 14px;
                                 border-left:4px solid #F57B39; margin:10px 0 18px;">
+                                <p style="margin:0;"><b>เลขที่ใบจอง #</b>' . $bookingCode . '</p>
                                 <p style="margin:0;"><b>ชื่อผู้จอง:</b> ' . htmlspecialchars($fullName, ENT_QUOTES, "UTF-8") . '</p>
                                 <p style="margin:0;"><b>วันที่เข้าพัก:</b> ' . htmlspecialchars($checkIn  ?? '', ENT_QUOTES, 'UTF-8') . '</p>
                                 <p style="margin:0;"><b>วันที่ย้ายออก:</b> ' . htmlspecialchars($checkOut ?? '', ENT_QUOTES, "UTF-8") . '</p>

@@ -33,15 +33,6 @@ $womanCount = isset($_POST['womanCount']) ? (int)$_POST['womanCount'] : 0;
 $manCount   = isset($_POST['manCount'])   ? (int)$_POST['manCount']   : 0;
 $adminUrl = 'http://localhost:3000/admin/ad_dashboard.php';
 
-
-
-//แปลงรูปแบบวันที่
-function toSqlDate($d)
-{
-    if (!$d) return null;
-    $dt = DateTime::createFromFormat('d-m-Y', $d) ?: DateTime::createFromFormat('Y-m-d', $d);
-    return $dt ? $dt->format('Y-m-d') : null;
-}
 $dateStart = $_POST['checkInDate'] ?? null;
 $dateEnd   = $_POST['checkOutDate'] ?? null;
 $checkIn  = toSqlDate($dateStart);

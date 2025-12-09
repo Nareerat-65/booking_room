@@ -54,6 +54,7 @@ $extraHead = '
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-start">
+                    <p><strong>เลขที่ใบจอง:</strong> <span id="eventId"></span></p>
                     <p><strong>ห้อง:</strong> <span id="eventRoom"></span></p>
                     <p><strong>ผู้จอง:</strong> <span id="eventBooker"></span></p>
                     <p><strong>ช่วงเข้าพัก:</strong> <span id="eventDates"></span></p>

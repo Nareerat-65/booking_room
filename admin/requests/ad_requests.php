@@ -1,49 +1,10 @@
 <?php
 require_once __DIR__ . '/../../utils/admin_guard.php';
-
-function formatDate(string $dateStr): string
-{
-    $date = new DateTime($dateStr);
-    return $date->format('d/m/Y');
-}
-
-function formatPosition(array $row): string
-{
-    $pos = $row['position'] ?? '';
-    switch ($pos) {
-        case 'student':
-            $year = isset($row['student_year']) && $row['student_year'] !== ''
-                ? $row['student_year'] : '–';
-            return "นักศึกษา/นิสิตแพทย์ชั้นปีที่ {$year}";
-        case 'intern':
-            return 'แพทย์ใช้ทุน';
-        case 'resident':
-            return 'แพทย์ประจำบ้าน';
-        case 'staff':
-            return 'เจ้าหน้าที่';
-        case 'other':
-            $other = trim($row['position_other'] ?? '');
-            return $other !== '' ? $other : 'อื่น ๆ';
-        default:
-            return '–';
-    }
-}
-
-function formatPurpose(array $row): string
-{
-    if (($row['purpose'] ?? '') === 'study') {
-        $course = trim($row['study_course'] ?? '');
-        return $course !== ''
-            ? "ศึกษารายวิชา {$course}"
-            : "ศึกษารายวิชา (ไม่ระบุชื่อวิชา)";
-    }
-    return $row['purpose'] ? $row['purpose'] : '-';
-}
-
 require_once '../../db.php';
 require_once '../../utils/booking_helper.php';
+
 $activeMenu = 'requests';
-$pageTitle = 'รายการคำขอ';
+$pageTitle = 'รายการจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="/assets/css/admin/ad_requests.css">
 ';
@@ -166,16 +127,6 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                                             ไม่อนุมัติ
                                                         </button>
                                                     ";
-                                            } elseif ($status === 'approved') {
-                                                // ✅ เปลี่ยนให้ใช้ปุ่มรายละเอียดเหมือนของไม่อนุมัติ
-                                                echo "
-                                                        <button class='btn btn-outline-secondary btn-sm btn-detail'
-                                                                data-id='{$row['id']}'
-                                                                data-status='{$status}'
-                                                                data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-                                                            <i class='fas fa-info-circle'></i> รายละเอียด
-                                                        </button>
-                                                    ";
                                             } else { // rejected
                                                 echo "
                                                         <button class='btn btn-outline-secondary btn-sm btn-detail'
@@ -242,67 +193,21 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="detailBody"></div>
-            </div>
-        </div>
-    </div>
+                <div class="modal-footer d-flex justify-content-between" id="detailFooter">
+                    <button type="button" class="btn btn-danger d-none" id="btnDeleteBooking">
+                        <i class="fas fa-trash-alt"></i> ลบรายการจอง
+                    </button>
 
-    <!-- Upload Doc Modal -->
-    <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="uploadForm" action="ad_upload_document.php" method="post" enctype="multipart/form-data">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title">อัปโหลดเอกสารประกอบการจอง</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <input type="hidden" name="booking_id" id="uploadBookingId">
-
-                        <div class="mb-3">
-                            <label class="form-label">คำขอจอง:</label>
-                            <div id="uploadBookingInfo" class="fw-bold text-primary"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="document" class="form-label">เลือกไฟล์เอกสาร</label>
-                            <input type="file" name="document" id="document" class="form-control" required
-                                accept=".pdf,.jpg,.jpeg,.png">
-                            <small class="form-text text-muted">
-                                รองรับไฟล์ .pdf, .jpg, .jpeg, .png ขนาดไม่เกิน 5MB
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                        <button type="submit" class="btn btn-success">อัปโหลด</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Doc Modal -->
-    <div class="modal fade" id="viewDocModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">เอกสารที่อัปโหลด</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <iframe id="docFrame" src="" width="100%" height="600" style="border:0;"></iframe>
-                    <div class="mt-2">
-                        <a id="docDownload" href="" target="_blank" class="btn btn-outline-primary btn-sm">
-                            ดาวน์โหลด / เปิดในแท็บใหม่
-                        </a>
-                    </div>
+                    <!-- <div class="ms-auto">
+                        <button type="button" class="btn btn-primary d-none" id="btnEditBooking">
+                            <i class="fas fa-edit"></i> แก้ไขข้อมูล
+                        </button>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- ===== Scripts ===== -->
     <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>

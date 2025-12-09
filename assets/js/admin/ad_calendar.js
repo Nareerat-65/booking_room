@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var ev = info.event;
             var props = ev.extendedProps || {};
 
+            $('#eventId').text(props.booking_code || ev.id || '-');
             $('#eventRoom').text(props.room || '-');
             $('#eventBooker').text(props.booker || '-');
 

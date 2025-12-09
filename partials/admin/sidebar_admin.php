@@ -15,14 +15,14 @@
                 <li class="nav-item">
                     <a href="/admin/ad_dashboard.php" class="nav-link <?= ($activeMenu ?? '') === 'dashboard' ? 'active' : '' ?> ">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard</p>
+                        <p>แดชบอร์ดผู้ดูแล</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="/admin/requests/ad_requests.php" class="nav-link <?= ($activeMenu ?? '') === 'requests' ? 'active' : '' ?>">
                         <i class="nav-icon fas fa-list"></i>
-                        <p>รายการคำขอ</p>
+                        <p>รายการจองห้องพัก</p>
                     </a>
                 </li>
 

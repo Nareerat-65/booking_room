@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../db.php';
+require_once '../../utils/booking_helper.php';
 
 // ดึงข้อมูลการจองที่ได้รับการอนุมัติทั้งหมด
 $sql = "
@@ -69,10 +70,10 @@ if ($result) {
     while ($row = $result->fetch_assoc()) {
         $roomName   = $row['room_name'];
         $roomId     = (int)$row['room_id'];
-        $startDate  = $row['start_date'];   
-        $endDateRaw = $row['end_date'];     
-        $cleanStart = date('Y-m-d', strtotime($endDateRaw . ' +1 day'));
-        $cleanEnd   = date('Y-m-d', strtotime($endDateRaw . ' +3 day'));
+        $checkIn  = $row['start_date'];   
+        $checkOut = $row['end_date'];     
+        $cleanStart = date('Y-m-d', strtotime($checkOut . ' +1 day'));
+        $cleanEnd   = date('Y-m-d', strtotime($checkOut . ' +3 day'));
         $w = (int)$row['woman_count'];
         $m = (int)$row['man_count'];
 
@@ -82,9 +83,7 @@ if ($result) {
         $titleMain = implode(' • ', $pieces);
 
         $tooltip = "ผู้จอง: {$row['full_name']}\n"
-            . "ห้อง {$roomName}\n"
-            . "วันเข้าพัก: {$startDate}\n"
-            . "วันออก: {$endDateRaw}\n";
+            . "ห้อง {$roomName}\n";
 
         $color = $roomColors[$roomId] ?? '#0d6efd';
 
@@ -97,8 +96,8 @@ if ($result) {
         $events[] = [
             'id'      => $row['id'],   
             'title'   => $titleMain,
-            'start'   => $startDate,
-            'end'     => date('Y-m-d', strtotime($endDateRaw . ' +1 day')), 
+            'start'   => $checkIn,
+            'end'     => date('Y-m-d', strtotime($checkOut . ' +1 day')), 
             'allDay'  => true,
             'color'   => $color,
             'extendedProps' => [
@@ -106,10 +105,11 @@ if ($result) {
                 'room'       => $roomName,
                 'booking_id' => $row['booking_id'],
                 'booker'     => $row['full_name'],
-                'start_real' => $startDate,
-                'end_real'   => $endDateRaw,
+                'start_real' => formatDate($checkIn),
+                'end_real'   => formatDate($checkOut),
                 'guests'     => $guestList,
                 'type'       => 'stay',
+                'booking_code' => formatBookingCode($row['booking_id'])
             ],
         ];
         // สร้าง event สำหรับการทำความสะอาด

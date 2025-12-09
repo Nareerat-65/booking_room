@@ -1,41 +1,8 @@
 <?php
 require_once '../../utils/admin_guard.php';
+require_once '../../utils/booking_helper.php';
 require_once '../../db.php';
 header('Content-Type: text/html; charset=utf-8');
-
-/* -------------------------------------------------
-    ฟังก์ชัน month ไทย
-------------------------------------------------- */
-function thaiMonth($m)
-{
-    $arr = [
-        1 => "มกราคม",
-        2 => "กุมภาพันธ์",
-        3 => "มีนาคม",
-        4 => "เมษายน",
-        5 => "พฤษภาคม",
-        6 => "มิถุนายน",
-        7 => "กรกฎาคม",
-        8 => "สิงหาคม",
-        9 => "กันยายน",
-        10 => "ตุลาคม",
-        11 => "พฤศจิกายน",
-        12 => "ธันวาคม"
-    ];
-    return $arr[(int)$m] ?? '';
-}
-
-/* -------------------------------------------------
-    ฟังก์ชันวันที่ไทยแบบ 1 ก.ค. 68
-------------------------------------------------- */
-function formatDateThai($date)
-{
-    if (!$date) return "-";
-    $d = new DateTime($date);
-    $months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-    $m = (int)$d->format("n") - 1;
-    return $d->format("j ") . $months[$m] . " " . ($d->format("Y") + 543);
-}
 
 /* -------------------------------------------------
     รับค่าที่ผู้ใช้เลือก
@@ -50,8 +17,12 @@ $year  = $_GET['year'] ?? date("Y");
 $sql = "
 SELECT 
     b.id AS booking_id,
+    b.	full_name,
     b.department,
+    b.study_dept,
+    b.elective_dept,
     b.purpose,
+    b.study_course,
     b.check_in_date,
     b.check_out_date,
 
@@ -94,6 +65,7 @@ $result = $stmt->get_result();
     <title>รายงานประจำเดือน</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         body {
@@ -117,6 +89,61 @@ $result = $stmt->get_result();
         h4 {
             font-weight: bold;
         }
+
+        /* เดิมเราเขียนไว้ประมาณนี้ */
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        /* แก้เป็น landscape แทน */
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+
+        @media print {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .report-container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+            }
+
+            table.table {
+                width: 100%;
+                table-layout: fixed;
+                /* ให้แบ่งคอลัมน์เต็มหน้า */
+            }
+
+            table th,
+            table td {
+                font-size: 14px;
+                /* ลดไซส์ลงนิดนึง */
+                padding: 4px 6px;
+                white-space: normal;
+                word-break: break-word;
+                /* ให้ตัดคำลงบรรทัดใหม่ได้ */
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -125,13 +152,13 @@ $result = $stmt->get_result();
 
         <!--================ Header =================-->
         <div class="text-center mb-4">
-            <h4>รายการขอความอนุเคราะห์เข้าพักที่หอพักนิสิตแพทย์</h4>
-            <h4>จากศูนย์แพทยศาสตร์ศึกษาชั้นคลินิก สถาบันการแพทย์ต่างๆ บุคคลภายนอก</h4>
-            <h4>เพื่อมาศึกษารายวิชาฝึกปฏิบัติงาน ณ ภาควิชา คณะแพทยศาสตร์</h4>
+            <h5>รายการขอความอนุเคราะห์เข้าพักที่หอพักนิสิตแพทย์</h5>
+            <h5>จากศูนย์แพทยศาสตร์ศึกษาชั้นคลินิก สถาบันการแพทย์ต่างๆ บุคคลภายนอก</h5>
+            <h5>เพื่อมาศึกษารายวิชาฝึกปฏิบัติงาน ณ ภาควิชา คณะแพทยศาสตร์</h5>
 
-            <h2 class="mt-3">
+            <h3 class="mt-3">
                 เดือน <?= thaiMonth($month) ?> <?= $year + 543 ?>
-            </h2>
+            </h3>
         </div>
 
         <!--================ Form เลือกเดือน =================-->
@@ -155,6 +182,10 @@ $result = $stmt->get_result();
             </select>
 
             <button class="btn btn-primary">แสดงรายงาน</button>
+
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+                <i class="fas fa-print" aria-hidden="true"></i>
+            </button>
         </form>
 
         <!--================ ตารางรายงาน =================-->
@@ -165,11 +196,12 @@ $result = $stmt->get_result();
                         <th>เลขที่ใบจอง</th>
                         <th>ชื่อสถาบัน</th>
                         <th>วัตถุประสงค์</th>
+                        <th>ภาควิชา</th>
                         <th>วันที่เข้าพัก</th>
                         <th>วันที่ย้ายออก</th>
                         <th>จำนวน<br>(ห้อง)</th>
                         <th>เลขที่ห้องพัก</th>
-                        <th>รายชื่อประกอบ</th>
+                        <th>ชื่อผู้ประสานงาน</th>
                     </tr>
                 </thead>
 
@@ -177,17 +209,19 @@ $result = $stmt->get_result();
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
                             <!-- เลขที่ใบจอง: 1 แถวต่อ 1 ใบจอง ไม่ซ้ำแล้ว -->
-                            <td><?= "RM-" . str_pad($row['booking_id'], 4, "0", STR_PAD_LEFT) ?></td>
+                            <td><?= formatBookingCode($row['booking_id']) ?></td>
 
                             <!-- ชื่อสถาบัน -->
                             <td><?= htmlspecialchars($row['department'] ?: "-") ?></td>
 
                             <!-- วัตถุประสงค์ -->
-                            <td><?= htmlspecialchars($row['purpose'] ?: "-") ?></td>
+                            <td><?= htmlspecialchars(formatPurpose($row)) ?></td>
+
+                            <td><?= htmlspecialchars($row['study_dept'] ?: ($row['elective_dept'] ?: "-")) ?></td>
 
                             <!-- วันที่เข้าพัก/ย้ายออก -->
-                            <td><?= formatDateThai($row['check_in_date']) ?></td>
-                            <td><?= formatDateThai($row['check_out_date']) ?></td>
+                            <td><?= formatDate($row['check_in_date']) ?></td>
+                            <td><?= formatDate($row['check_out_date']) ?></td>
 
                             <!-- จำนวน(ห้อง) -->
                             <td><?= (int)($row['room_count'] ?? 0) ?></td>
@@ -196,7 +230,7 @@ $result = $stmt->get_result();
                             <td><?= htmlspecialchars($row['room_list'] ?: "-") ?></td>
 
                             <!-- รายชื่อประกอบ -->
-                            <td><?= htmlspecialchars($row['guest_list'] ?: "-") ?></td>
+                            <td><?= htmlspecialchars($row['full_name'] ?: "-") ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
