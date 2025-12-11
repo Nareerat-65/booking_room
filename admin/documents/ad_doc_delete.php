@@ -1,8 +1,8 @@
 <?php
-// admin/documents/ad_doc_delete.php
-
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
+require_once __DIR__ . '/../../services/documentService.php';
+require_once __DIR__ . '/../../utils/document_file_helper.php';
 
 // รับค่าจากลิงก์
 $doc_id     = (int)($_GET['id'] ?? 0);
@@ -18,33 +18,16 @@ if ($doc_id <= 0) {
     exit;
 }
 
-// 1) ดึงข้อมูลเอกสารมาก่อน เพื่อรู้ path ไฟล์
-$stmt = $conn->prepare("SELECT file_path FROM booking_documents WHERE id = ?");
-$stmt->bind_param("i", $doc_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$doc    = $result->fetch_assoc();
-$stmt->close();
+$doc = getDocumentById($conn, $doc_id);
 
 if ($doc) {
-    $relativePath = $doc['file_path'];   // เช่น "uploads/documents/xxx.pdf"
-
-    if (!empty($relativePath) && !preg_match('#^https?://#', $relativePath)) {
-        // ต่อ path แบบชี้จาก root โปรเจกต์
-        $projectRoot = realpath(__DIR__ . '/../../');                      // โฟลเดอร์โปรเจกต์หลัก
-        $fullPath    = realpath($projectRoot . '/' . ltrim($relativePath, '/'));
-
-        // กันพลาดไม่ให้ไปลบไฟล์นอกโปรเจกต์
-        if ($fullPath && strpos($fullPath, $projectRoot) === 0 && is_file($fullPath)) {
-            @unlink($fullPath);   // ลบไฟล์จริง
-        }
+    // ลบไฟล์จริง (ถ้าเป็น local)
+    if (!empty($doc['file_path'])) {
+        deleteDocumentFileIfLocal($doc['file_path']);
     }
 
-    // 2) ลบ row ในฐานข้อมูล
-    $del = $conn->prepare("DELETE FROM booking_documents WHERE id = ?");
-    $del->bind_param("i", $doc_id);
-    $del->execute();
-    $del->close();
+    // ลบ row DB
+    deleteBookingDocumentById($conn, $doc_id);
 }
 
 // 3) กลับไปหน้า manage เดิม

@@ -20,7 +20,7 @@ if ($status === 'approved') {
     $booking = approveBooking($conn, $id);
 
     if ($booking) {
-        sendBookingResultEmail($booking, 'approved', null);
+        sendBookingResult($booking, 'approved', null);
         echo 'success';
     } else {
         echo 'error';
@@ -30,7 +30,7 @@ if ($status === 'approved') {
     $booking = rejectBooking($conn, $id, (string)$reason);
 
     if ($booking) {
-        sendBookingResultEmail($booking, 'rejected', (string)$reason);
+        sendBookingResult($booking, 'rejected', (string)$reason);
         echo 'success';
     } else {
         echo 'error';

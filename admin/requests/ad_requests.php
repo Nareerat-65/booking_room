@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once __DIR__ . '/../../utils/booking_helper.php';
 require_once __DIR__ . '/../../db.php';
-require_once __DIR__ . '/../../utils/booking_service.php';
+require_once __DIR__ . '/../../services/bookingService.php';
 
 $activeMenu = 'requests';
 $pageTitle = 'รายการจองห้องพัก';

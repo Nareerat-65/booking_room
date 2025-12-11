@@ -2,46 +2,30 @@
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
 require_once '../../utils/booking_helper.php';
+require_once __DIR__ . '/../../services/documentService.php';
+require_once __DIR__ . '/../../services/bookingService.php';
 
-$booking_id = (int)($_GET['booking_id'] ?? 0);
+/* --- FIX: ดึง booking_id ให้ถูกต้อง --- */
+$booking_id = isset($_GET['booking_id']) ? (int)$_GET['booking_id'] : 0;
 if ($booking_id <= 0) {
-    header("Location: ad_doc_bookings.php");
-    exit;
+    die("ไม่พบ booking_id");
 }
 
-// ข้อมูลการจอง
-$bookingRes = $conn->prepare("SELECT * FROM bookings WHERE id = ?");
-$bookingRes->bind_param("i", $booking_id);
-$bookingRes->execute();
-$bookingResult = $bookingRes->get_result();
-$booking = $bookingResult->fetch_assoc();
+/* --- โหลดข้อมูล booking --- */
+$booking = getBookingById($conn, $booking_id);
 if (!$booking) {
-    header("Location: ad_doc_bookings.php");
-    exit;
+    die("ไม่พบข้อมูลการจอง");
 }
 
-$sqlDocs = "
-    SELECT d.*, 
-           CASE 
-             WHEN d.uploaded_by = 'admin' THEN a.full_name
-             ELSE d.uploaded_by
-           END AS uploader_name
-    FROM booking_documents d
-    LEFT JOIN admins a
-      ON d.uploaded_by = 'admin' AND d.uploader_id = a.id
-    WHERE d.booking_id = ?
-    ORDER BY d.uploaded_at DESC
-";
-$docRes = $conn->prepare($sqlDocs);
-$docRes->bind_param("i", $booking_id);
-$docRes->execute();
-$docResult = $docRes->get_result();
+/* --- โหลดเอกสารของ booking --- */
+$docResult = getDocumentsByBookingId($conn, $booking_id);
 
 $bookingCode = formatBookingCode($booking['id']);
 $pageTitle  = "เลขที่ใบจอง #" . $bookingCode;
 $activeMenu = "documents";
-$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">'
+$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">';
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 

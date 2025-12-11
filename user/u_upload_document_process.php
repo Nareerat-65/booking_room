@@ -3,6 +3,7 @@
 
 session_start();
 require_once '../db.php';
+require_once '../services/documentService.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: u_upload_document.php');
@@ -47,7 +48,7 @@ if (!$files || !is_array($files['name']) || count($files['name']) === 0) {
     exit;
 }
 
-$total         = count($files['name']);
+$total = count($files['name']);
 $uploadedCount = 0;
 
 for ($i = 0; $i < $total; $i++) {
@@ -88,33 +89,12 @@ for ($i = 0; $i < $total; $i++) {
     $relativePath = $relativeBaseDir . $newName;
     $fileSize     = $size;
 
-    // INSERT ลง booking_documents (ผู้ใช้เป็นคนอัปโหลด)
-    // uploader_id ตอนนี้ใส่ 0 ไปก่อน (ถ้าไม่มีระบบ user login)
-    $sql = "INSERT INTO booking_documents
-            (booking_id, uploaded_by, uploader_id, doc_type,
-             original_name, stored_name, file_path, mime_type, file_size,
-             is_visible_to_user, uploaded_at)
-            VALUES (?, 'user', 0, 'user_attachment',
-                    ?, ?, ?, ?, ?, 1, NOW())";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param(
-        'issssi',
-        $bookingId,
-        $originalName,
-        $newName,
-        $relativePath,
-        $mime,
-        $fileSize
-    );
-
-    if ($stmt->execute()) {
+    // ใช้ service บันทึกข้อมูลเอกสาร
+    if (insertUserDocument($conn, $bookingId, $originalName, $newName, $relativePath, $mime, $fileSize)) {
         $uploadedCount++;
     } else {
-        @unlink($fullPath); // ถ้า insert DB ไม่ผ่าน ลบไฟล์ทิ้ง
+        @unlink($fullPath);
     }
-
-    $stmt->close();
 }
 
 // กลับไปหน้าเดิม พร้อมสถานะ

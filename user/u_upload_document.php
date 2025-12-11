@@ -2,6 +2,7 @@
 session_start();
 require_once '../db.php';
 require_once '../utils/booking_helper.php';
+require_once '../services/documentService.php';
 
 $bookingId = (int)($_GET['booking_id'] ?? 0);
 if ($bookingId <= 0) {
@@ -26,19 +27,7 @@ if (!$booking) {
 }
 $bookingCode = formatBookingCode((int)$booking['id'] ?? null);
 
-$sqlDocs = "
-    SELECT id, uploaded_by, doc_type, original_name, file_path, mime_type, file_size, uploaded_at
-    FROM booking_documents
-    WHERE booking_id = ?
-      AND is_visible_to_user = 1   -- ถ้าไม่อยากใช้ flag นี้จะลบเงื่อนไขนี้ทิ้งก็ได้
-    ORDER BY uploaded_at DESC
-";
-$stmt2 = $conn->prepare($sqlDocs);
-$stmt2->bind_param("i", $bookingId);
-$stmt2->execute();
-$docsResult = $stmt2->get_result();
-$stmt2->close();
-
+$docsResult = getDocumentsVisibleToUser($conn, $bookingId);
 // helper แปลงขนาดไฟล์ให้อ่านง่าย
 function formatSize($bytes)
 {

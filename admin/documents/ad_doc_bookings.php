@@ -2,25 +2,9 @@
 require_once __DIR__ . '/../../utils/admin_guard.php';
 require_once '../../db.php';
 require_once '../../utils/booking_helper.php';
+require_once __DIR__ . '/../../services/documentService.php';
 
-// ดึงรายการจอง + นับจำนวนเอกสาร
-$sql = "
-    SELECT 
-        b.id,
-        b.full_name,
-        b.department,
-        b.check_in_date,
-        b.check_out_date,
-        b.status,
-        COUNT(d.id) AS doc_count
-    FROM bookings b
-    LEFT JOIN booking_documents d ON d.booking_id = b.id
-    WHERE b.status = 'approved' 
-    GROUP BY b.id
-    ORDER BY b.created_at DESC
-";
-$res = $conn->query($sql);
-
+$res = getBookingsForDocumentPage($conn);
 
 $pageTitle  = "จัดการเอกสาร";
 $activeMenu = "documents";

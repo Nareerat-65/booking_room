@@ -1,61 +1,57 @@
 <?php
-// admin/documents/ad_doc_download.php
-
 require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../db.php';  // ใช้ $conn แบบเดียวกับ ad_doc_manage.php
+require_once __DIR__ . '/../../db.php';
+require_once __DIR__ . '/../../services/documentService.php';
+require_once __DIR__ . '/../../utils/document_file_helper.php';
 
-$doc_id = (int)($_GET['id'] ?? 0);
-
+// 1) รับ id เอกสารจาก query string
+$doc_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($doc_id <= 0) {
     http_response_code(400);
     echo "Invalid document id.";
     exit;
 }
 
-// 1) ดึงข้อมูลเอกสารจากฐานข้อมูล
-$stmt = $conn->prepare("
-    SELECT original_name, file_path, mime_type 
-    FROM booking_documents 
-    WHERE id = ?
-");
-$stmt->bind_param("i", $doc_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$doc = $result->fetch_assoc();
-$stmt->close();
-
+// 2) ดึงข้อมูลเอกสารจาก DB
+$doc = getDocumentById($conn, $doc_id);
 if (!$doc) {
     http_response_code(404);
     echo "Document not found.";
     exit;
 }
 
-$originalName = $doc['original_name'] ?: 'document';
-$filePath     = $doc['file_path'];
-$mime         = $doc['mime_type'] ?: 'application/octet-stream';
+// 3) ดึง path จาก DB
+$filePath = $doc['file_path'] ?? '';
+if ($filePath === '') {
+    http_response_code(404);
+    echo "File path is empty.";
+    exit;
+}
 
-// ถ้าเป็น URL (เช่น เก็บใน cloud) ให้ redirect ไปเลย
+// 4) ถ้าเป็น URL (เก็บบน Cloud/ที่อื่น) ให้ redirect ออกไปเลย
 if (preg_match('#^https?://#', $filePath)) {
     header("Location: " . $filePath);
     exit;
 }
 
-// 2) ถ้าเป็นไฟล์ในเครื่อง ให้ต่อ path จริง
-$projectRoot = realpath(__DIR__ . '/../../');              // โฟลเดอร์โปรเจกต์หลัก
-$fullPath    = realpath($projectRoot . '/' . ltrim($filePath, '/'));
-
-if (!$fullPath || strpos($fullPath, $projectRoot) !== 0 || !is_file($fullPath)) {
+// 5) ถ้าเป็นไฟล์ในเครื่อง → แปลงเป็น path เต็มแล้วเช็คว่ามีอยู่จริง
+$fullPath = resolveDocumentFullPath($filePath);
+if (!$fullPath) {
     http_response_code(404);
     echo "File not found.";
     exit;
 }
 
-// 3) ส่ง header แล้วอ่านไฟล์ออกไป
-// ป้องกัน output เก่าค้าง
+// 6) เตรียมข้อมูล header
+$mime         = $doc['mime_type']    ?? 'application/octet-stream';
+$originalName = $doc['original_name'] ?? basename($fullPath);
+
+// เคลียร์ output buffer เดิม (กัน header พัง)
 if (ob_get_level()) {
     ob_end_clean();
 }
 
+// 7) ส่ง header และไฟล์ออกไป
 header('Content-Description: File Transfer');
 header('Content-Type: ' . $mime);
 header('Content-Disposition: inline; filename="' . basename($originalName) . '"');

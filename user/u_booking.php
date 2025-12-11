@@ -238,6 +238,28 @@ $activeMenu = 'booking';
                         </div>
                     </div>
                 </div>
+
+                <!-- รายชื่อผู้เข้าพัก -->
+                <div class="mb-4">
+                    <label class="form-label required">รายชื่อผู้เข้าพัก</label>
+                    <p class="text-muted small mb-2">
+                        กรุณากรอกรายชื่อผู้ที่จะเข้าพักทุกคนให้ครบถ้วน
+                        คุณสามารถกดปุ่ม “สร้างช่องกรอกจากจำนวน” เพื่อให้ระบบสร้างช่องตามจำนวนผู้เข้าพักด้านบนอัตโนมัติ
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="btnGenerateGuests">
+                            สร้างช่องกรอกจากจำนวนด้านบน
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAddGuest">
+                            + เพิ่มรายชื่อทีละคน
+                        </button>
+                    </div>
+
+                    <div id="guestListContainer"></div>
+                </div>
+
+
                 <div class="d-flex justify-content-between">
                     <button type="reset" class="btn btn-outline-secondary">ล้างฟอร์ม</button>
                     <button type="submit" class="btn btn-primary">ส่งคำขอ</button>

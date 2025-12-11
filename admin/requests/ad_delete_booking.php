@@ -13,6 +13,6 @@ if ($id <= 0) {
     exit;
 }
 
-$ok = deleteBookingWithRelations($conn, $id);
+$ok = deleteBooking($conn, $id);
 
 echo $ok ? 'success' : 'error';

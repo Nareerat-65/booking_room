@@ -31,7 +31,7 @@ $errors  = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    [$ok, $errors, $updated] = updateBookingFromAdminForm($conn, $bookingId, $_POST);
+    [$ok, $errors, $updated] = updateBooking($conn, $bookingId, $_POST);
 
     if ($ok) {
         $success = true;
