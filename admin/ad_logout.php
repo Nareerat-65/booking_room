@@ -16,6 +16,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // กลับไปหน้า login
-header("Location: /admin/ad_login.php");
+header("Location: /user/index.php");
 exit;
 ?>

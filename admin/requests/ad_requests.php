@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../db.php';
-require_once '../../utils/booking_helper.php';
+require_once __DIR__ . '/../../utils/booking_helper.php';
+require_once __DIR__ . '/../../db.php';
+require_once __DIR__ . '/../../utils/booking_service.php';
 
 $activeMenu = 'requests';
 $pageTitle = 'รายการจองห้องพัก';
@@ -64,31 +65,25 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql = "
-                                        SELECT b.*,
-                                            (
-                                                SELECT d.file_path
-                                                FROM booking_documents d
-                                                WHERE d.booking_id = b.id
-                                                    AND d.uploaded_by = 'admin'
-                                                    AND d.is_visible_to_user = 1
-                                                ORDER BY d.uploaded_at DESC
-                                                LIMIT 1
-                                            ) AS admin_doc_path
-                                        FROM bookings b
-                                        ORDER BY b.id DESC
-                                    ";
-                                    $result = $conn->query($sql);
+                                    try {
+                                        // ดึงจาก service
+                                        $result = getAdminBookingList($conn);
+                                    } catch (Throwable $e) {
+                                        $result = false;
+                                        // ถ้าอยาก log ก็ทำเพิ่มได้
+                                        // error_log($e->getMessage());
+                                    }
+
                                     if ($result && $result->num_rows > 0) {
-                                        $i = 1;
-
                                         while ($row = $result->fetch_assoc()) {
-                                            $status = $row['status'] ?? 'pending';
-                                            $reason = $row['reject_reason'] ?? '';
-                                            $docPath = $row['admin_doc_path'] ?? '';
-                                            $bookingCode = formatBookingCode($row['id'] ?? null);
+                                            $status     = $row['status'] ?? 'pending';
+                                            $reason     = $row['reject_reason'] ?? '';
+                                            $bookingId  = (int)$row['id'];
+                                            $bookingCode = formatBookingCode($bookingId);
 
-                                            echo "<tr data-id='{$row['id']}' data-status='{$status}' data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
+                                            echo "<tr data-id='{$bookingId}' data-status='{$status}' data-reason='" .
+                                                htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>";
+
                                             echo "<td>{$bookingCode}</td>";
                                             echo "<td>" . htmlspecialchars($row['full_name'], ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars($row['phone'], ENT_QUOTES, 'UTF-8') . "</td>";
@@ -97,7 +92,11 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                             echo "<td>" . htmlspecialchars(formatPosition($row), ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars($row['department'], ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars(formatPurpose($row), ENT_QUOTES, 'UTF-8') . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['study_dept'] ?: ($row['elective_dept'] ?: '-'), ENT_QUOTES, 'UTF-8') . "</td>";
+                                            echo "<td>" . htmlspecialchars(
+                                                $row['study_dept'] ?: ($row['elective_dept'] ?: '-'),
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) . "</td>";
                                             echo "<td>" . htmlspecialchars(formatDate($row['check_in_date']), ENT_QUOTES, 'UTF-8') . "</td>";
                                             echo "<td>" . htmlspecialchars(formatDate($row['check_out_date']), ENT_QUOTES, 'UTF-8') . "</td>";
 
@@ -109,6 +108,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                             if (empty($people)) $people[] = "-";
                                             echo "<td>" . implode(" ", $people) . "</td>";
 
+                                            // badge สถานะ
                                             if ($status == 'approved') {
                                                 $badge = '<span class="badge text-bg-success">อนุมัติแล้ว</span>';
                                             } elseif ($status == 'rejected') {
@@ -118,34 +118,36 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                             }
                                             echo "<td>{$badge}</td>";
 
+                                            // ปุ่มจัดการ (ใช้ของเดิมได้เลย)
                                             echo '<td>';
                                             if ($status === 'pending') {
                                                 echo "
-                                                        <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
-                                                        <button class='btn btn-danger btn-sm btn-reject'
-                                                                data-bs-toggle='modal' data-bs-target='#rejectModal'>
-                                                            ไม่อนุมัติ
-                                                        </button>
-                                                    ";
-                                            } else { // rejected
+                                                    <button class='btn btn-success mb-1 btn-sm btn-approve'>อนุมัติ</button>
+                                                    <button class='btn btn-danger btn-sm btn-reject'
+                                                            data-bs-toggle='modal' data-bs-target='#rejectModal'>
+                                                        ไม่อนุมัติ
+                                                    </button>
+                                                ";
+                                            } else {
                                                 echo "
-                                                        <button class='btn btn-outline-secondary btn-sm btn-detail'
-                                                                data-id='{$row['id']}'
-                                                                data-status='{$status}'
-                                                                data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
-                                                            <i class='fas fa-info-circle'></i> รายละเอียด
-                                                        </button>
-                                                    ";
+                                                    <button class='btn btn-outline-secondary btn-sm btn-detail'
+                                                            data-id='{$bookingId}'
+                                                            data-status='{$status}'
+                                                            data-reason='" . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . "'>
+                                                        <i class='fas fa-info-circle'></i> รายละเอียด
+                                                    </button>
+                                                ";
                                             }
                                             echo '</td>';
+
                                             echo "</tr>";
-                                            $i++;
                                         }
                                     } else {
                                         echo "<tr><td colspan='14' class='text-center text-muted'>ไม่มีข้อมูลการจอง</td></tr>";
                                     }
                                     ?>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
@@ -198,11 +200,11 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                         <i class="fas fa-trash-alt"></i> ลบรายการจอง
                     </button>
 
-                    <!-- <div class="ms-auto">
+                    <div class="ms-auto">
                         <button type="button" class="btn btn-primary d-none" id="btnEditBooking">
                             <i class="fas fa-edit"></i> แก้ไขข้อมูล
                         </button>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div>

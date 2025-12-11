@@ -60,14 +60,14 @@ $(function () {
         $('#detailBody').html(html);
 
         const $btnDelete = $('#btnDeleteBooking');
-        // const $btnEdit = $('#btnEditBooking');
+        const $btnEdit = $('#btnEditBooking');
 
         if (status === 'approved') {
             $btnDelete.removeClass('d-none');
-            // $btnEdit.removeClass('d-none');
+            $btnEdit.removeClass('d-none');
         } else {
             $btnDelete.addClass('d-none');
-            // $btnEdit.addClass('d-none');
+            $btnEdit.addClass('d-none');
         }
 
         $('#detailsModal').modal('show');
@@ -229,12 +229,12 @@ $(function () {
         });
     });
 
-    // // ⭐ ปุ่มแก้ไขข้อมูลใน modal
-    // $('#btnEditBooking').on('click', function () {
-    //     if (!currentDetailId) return;
+    // ⭐ ปุ่มแก้ไขข้อมูลใน modal
+    $('#btnEditBooking').on('click', function () {
+        if (!currentDetailId) return;
 
-    //     // วิธีง่ายสุด: เด้งไปหน้าฟอร์มแก้ไข
-    //     window.location.href = 'ad_booking_edit.php?id=' + currentDetailId;
-    // });
+        // วิธีง่ายสุด: เด้งไปหน้าฟอร์มแก้ไข
+        window.location.href = 'ad_booking_edit.php?id=' + currentDetailId;
+    });
 
 });
