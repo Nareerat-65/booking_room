@@ -26,7 +26,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
         <main class="app-main">
             <div class="app-content-header py-3">
                 <div class="container-fluid text-center">
-                    <h2 class="my-3">📋 รายการคำขอจองห้องพัก</h2>
+                    <h2 class="my-3">📋 รายการจองห้องพัก</h2>
                     <p class="text-muted mb-2">
                         ตรวจสอบคำขอ, อนุมัติ หรือระบุเหตุผลที่ไม่อนุมัติได้จากหน้านี้
                     </p>

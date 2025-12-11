@@ -27,15 +27,6 @@
     .main-header .nav-link {
         color: #fff !important;
     }
-
-    h2 {
-        font-size: 2.5rem;
-        font-weight: bold;
-    }
-
-    p {
-        font-size: 1.2rem;
-    }
 </style>
 
 <!-- เพิ่มเฉพาะหน้า (เช่น FullCalendar CSS ฯลฯ) -->

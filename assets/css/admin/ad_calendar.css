@@ -1,13 +1,12 @@
 #calendar {
-    max-width: 1500px;
+    max-width: 1200px;
     margin: 20px auto 40px;
     background: #fff;
     padding: 20px;
     border-radius: 0.75rem;
     box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
-.fc-event-title {
-    font-size: 1rem;       /* หรือ 14px */
+.fc-event-title {     /* หรือ 14px */
     font-weight: 600;      /* ทำให้เด่นขึ้น */
     white-space: normal;   /* ให้ตัดบรรทัดได้ */
 }

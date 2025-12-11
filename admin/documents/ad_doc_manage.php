@@ -20,7 +20,6 @@ if (!$booking) {
     exit;
 }
 
-// เอกสารของรายการนี้
 $sqlDocs = "
     SELECT d.*, 
            CASE 
@@ -39,7 +38,7 @@ $docRes->execute();
 $docResult = $docRes->get_result();
 
 $bookingCode = formatBookingCode($booking['id']);
-$pageTitle  = "เอกสารของรายการ #" . $bookingCode;
+$pageTitle  = "เลขที่ใบจอง #" . $bookingCode;
 $activeMenu = "documents";
 $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">'
 ?>
@@ -58,7 +57,7 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">
         <main class="app-main">
             <div class="app-content-header py-3">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
-                    <h1>เอกสารของรายการ #<?= $bookingCode ?></h1>
+                    <h3>เลขที่ใบจอง #<?= $bookingCode ?></h3>
                     <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
                 </div>
                 <div class="container-fluid mt-2">

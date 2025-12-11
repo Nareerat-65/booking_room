@@ -1,3 +1,31 @@
+.hero {
+    background-image: url("https://www.nu.ac.th/wp-content/uploads/2023/09/IMG_0330-1-scaled.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    padding: 120px 20px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* ทำพื้นหลังเข้มเพื่อให้อ่านตัวอักษรง่ายขึ้น */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(74, 74, 74, 0.45); /* ความเข้มปรับได้ */
+}
+
+/* ทำให้ข้อความซ้อนบน overlay */
+.hero * {
+    position: relative;
+    z-index: 2;
+}
+
 .btn-main {
     background-color: #F57B39;
     border: 0;

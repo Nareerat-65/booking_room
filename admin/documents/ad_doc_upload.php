@@ -18,13 +18,32 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
 }
 
 $originalName = $file['name'];
+$admin_id = (int)($_SESSION['admin_id'] ?? 0);
+$mime     = $file['type'];
+$size     = (int)$file['size'];
 $ext = pathinfo($originalName, PATHINFO_EXTENSION);
 $storedName = uniqid('doc_') . ($ext ? ".$ext" : '');
 $uploadDir  = __DIR__ . '/../../uploads/documents/';
+
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
 $fullPath = $uploadDir . $storedName;
+
+$allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+$extLower = strtolower($ext);
+
+if (!in_array($extLower, $allowedExtensions, true)) {
+    header("Location: ad_doc_manage.php?booking_id={$booking_id}&error=type");
+    exit;
+}
+
+$maxSize = 5 * 1024 * 1024; // 5 MB
+
+if ($size > $maxSize) {
+    header("Location: ad_doc_manage.php?booking_id={$booking_id}&error=size");
+    exit;
+}
 
 if (!move_uploaded_file($file['tmp_name'], $fullPath)) {
     header("Location: ad_doc_manage.php?booking_id={$booking_id}&error=save");
@@ -41,12 +60,11 @@ $sql = "
     VALUES (?, 'admin', ?, ?, ?, ?, ?, ?, ?, ?, NOW())
 ";
 
-$admin_id = (int)($_SESSION['admin_id'] ?? 0);
-$mime     = $file['type'];
-$size     = (int)$file['size'];
+
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iisssssii", 
+$stmt->bind_param(
+    "iisssssii",
     $booking_id,
     $admin_id,
     $doc_type,

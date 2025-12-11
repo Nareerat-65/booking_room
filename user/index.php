@@ -15,20 +15,20 @@ $activeMenu = 'index';
     <?php include '../partials/user/nav_user.php'; ?>
 
     <!-- ชื่อระบบ -->
-    <div class="container hero">
+    <div class="container-fluid hero px-0">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
-        <p class="text-muted mb-4">
+        <p class=" text-white mb-4">
             กรอกคำขอจองออนไลน์ รอการอนุมัติผ่านอีเมล และรับลิงก์สำหรับกรอกรายชื่อผู้เข้าพักในแต่ละห้อง
         </p>
         <div class="d-flex justify-content-center gap-2">
             <a href="u_booking.php" class="btn btn-main">เริ่มจองห้องพัก</a>
-            <a href="#steps" class="btn btn-outline-secondary rounded-pill">ดูขั้นตอนการจอง</a>
+            <a href="#steps" class="btn btn-outline-light rounded-pill">ดูขั้นตอนการจอง</a>
         </div>
     </div>
 
     <!-- ขั้นตอนการจอง -->
-    <div id="steps" class="container pb-4 " >
-        <h2 class="h4 mb-3">ขั้นตอนการใช้งาน</h2>
+    <div id="steps" class="container pb-4 mt-4 ">
+        <h2 class="h4 mb-3 text-center mb-4">ขั้นตอนการจอง</h2>
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="card step-card h-100 p-3">

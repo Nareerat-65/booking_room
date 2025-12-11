@@ -81,7 +81,7 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css
                                             <td><?= (int)$row['doc_count'] ?></td>
                                             <td>
                                                 <a href="ad_doc_manage.php?booking_id=<?= (int)$row['id'] ?>"
-                                                    class="btn-manage">
+                                                    class="btn btn-warning">
                                                     จัดการเอกสาร
                                                 </a>
                                             </td>

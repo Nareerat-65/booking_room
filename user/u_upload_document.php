@@ -159,7 +159,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_upload_document.cs
                                     <th>ประเภทเอกสาร</th>
                                     <th>ขนาด</th>
                                     <th>วันที่อัปโหลด</th>
-                                    <th class="text-center">เปิดดู</th>
+                                    <th class="text-center">เปิดเอกสาร</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,7 +182,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_upload_document.cs
                                             $url = htmlspecialchars($doc['file_path'], ENT_QUOTES, 'UTF-8');
                                             ?>
                                             <a href="../<?= $url ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                เปิดดู
+                                                เปิด
                                             </a>
                                         </td>
                                     </tr>

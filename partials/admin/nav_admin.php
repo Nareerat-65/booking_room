@@ -19,7 +19,7 @@
         <ul class="navbar-nav ms-auto">
             <li class="nav-item">
                 <div class="user-panel mt-1 d-flex align-items-center gap-2 px-3">
-                    <i class="fas fa-user-circle fa-2x text-white"></i>
+                    <i class="fas fa-user-circle fa-2x text-white ts-2"></i>
                     <div class="info">
                         <span class="d-block text-white fs-5">
                             <?= htmlspecialchars($_SESSION['admin_name']) ?>

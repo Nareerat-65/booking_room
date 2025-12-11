@@ -4,7 +4,7 @@
 .card {
     border-radius: 1rem;
     border: none;
-    box-shadow: 0 6px 22px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
 }
 
 /* Card Header */
@@ -25,7 +25,6 @@
     background: #ff8d4a;
     color: #fff;
     font-weight: 600;
-    font-size: 1.1rem;
     border: none;
     white-space: nowrap;
 }
@@ -34,18 +33,62 @@
     background: #ffffff;
 }
 
-/* Cells */
-.table-requests td {
-    padding: 8px 12px;
-    font-size: 1rem;
-}
-
 /* Buttons */
 .table-requests .btn {
     font-size: 0.75rem;
     padding: 4px 10px;
     border-radius: 6px;
 }
-.badge {
-        font-size: 0.9rem;
-    }
+
+/* ทำให้ DataTables ใช้ความกว้างที่กำหนด */
+#bookingsTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* คอลัมน์: เลขที่ใบจอง */
+#bookingsTable th:nth-child(1),
+#bookingsTable td:nth-child(1) {
+    width: 50px;
+}
+
+/* คอลัมน์: เลขที่ใบจอง */
+#bookingsTable th:nth-child(4),
+#bookingsTable td:nth-child(4) {
+    width: 50px;
+}
+
+#bookingsTable th:nth-child(7),
+#bookingsTable td:nth-child(7) {
+    width: 100px;
+}
+
+#bookingsTable th:nth-child(8),
+#bookingsTable td:nth-child(8) {
+    width: 120px;
+}
+
+#bookingsTable th:nth-child(10),
+#bookingsTable td:nth-child(10),
+#bookingsTable th:nth-child(11),
+#bookingsTable td:nth-child(11) {
+    width: 50px;
+}
+
+#bookingsTable th:nth-child(12),
+#bookingsTable td:nth-child(12) {
+    width: 40px;
+}
+
+
+#bookingsTable th:nth-child(13),
+#bookingsTable td:nth-child(13) {
+    width: 35px;
+}
+
+#bookingsTable th:nth-child(14),
+#bookingsTable td:nth-child(14) {
+    width: 58px;
+}
+
+
