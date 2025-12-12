@@ -4,8 +4,6 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../db.php';
-// เดิมเป็น __DIR__ . '/booking_helper.php' (ผิดโฟลเดอร์)
 require_once __DIR__ . '/../utils/booking_helper.php';
 require_once __DIR__ . '/../mail_config.php';
 
@@ -163,6 +161,10 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
         if ($status === 'approved') {
             $linkUpload = 'http://localhost:3000/user/u_upload_document.php?booking_id=' . $id;
 
+            global $conn;
+            $roomSummaryHtml = buildRoomSummaryHtml($conn, $id);
+            
+
             $mail->Subject = 'ผลการจองห้องพัก: อนุมัติ';
 
             $body = '<div style="background:#f2f2f2; padding:20px; font-family:Kanit, sans-serif;">
@@ -196,7 +198,7 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                                 <p style="margin:0;"><b>วันที่ย้ายออก:</b> ' . htmlspecialchars($checkOut ?? '', ENT_QUOTES, "UTF-8") . '</p>
                                 <p style="margin:0;"><b>จำนวนผู้เข้าพัก:</b> หญิง ' . $w . ' คน, ชาย ' . $m . ' คน</p>
                             </div>
-            
+                            ' . $roomSummaryHtml . '
                             <p>
                                 สามรถอัปโหลดเอกสารเพิ่มเติมได้ด้านล่างนี้
                             </p>
@@ -229,7 +231,6 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
 
             $mail->Subject = 'ผลการจองห้องพัก: อนุมัติ';
             $mail->Body    = $body;
-
         } elseif ($status === 'rejected') {
             $mail->Subject = 'ผลการจองห้องพัก: ไม่อนุมัติ';
 
@@ -274,7 +275,6 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                     </div>';
 
             $mail->Body = $body;
-
         } else {
             // status อื่นยังไม่รองรับ
             return;
