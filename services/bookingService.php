@@ -274,17 +274,26 @@ function approveBooking(mysqli $conn, int $bookingId): ?array
     try {
         $conn->begin_transaction();
 
-        // 1) อัปเดต booking เป็น approved + เก็บ token
+        // 1) อัปเดต booking เป็น approved + เคลียร์เหตุผลไม่อนุมัติ
         $stmt = $conn->prepare("
             UPDATE bookings
             SET status = 'approved',
-                reject_reason = NULL,
+                reject_reason = NULL
             WHERE id = ?
         ");
-        $stmt->bind_param('ssi', $token, $expire, $bookingId);
+        if (!$stmt) {
+            $conn->rollback();
+            error_log('approveBooking prepare failed: ' . $conn->error);
+            return null;
+        }
+
+        $stmt->bind_param('i', $bookingId);
+
         if (!$stmt->execute()) {
+            $err = $stmt->error;
             $stmt->close();
             $conn->rollback();
+            error_log('approveBooking execute failed: ' . $err);
             return null;
         }
         $stmt->close();
@@ -320,7 +329,6 @@ function approveBooking(mysqli $conn, int $bookingId): ?array
         return null;
     }
 }
-
 
 /**
  * ไม่อนุมัติ booking
