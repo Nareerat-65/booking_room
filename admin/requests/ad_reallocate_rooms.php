@@ -35,19 +35,31 @@ try {
     $stmt->execute();
     $stmt->close();
 
+    // (ถ้าทำตามข้อแนะนำในข้อ 1 แล้ว autoFill จะลบ room_guests เอง
+    //  แต่จะลบตรงนี้เลยก็ได้ ชัดเจนดี)
+    $stmt = $conn->prepare("DELETE FROM room_guests WHERE booking_id = ?");
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    $stmt->close();
+
     // จัดใหม่
     $ok = allocateRoomsStrict($conn, $bookingId);
-
     if (!$ok) {
         $conn->rollback();
         header("Location: ad_booking_edit.php?id={$bookingId}&reallocate_error=full");
         exit;
     }
 
+    // ✅ เติมรายชื่อผู้เข้าพักลง room_guests ตาม allocation ใหม่
+    if (!autoFillRoomGuestsFromRequests($conn, $bookingId)) {
+        $conn->rollback();
+        header("Location: ad_booking_edit.php?id={$bookingId}&reallocate_error=guest_fill");
+        exit;
+    }
+
     $conn->commit();
     header("Location: ad_booking_edit.php?id={$bookingId}&reallocated=1");
     exit;
-
 } catch (Throwable $e) {
     $conn->rollback();
     error_log('reallocate error: ' . $e->getMessage());

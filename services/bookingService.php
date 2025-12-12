@@ -2,7 +2,8 @@
 // services/bookingService.php
 
 require_once __DIR__ . '/../utils/booking_helper.php';
-
+require_once __DIR__ . '/roomAllocationService.php';
+require_once __DIR__ . '/../db.php';
 // ถ้าจะใช้ส่งเมล ให้ require PHPMailer
 require_once __DIR__ . '/../PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../PHPMailer/src/PHPMailer.php';
@@ -270,20 +271,14 @@ function deleteBooking(mysqli $conn, int $bookingId): bool
  */
 function approveBooking(mysqli $conn, int $bookingId): ?array
 {
-    // สร้าง token
-    $token  = bin2hex(random_bytes(16)); // 32 chars
-    $expire = date('Y-m-d H:i:s', strtotime('+7 days'));
-
     try {
         $conn->begin_transaction();
 
-        // อัปเดต booking
+        // 1) อัปเดต booking เป็น approved + เก็บ token
         $stmt = $conn->prepare("
             UPDATE bookings
             SET status = 'approved',
                 reject_reason = NULL,
-                confirm_token = ?,
-                confirm_token_expires = ?
             WHERE id = ?
         ");
         $stmt->bind_param('ssi', $token, $expire, $bookingId);
@@ -294,31 +289,38 @@ function approveBooking(mysqli $conn, int $bookingId): ?array
         }
         $stmt->close();
 
-        // ลบ allocations เดิม (กันกรณีมีอยู่แล้ว)
+        // 2) ลบ allocations เดิม (กันกรณีมีอยู่แล้ว)
         $stmt = $conn->prepare("DELETE FROM room_allocations WHERE booking_id = ?");
         $stmt->bind_param('i', $bookingId);
         $stmt->execute();
         $stmt->close();
 
-        // จัดห้องใหม่
+        // 3) จัดห้องใหม่แบบ strict
         $okAlloc = allocateRoomsStrict($conn, $bookingId);
         if (!$okAlloc) {
+            $conn->rollback();
+            return ['__error__' => 'no_rooms'];
+        }
+
+        // 4) เติมรายชื่อผู้เข้าพักจาก booking_guest_requests ลง room_guests
+        if (!autoFillRoomGuestsFromRequests($conn, $bookingId)) {
             $conn->rollback();
             return null;
         }
 
+        // 5) ทุกอย่างผ่าน → commit
         $conn->commit();
 
-        // ดึงข้อมูล booking ที่ต้องใช้ส่งเมล
+        // 6) ดึงข้อมูล booking ที่ต้องใช้ส่งเมลกลับไป
         $booking = getBookingById($conn, $bookingId);
         return $booking ?: null;
-
     } catch (Throwable $e) {
         $conn->rollback();
         error_log('approveBooking error: ' . $e->getMessage());
         return null;
     }
 }
+
 
 /**
  * ไม่อนุมัติ booking
@@ -340,6 +342,35 @@ function rejectBooking(mysqli $conn, int $bookingId, string $reason): ?array
 
     return getBookingById($conn, $bookingId);
 }
+/**
+ * ดึงรายชื่อผู้เข้าพักที่กรอกในฟอร์มคำขอ
+ */
+function getGuestRequestsByBookingId(mysqli $conn, int $bookingId): array
+{
+    $sql = "
+        SELECT id, guest_name, gender, guest_phone
+        FROM booking_guest_requests
+        WHERE booking_id = ?
+        ORDER BY id
+    ";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return [];
+    }
+
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $rows = [];
+    while ($row = $res->fetch_assoc()) {
+        $rows[] = $row;
+    }
+
+    $stmt->close();
+    return $rows;
+}
 
 /**
  * ตั้งสถานะกลับเป็น pending
@@ -356,4 +387,3 @@ function setBookingPending(mysqli $conn, int $bookingId): bool
     $stmt->close();
     return $ok;
 }
-

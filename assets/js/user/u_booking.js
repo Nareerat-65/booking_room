@@ -16,20 +16,18 @@ document.querySelectorAll('.dropdown').forEach(drop => {
 });
 
 const today = new Date();
-today.setHours(0, 0, 0, 0);
+today.setHours(0, 0, 0, 0);  
 
 const minCheckIn = new Date(today);
-const maxCheckIn = new Date(today);
 minCheckIn.setDate(minCheckIn.getDate() + 14);
-maxCheckIn.setDate(minCheckIn.getDate() + 60);
 
 // datepicker ช่องวันเข้า
 $('#checkInDate').datepicker({
     format: 'dd-mm-yyyy',
     autoclose: true,
     startDate: minCheckIn,
-    language: 'th',
-    thaiyear: true
+    language: 'th',      
+    thaiyear: true       
 }).on('changeDate', function (e) {
     const start = e.date; // วันที่ย้ายเข้า
     $('#checkOutDate').datepicker('setStartDate', start);
@@ -46,8 +44,8 @@ $('#checkOutDate').datepicker({
     format: 'dd-mm-yyyy',
     autoclose: true,
     startDate: minCheckIn,
-    language: 'th',
-    thaiyear: true
+    language: 'th',      
+    thaiyear: true  
 });
 
 // ===== ส่งฟอร์มแบบ AJAX + SweetAlert2 =====
@@ -116,10 +114,10 @@ $(function () {
 // ส่วนจัดการรายชื่อผู้เข้าพัก
 document.addEventListener('DOMContentLoaded', function () {
     const womanInput = document.getElementById('womanCount');
-    const manInput = document.getElementById('manCount');
-    const btnGen = document.getElementById('btnGenerateGuests');
-    const btnAdd = document.getElementById('btnAddGuest');
-    const container = document.getElementById('guestListContainer');
+    const manInput   = document.getElementById('manCount');
+    const btnGen     = document.getElementById('btnGenerateGuests');
+    const btnAdd     = document.getElementById('btnAddGuest');
+    const container  = document.getElementById('guestListContainer');
 
     if (!container) return;
 
@@ -161,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const btnRemove = row.querySelector('.btn-remove-guest');
         btnRemove.addEventListener('click', function () {
             row.remove();
+            // อัปเดตเลขลำดับใหม่เล็กน้อย (ไม่จำเป็นมาก แต่เพื่อความสวย)
             renumberGuests();
         });
 
@@ -181,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnGen) {
         btnGen.addEventListener('click', function () {
             const w = parseInt(womanInput.value || '0', 10);
-            const m = parseInt(manInput.value || '0', 10);
+            const m = parseInt(manInput.value   || '0', 10);
             const total = (isNaN(w) ? 0 : w) + (isNaN(m) ? 0 : m);
 
             container.innerHTML = '';
@@ -212,67 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const current = container.querySelectorAll('.guest-row').length;
             createGuestRow(current + 1, '');
             renumberGuests();
-        });
-    }
-
-    // ✅ บังคับให้กรอกรายชื่อครบตามจำนวนหญิง/ชาย ก่อนส่งฟอร์ม
-    const bookingForm = document.getElementById('bookingForm');
-
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function (e) {
-            const w = parseInt(womanInput.value || '0', 10);
-            const m = parseInt(manInput.value || '0', 10);
-            const expected = (isNaN(w) ? 0 : w) + (isNaN(m) ? 0 : m);
-
-            // 1) ต้องมีจำนวนผู้เข้าพักอย่างน้อย 1 คน
-            if (expected <= 0) {
-                e.preventDefault();
-                alert('กรุณาระบุจำนวนผู้เข้าพักอย่างน้อย 1 คน');
-                womanInput.focus();
-                return;
-            }
-
-            // 2) ต้องมีช่องรายชื่อถูกสร้างแล้ว
-            const nameInputs = container.querySelectorAll('input[name="guest_name[]"]');
-            if (nameInputs.length === 0) {
-                e.preventDefault();
-                alert('กรุณากดปุ่ม "สร้างช่องกรอกจากจำนวนด้านบน" หรือเพิ่มรายชื่อผู้เข้าพักให้ครบ ' + expected + ' คน');
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return;
-            }
-
-            // 3) นับจำนวนชื่อที่กรอกจริง (ไม่ว่าง)
-            let filled = 0;
-            nameInputs.forEach((input) => {
-                if (input.value.trim() !== '') {
-                    filled++;
-                }
-            });
-
-            // 4) ถ้าน้อยกว่าที่ระบุ → บล็อก
-            if (filled < expected) {
-                e.preventDefault();
-                alert(
-                    'คุณกำหนดจำนวนผู้เข้าพักทั้งหมด ' + expected + ' คน\n' +
-                    'แต่กรอกรายชื่อแล้วเพียง ' + filled + ' คน\n\n' +
-                    'กรุณากรอกชื่อผู้เข้าพักให้ครบทุกคน'
-                );
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return;
-            }
-
-            // 5) ถ้ามากกว่าที่ระบุ → บล็อกเหมือนกัน
-            if (filled > expected) {
-                e.preventDefault();
-                alert(
-                    'จำนวนรายชื่อผู้เข้าพัก (' + filled + ' คน) มากกว่าจำนวนที่ระบุไว้ (' + expected + ' คน)\n\n' +
-                    'กรุณาปรับจำนวนผู้เข้าพัก หรือแก้ไขรายชื่อให้ตรงกัน'
-                );
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                return;
-            }
-
-            // ผ่านทุกเงื่อนไข → ส่งฟอร์มได้
         });
     }
 });

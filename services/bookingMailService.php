@@ -4,7 +4,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../db.php';
 // เดิมเป็น __DIR__ . '/booking_helper.php' (ผิดโฟลเดอร์)
 require_once __DIR__ . '/../utils/booking_helper.php';
 require_once __DIR__ . '/../mail_config.php';
@@ -141,7 +141,6 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
     $checkOut = $booking['check_out_date'] ?? null;
     $w        = (int)($booking['woman_count'] ?? 0);
     $m        = (int)($booking['man_count']   ?? 0);
-    $token    = $booking['confirm_token']     ?? null;
     $id       = (int)($booking['id'] ?? 0);
 
     if (!$email) {
@@ -162,7 +161,6 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
         $mail->isHTML(true);
 
         if ($status === 'approved') {
-            $linkGuest  = 'http://localhost:3000/user/u_guest_form.php?token=' . urlencode((string)$token);
             $linkUpload = 'http://localhost:3000/user/u_upload_document.php?booking_id=' . $id;
 
             $mail->Subject = 'ผลการจองห้องพัก: อนุมัติ';
@@ -187,7 +185,7 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                             <p>
                                 ระบบได้อนุมัติคำขอจองห้องพักของคุณเรียบร้อยแล้ว
                                 โปรดตรวจสอบข้อมูลรายละเอียดการเข้าพักด้านล่าง
-                                และกดปุ่มเพื่อกรอกรายชื่อผู้เข้าพักในแต่ละห้อง
+                                หากไม่ถูกต้องหรือมีปัญหาโปรดติดต่อ 080-000-0000
                             </p>
 
                             <div style="background:#fafafa; border-radius:8px; padding:12px 14px;
@@ -200,16 +198,10 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                             </div>
             
                             <p>
-                                <b>ขั้นตอนถัดไป:</b><br>
-                                กรุณากดปุ่มด้านล่างเพื่อกรอกรายชื่อผู้เข้าพัก (พร้อมเบอร์โทร) แยกตามแต่ละห้อง
+                                สามรถอัปโหลดเอกสารเพิ่มเติมได้ด้านล่างนี้
                             </p>
 
                             <div style="text-align:center; margin:24px 0 10px;">
-                                <a href="' . $linkGuest . '" style="background:#F57B39; color:#ffffff; padding:12px 26px; 
-                                border-radius:999px; text-decoration:none; font-weight:bold;
-                                display:inline-block;">
-                                    กรอกรายชื่อผู้เข้าพัก
-                                </a>
                                 <a href="' . $linkUpload . '" style="background:#F5F5F5; color:#333333; padding:10px 22px;
                                     border-radius:999px; text-decoration:none; font-weight:bold;
                                     display:inline-block; font-size:14px;">
@@ -219,10 +211,6 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
 
                             <p style="font-size:13px; color:#777; margin-top:15px;">
                                 หากกดปุ่มไม่ได้ สามารถคัดลอกลิงก์ด้านล่างไปวางในเบราว์เซอร์ได้เช่นกัน:<br>
-                                <b>กรอกรายชื่อผู้เข้าพัก:</b><br>
-                                <span style="word-break:break-all; color:#555;">
-                                    ' . $linkGuest . '
-                                </span><br>
                                 <b>อัปโหลดเอกสารประกอบ:</b><br>
                                 <span style="word-break:break-all; color:#555;">
                                     ' . $linkUpload . '

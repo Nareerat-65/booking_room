@@ -26,7 +26,7 @@ $(function () {
 
         const id = $tr.data('id');
         currentDetailId = id;
-        
+
         const name = $tr.find('td').eq(1).text().trim();
         const inDate = $tr.find('td').eq(9).text().trim();
         const outDate = $tr.find('td').eq(10).text().trim();
@@ -119,6 +119,13 @@ $(function () {
                     title: (status === 'approved') ? 'อนุมัติสำเร็จ' : 'บันทึกเหตุผลสำเร็จ',
                     timer: 1500,
                     showConfirmButton: false
+                });
+
+            } else if (res === 'no_rooms') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ไม่สามารถอนุมัติได้',
+                    html: 'จำนวนห้องว่างไม่เพียงพอในช่วงวันที่ผู้ใช้เลือก<br>กรุณาจัดสรรช่วงวันใหม่หรือแจ้งผู้ใช้ปรับวันเข้าพัก'
                 });
 
             } else {

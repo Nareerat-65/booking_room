@@ -72,7 +72,7 @@
 #bookingsTable td:nth-child(10),
 #bookingsTable th:nth-child(11),
 #bookingsTable td:nth-child(11) {
-    width: 50px;
+    width: 55px;
 }
 
 #bookingsTable th:nth-child(12),
