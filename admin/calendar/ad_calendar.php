@@ -69,8 +69,6 @@ $extraHead = '
     <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
     <script src="../../assets/js/admin/ad_calendar.js"></script>
-
-
 </body>
 
 </html>

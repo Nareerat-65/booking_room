@@ -35,8 +35,6 @@ try {
     $stmt->execute();
     $stmt->close();
 
-    // (ถ้าทำตามข้อแนะนำในข้อ 1 แล้ว autoFill จะลบ room_guests เอง
-    //  แต่จะลบตรงนี้เลยก็ได้ ชัดเจนดี)
     $stmt = $conn->prepare("DELETE FROM room_guests WHERE booking_id = ?");
     $stmt->bind_param('i', $bookingId);
     $stmt->execute();
