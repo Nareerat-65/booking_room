@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#checkInDate').datepicker({
         format: 'dd-mm-yyyy',
         autoclose: true,
-        startDate: minCheckIn,   
-        endDate: maxCheckIn,   
+        startDate: minCheckIn,
+        endDate: maxCheckIn,
         language: 'th',
         thaiyear: true
     }).on('changeDate', function (e) {
@@ -48,8 +48,8 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#checkOutDate').datepicker({
         format: 'dd-mm-yyyy',
         autoclose: true,
-        startDate: minCheckIn,   
-        endDate: maxCheckIn,   
+        startDate: minCheckIn,
+        endDate: maxCheckIn,
         language: 'th',
         thaiyear: true
     });
@@ -64,6 +64,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
         $('#checkInDate').datepicker('setDatesDisabled', disabled);
         $('#checkOutDate').datepicker('setDatesDisabled', disabled);
+    });
+
+    // ดัก mousedown บนทุก cell วันที่ แล้วเช็คเองว่าถูก disable มั้ย
+    $(document).on('mousedown', '.datepicker-days td.day', function (e) {
+        const $td = $(this);
+
+        // ถ้า td นี้ถูกปิดใช้งาน (เช่น disabled จาก setDatesDisabled / ช่วงวันที่นอก range)
+        if ($td.hasClass('disabled') || $td.hasClass('disabled-date')) {
+            e.preventDefault(); // กันไม่ให้ datepicker ทำงานต่อ
+
+            Swal.fire({
+                icon: 'info',
+                title: 'ไม่สามารถเลือกวันที่นี้ได้',
+                html: `
+                ช่วงวันดังกล่าวไม่เปิดให้จองผ่านระบบออนไลน์<br>
+                หากต้องการจองในกรณีเร่งด่วนหรือฉุกเฉิน<br>
+                กรุณาติดต่อเจ้าหน้าที่เพื่อดำเนินการแทน<br><br>
+                <b>เบอร์โทรศัพท์: 0-5596-7847</b>
+            `,
+                confirmButtonText: 'ตกลง'
+            });
+        }
     });
 
 
