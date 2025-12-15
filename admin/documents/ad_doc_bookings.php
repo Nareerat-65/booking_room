@@ -8,7 +8,8 @@ $res = getBookingsForDocumentPage($conn);
 
 $pageTitle  = "จัดการเอกสาร";
 $activeMenu = "documents";
-$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css">'
+$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -39,7 +40,7 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css
                             <h3 class="card-title">เลือกรายการจองเพื่อจัดการเอกสาร</h3>
                         </div>
                         <div class="card-body table-responsive">
-                            <table id="docBookingTable" class="table table-striped">
+                            <table id="docBookingTable" class="table table-bordered table-striped table-requests text-center align-middle">
                                 <thead>
                                     <tr>
                                         <th>เลขที่ใบจอง</th>
@@ -82,13 +83,9 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css
         <?php include '../../partials/admin/footer_admin.php'; ?>
     </div>
         <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.jQuery && $.fn.DataTable) {
-                $('#docBookingTable').DataTable();
-            }
-        });
-    </script>
+        <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/assets/js/admin/ad_doc_bookings.js"></script>
 </body>
 
 </html>

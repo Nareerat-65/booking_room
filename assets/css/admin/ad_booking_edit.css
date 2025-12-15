@@ -3,3 +3,7 @@
     padding: 18px;
     color: #fff;
 }
+.purpose-study-group,
+.purpose-elective-group {
+    display: none;
+}

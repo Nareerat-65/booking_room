@@ -152,7 +152,6 @@ $activeMenu = 'booking';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <label class="form-label small mb-1">ภาควิชา</label>
                                 <select name="department" id="department" class="form-select" required>
                                     <option value="">เลือกภาควิชา</option>
                                     <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>

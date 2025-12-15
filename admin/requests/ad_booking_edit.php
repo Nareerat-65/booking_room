@@ -37,12 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // helper h()
-function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function h($v)
+{
+    return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+}
 
 $position      = $booking['position'] ?? '';
 $studentYear   = $booking['student_year'] ?? '';
 $positionOther = $booking['position_other'] ?? '';
 $purpose       = $booking['purpose'] ?? '';
+$study_dept    = $booking['study_dept'] ?? '';
+$elective_dept = $booking['elective_dept'] ?? '';
 $checkInValue  = $booking['check_in_date'] ?? '';
 $checkOutValue = $booking['check_out_date'] ?? '';
 $womanCount    = (int)($booking['woman_count'] ?? 0);
@@ -151,9 +156,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-3">
-                                            <label class="form-label">สถานะ / ตำแหน่ง</label>
+                                            <label class="form-label">ตำแหน่ง</label>
                                             <select name="position" id="position" class="form-select">
-                                                <option value="">-- เลือก --</option>
+                                                <option value="">เลือกตำแหน่ง</option>
                                                 <option value="student" <?= $position === 'student'  ? 'selected' : '' ?>>นักศึกษา/นิสิตแพทย์</option>
                                                 <option value="intern" <?= $position === 'intern'   ? 'selected' : '' ?>>แพทย์ใช้ทุน</option>
                                                 <option value="resident" <?= $position === 'resident' ? 'selected' : '' ?>>แพทย์ประจำบ้าน</option>
@@ -194,7 +199,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css
                                         <div class="col-md-4">
                                             <label class="form-label d-block">วัตถุประสงค์หลัก</label>
                                             <select name="purpose" id="purpose" class="form-select">
-                                                <option value="">-- เลือก --</option>
+                                                <option value="">เลือกวัตถุประสงค์</option>
                                                 <option value="study" <?= $purpose === 'study'    ? 'selected' : '' ?>>ศึกษารายวิชา</option>
                                                 <option value="elective" <?= $purpose === 'elective' ? 'selected' : '' ?>>Elective</option>
                                             </select>
@@ -204,15 +209,47 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css
                                             <input type="text" name="study_course" class="form-control"
                                                 value="<?= h($booking['study_course'] ?? '') ?>">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 purpose-study-group">
                                             <label class="form-label">ภาควิชาที่มาศึกษา</label>
-                                            <input type="text" name="study_dept" class="form-control"
-                                                value="<?= h($booking['study_dept'] ?? '') ?>">
+                                            <select name="study_dept" id="study_dept" class="form-select" >
+                                                <option value="">เลือกภาควิชา</option>
+                                                <option value="กุมารเวชศาสตร์" <?= $study_dept === 'กุมารเวชศาสตร์'? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
+                                                <option value="จักษุวิทยา" <?= $study_dept === 'จักษุวิทยา'? 'selected' : '' ?>>จักษุวิทยา</option>
+                                                <option value="จิตเวชศาสตร์" <?= $study_dept === 'จิตเวชศาสตร์'? 'selected' : '' ?>>จิตเวชศาสตร์</option>
+                                                <option value="นิติเวชศาสตร์" <?= $study_dept === 'นิติเวชศาสตร์'? 'selected' : '' ?>>นิติเวชศาสตร์</option>
+                                                <option value="พยาธิวิทยา" <?= $study_dept === 'พยาธิวิทยา'? 'selected' : '' ?>>พยาธิวิทยา</option>
+                                                <option value="รังสีวิทยา" <?= $study_dept === 'รังสีวิทยา'? 'selected' : '' ?>>รังสีวิทยา</option>
+                                                <option value="วิสัญญีวิทยา" <?= $study_dept === 'วิสัญญีวิทยา'? 'selected' : '' ?>>วิสัญญีวิทยา</option>
+                                                <option value="ศัลยศาสตร์" <?= $study_dept === 'ศัลยศาสตร์'? 'selected' : '' ?>>ศัลยศาสตร์</option>
+                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $study_dept === 'สูติศาสตร์-นรีเวชวิทยา'? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
+                                                <option value="ออร์โธปิดิกส์" <?= $study_dept === 'ออร์โธปิดิกส์'? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
+                                                <option value="อายุรศาสตร์" <?= $study_dept === 'อายุรศาสตร์'? 'selected' : '' ?>>อายุรศาสตร์</option>
+                                                <option value="เวชศาสตร์ครอบครัว" <?= $study_dept === 'เวชศาสตร์ครอบครัว'? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
+                                                <option value="เวชศาสตร์ชุมชน" <?= $study_dept === 'เวชศาสตร์ชุมชน'? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
+                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $study_dept === 'เวชศาสตร์ฟื้นฟู'? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
+                                                <option value="โสต ศอ นาสิกวิทยา" <?= $study_dept === 'โสต ศอ นาสิกวิทยา'? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-4 purpose-elective-group">
-                                            <label class="form-label">ภาควิชา (Elective / หมุนเวียน)</label>
-                                            <input type="text" name="elective_dept" class="form-control"
-                                                value="<?= h($booking['elective_dept'] ?? '') ?>">
+                                            <label class="form-label">ภาควิชา (Elective)</label>
+                                            <select name="elective_dept" id="elective_dept" class="form-select" >
+                                                <option value="">เลือกภาควิชา</option>
+                                                <option value="กุมารเวชศาสตร์" <?= $elective_dept === 'กุมารเวชศาสตร์'? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
+                                                <option value="จักษุวิทยา" <?= $elective_dept === 'จักษุวิทยา'? 'selected' : '' ?>>จักษุวิทยา</option>
+                                                <option value="จิตเวชศาสตร์" <?= $elective_dept === 'จิตเวชศาสตร์'? 'selected' : '' ?>>จิตเวชศาสตร์</option>
+                                                <option value="นิติเวชศาสตร์" <?= $elective_dept === 'นิติเวชศาสตร์'? 'selected' : '' ?>>นิติเวชศาสตร์</option>
+                                                <option value="พยาธิวิทยา" <?= $elective_dept === 'พยาธิวิทยา'? 'selected' : '' ?>>พยาธิวิทยา</option>
+                                                <option value="รังสีวิทยา" <?= $elective_dept === 'รังสีวิทยา'? 'selected' : '' ?>>รังสีวิทยา</option>
+                                                <option value="วิสัญญีวิทยา" <?= $elective_dept === 'วิสัญญีวิทยา'? 'selected' : '' ?>>วิสัญญีวิทยา</option>
+                                                <option value="ศัลยศาสตร์" <?= $elective_dept === 'ศัลยศาสตร์'? 'selected' : '' ?>>ศัลยศาสตร์</option>
+                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $elective_dept === 'สูติศาสตร์-นรีเวชวิทยา'? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
+                                                <option value="ออร์โธปิดิกส์" <?= $elective_dept === 'ออร์โธปิดิกส์'? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
+                                                <option value="อายุรศาสตร์" <?= $elective_dept === 'อายุรศาสตร์'? 'selected' : '' ?>>อายุรศาสตร์</option>
+                                                <option value="เวชศาสตร์ครอบครัว" <?= $elective_dept === 'เวชศาสตร์ครอบครัว'? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
+                                                <option value="เวชศาสตร์ชุมชน" <?= $elective_dept === 'เวชศาสตร์ชุมชน'? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
+                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $elective_dept === 'เวชศาสตร์ฟื้นฟู'? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
+                                                <option value="โสต ศอ นาสิกวิทยา" <?= $elective_dept === 'โสต ศอ นาสิกวิทยา'? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

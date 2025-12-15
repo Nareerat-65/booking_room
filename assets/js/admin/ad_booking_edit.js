@@ -7,12 +7,25 @@ function togglePositionFields() {
 }
 
 function togglePurposeFields() {
-    const purpose = document.getElementById('purpose').value;
-    document.querySelector('.purpose-study-group').style.display =
-        (purpose === 'study') ? 'block' : 'none';
-    document.querySelector('.purpose-elective-group').style.display =
-        (purpose === 'elective') ? 'block' : 'none';
+    const purpose = document.getElementById('purpose')?.value || '';
+
+    const studyGroups    = document.querySelectorAll('.purpose-study-group');
+    const electiveGroups = document.querySelectorAll('.purpose-elective-group');
+
+    // ซ่อนทั้งหมดก่อน
+    studyGroups.forEach(el => el.style.display = 'none');
+    electiveGroups.forEach(el => el.style.display = 'none');
+
+    // แสดงตามวัตถุประสงค์
+    if (purpose === 'study') {
+        studyGroups.forEach(el => el.style.display = 'block');
+    }
+
+    if (purpose === 'elective') {
+        electiveGroups.forEach(el => el.style.display = 'block');
+    }
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     togglePositionFields();
