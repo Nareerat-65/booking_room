@@ -7,18 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // เปลี่ยนข้อความปุ่มตามที่เลือกใน dropdown
-    document.querySelectorAll('.dropdown').forEach(drop => {
-        const btn = drop.querySelector('.dropdown-toggle');
-        const hidden = drop.querySelector('input[type="hidden"]');
-        drop.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
-            item.addEventListener('click', function () {
-                btn.textContent = this.textContent;
-                if (hidden) hidden.value = this.textContent;
-            });
-        });
-    });
-
+    // ===== Datepicker =====
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -94,59 +83,73 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = $('#bookingForm');
 
         form.on('submit', function (e) {
-            e.preventDefault(); // กันไม่ให้ submit ปกติ
+            e.preventDefault(); // ❗ กัน submit ปกติไว้ก่อน
 
-            // 🔸 เปิด SweetAlert Loading แทน loadingModal
             Swal.fire({
-                title: 'กำลังส่งคำขอ...',
-                text: 'กรุณารอสักครู่',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
+                icon: 'question',
+                title: 'ยืนยันการส่งคำขอ',
+                html: `
+            กรุณาตรวจสอบข้อมูลให้ถูกต้องครบถ้วนก่อนส่ง<br>
+            เมื่อส่งแล้วจะไม่สามารถแก้ไขข้อมูลได้ทันที
+        `,
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน ส่งคำขอ',
+                cancelButtonText: 'กลับไปตรวจสอบ',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (!result.isConfirmed) {
+                    return;
                 }
-            });
 
-            $.ajax({
-                url: 'u_booking_process.php',
-                method: 'POST',
-                data: form.serialize(),
-                dataType: 'json'
-            }).done(function (res) {
-                // ปิด loading ก่อน
-                Swal.close();
+                Swal.fire({
+                    title: 'กำลังส่งคำขอ...',
+                    text: 'กรุณารอสักครู่',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
-                if (res.status === 'success') {
-                    // ล้างฟอร์ม
-                    form.trigger('reset');
-                    $('#checkInDate').datepicker('update', '');
-                    $('#checkOutDate').datepicker('update', '');
+                $.ajax({
+                    url: 'u_booking_process.php',
+                    method: 'POST',
+                    data: form.serialize(),
+                    dataType: 'json'
+                }).done(function (res) {
+                    Swal.close();
 
-                    // 🔸 แสดง SweetAlert Success แทน successModal
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'ส่งคำขอสำเร็จ',
-                        html: `
+                    if (res.status === 'success') {
+                        form.trigger('reset');
+                        $('#checkInDate').datepicker('update', '');
+                        $('#checkOutDate').datepicker('update', '');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ส่งคำขอสำเร็จ',
+                            html: `
                         ระบบได้รับคำขอจองห้องพักของคุณเรียบร้อยแล้ว<br>
                         <span style="font-size:0.9rem;color:#666;">
-                          กรุณารอการติดต่อกลับจากเจ้าหน้าที่เพื่อยืนยันการจอง
+                            กรุณารอการติดต่อกลับจากเจ้าหน้าที่เพื่อยืนยันการจอง
                         </span>
                     `,
-                        confirmButtonText: 'ตกลง'
-                    });
-                } else {
+                            confirmButtonText: 'ตกลง'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: res.message || 'ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง'
+                        });
+                    }
+                }).fail(function () {
+                    Swal.close();
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาด',
-                        text: res.message || 'ไม่สามารถส่งคำขอได้ กรุณาลองใหม่อีกครั้ง'
+                        text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง'
                     });
-                }
-            }).fail(function () {
-                Swal.close();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด',
-                    text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง'
                 });
             });
         });

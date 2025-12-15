@@ -9,10 +9,10 @@
 
 /* Card Header */
 .card-header {
-    background: #f57b39;
-    border-radius: 1rem 1rem 0 0 !important;
+    background: linear-gradient(45deg, #ff7b29, #ff9f4a);
+    padding: 18px;
+    color: #fff;
     border: none;
-    padding: 1rem 1.25rem;
 }
 
 /* Table */

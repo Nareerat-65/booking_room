@@ -4,9 +4,6 @@ require_once __DIR__ . '/../../db.php';
 require_once __DIR__ . '/../../utils/booking_helper.php';
 require_once __DIR__ . '/../../services/bookingService.php';
 
-$activeMenu = 'requests';
-$pageTitle  = 'แก้ไขข้อมูลการจอง';
-
 $bookingId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($bookingId <= 0) {
     header('Location: ad_requests.php');
@@ -42,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // helper h()
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 
-// เตรียมค่าตัวแปรไปใช้ใน view ตามเดิม...
 $position      = $booking['position'] ?? '';
 $studentYear   = $booking['student_year'] ?? '';
 $positionOther = $booking['position_other'] ?? '';
@@ -51,6 +47,10 @@ $checkInValue  = $booking['check_in_date'] ?? '';
 $checkOutValue = $booking['check_out_date'] ?? '';
 $womanCount    = (int)($booking['woman_count'] ?? 0);
 $manCount      = (int)($booking['man_count'] ?? 0);
+
+$activeMenu = 'requests';
+$pageTitle  = 'แก้ไขข้อมูลการจอง';
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">

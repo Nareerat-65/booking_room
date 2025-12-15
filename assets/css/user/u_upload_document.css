@@ -1,8 +1,8 @@
 .card-header {
-    background-color: #F57B39;
-    color: #FFFFFF;
+    background: linear-gradient(45deg, #ff7b29, #ff9f4a);
+    padding: 18px;
+    color: #fff;
     border-bottom: 0;
-    font-size: 1.25rem;
 }
 .btn {
     background-color: #F57B39;

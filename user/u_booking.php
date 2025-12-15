@@ -152,29 +152,25 @@ $activeMenu = 'booking';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <div class="dropdown">
-                                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="studyDeptDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        เลือกภาควิชา
-                                    </button>
-                                    <ul class="dropdown-menu w-100" aria-labelledby="studyDeptDropdown">
-                                        <li><a class="dropdown-item" href="#">กุมารเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">จักษุวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">จิตเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">นิติเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">พยาธิวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">รังสีวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">วิสัญญีวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">ศัลยศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">สูติศาสตร์-นรีเวชวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">ออร์โธปิดิกส์</a></li>
-                                        <li><a class="dropdown-item" href="#">อายุรศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ครอบครัว</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ชุมชน</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ฟื้นฟู</a></li>
-                                        <li><a class="dropdown-item" href="#">โสต ศอ นาสิกวิทยา</a></li>
-                                    </ul>
-                                    <input type="hidden" name="studyDept" value="">
-                                </div>
+                                <label class="form-label small mb-1">ภาควิชา</label>
+                                <select name="department" id="department" class="form-select" required>
+                                    <option value="">เลือกภาควิชา</option>
+                                    <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
+                                    <option value="จักษุวิทยา">จักษุวิทยา</option>
+                                    <option value="จิตเวชศาสตร์">จิตเวชศาสตร์</option>
+                                    <option value="นิติเวชศาสตร์">นิติเวชศาสตร์</option>
+                                    <option value="พยาธิวิทยา">พยาธิวิทยา</option>
+                                    <option value="รังสีวิทยา">รังสีวิทยา</option>
+                                    <option value="วิสัญญีวิทยา">วิสัญญีวิทยา</option>
+                                    <option value="ศัลยศาสตร์">ศัลยศาสตร์</option>
+                                    <option value="สูติศาสตร์-นรีเวชวิทยา">สูติศาสตร์-นรีเวชวิทยา</option>
+                                    <option value="ออร์โธปิดิกส์">ออร์โธปิดิกส์</option>
+                                    <option value="อายุรศาสตร์">อายุรศาสตร์</option>
+                                    <option value="เวชศาสตร์ครอบครัว">เวชศาสตร์ครอบครัว</option>
+                                    <option value="เวชศาสตร์ชุมชน">เวชศาสตร์ชุมชน</option>
+                                    <option value="เวชศาสตร์ฟื้นฟู">เวชศาสตร์ฟื้นฟู</option>
+                                    <option value="โสต ศอ นาสิกวิทยา">โสต ศอ นาสิกวิทยา</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -186,29 +182,24 @@ $activeMenu = 'booking';
                         <div class="row mt-2">
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <div class="dropdown">
-                                    <button class="btn btn-light dropdown-toggle w-100" type="button" id="electiveDeptDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        เลือกภาควิชา
-                                    </button>
-                                    <ul class="dropdown-menu w-100" aria-labelledby="electiveDeptDropdown">
-                                        <li><a class="dropdown-item" href="#">กุมารเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">จักษุวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">จิตเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">นิติเวชศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">พยาธิวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">รังสีวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">วิสัญญีวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">ศัลยศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">สูติศาสตร์-นรีเวชวิทยา</a></li>
-                                        <li><a class="dropdown-item" href="#">ออร์โธปิดิกส์</a></li>
-                                        <li><a class="dropdown-item" href="#">อายุรศาสตร์</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ครอบครัว</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ชุมชน</a></li>
-                                        <li><a class="dropdown-item" href="#">เวชศาสตร์ฟื้นฟู</a></li>
-                                        <li><a class="dropdown-item" href="#">โสต ศอ นาสิกวิทยา</a></li>
-                                    </ul>
-                                    <input type="hidden" name="electiveDept" value="">
-                                </div>
+                                <select name="department" id="department" class="form-select" required>
+                                    <option value="">เลือกภาควิชา</option>
+                                    <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
+                                    <option value="จักษุวิทยา">จักษุวิทยา</option>
+                                    <option value="จิตเวชศาสตร์">จิตเวชศาสตร์</option>
+                                    <option value="นิติเวชศาสตร์">นิติเวชศาสตร์</option>
+                                    <option value="พยาธิวิทยา">พยาธิวิทยา</option>
+                                    <option value="รังสีวิทยา">รังสีวิทยา</option>
+                                    <option value="วิสัญญีวิทยา">วิสัญญีวิทยา</option>
+                                    <option value="ศัลยศาสตร์">ศัลยศาสตร์</option>
+                                    <option value="สูติศาสตร์-นรีเวชวิทยา">สูติศาสตร์-นรีเวชวิทยา</option>
+                                    <option value="ออร์โธปิดิกส์">ออร์โธปิดิกส์</option>
+                                    <option value="อายุรศาสตร์">อายุรศาสตร์</option>
+                                    <option value="เวชศาสตร์ครอบครัว">เวชศาสตร์ครอบครัว</option>
+                                    <option value="เวชศาสตร์ชุมชน">เวชศาสตร์ชุมชน</option>
+                                    <option value="เวชศาสตร์ฟื้นฟู">เวชศาสตร์ฟื้นฟู</option>
+                                    <option value="โสต ศอ นาสิกวิทยา">โสต ศอ นาสิกวิทยา</option>
+                                </select>
                             </div>
                         </div>
                     </div>

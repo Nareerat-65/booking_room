@@ -10,10 +10,11 @@
 
 /* Header สีส้มสไตล์เดียวกับ user */
 .card-header {
-    background-color: #F57B39 !important;
-    color: #fff !important;
+    background: linear-gradient(45deg, #ff7b29, #ff9f4a);
+    padding: 18px;
+    color: #fff;
     border-bottom: 0;
-    padding: 14px 20px;
+    
 }
 
 .card-title {
