@@ -23,7 +23,7 @@ $docResult = getDocumentsByBookingId($conn, $booking_id);
 $bookingCode = formatBookingCode($booking['id']);
 $pageTitle  = "เลขที่ใบจอง #" . $bookingCode;
 $activeMenu = "documents";
-$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">';
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">';
 ?>
 
 <!DOCTYPE html>
@@ -42,12 +42,18 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_manage.css">
             <div class="app-content-header py-3">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
                     <h3>เลขที่ใบจอง #<?= $bookingCode ?></h3>
-                    <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-sm btn-outline-primary"
+                            href="ad_bill_preview.php?booking_id=<?= (int)$booking['id'] ?>">
+                            ออกใบแจ้งค่าใช้จ่าย
+                        </a>
+                        <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
+                    </div>
                 </div>
                 <div class="container-fluid mt-2">
                     <p>
-                        ชื่อผู้จอง: <?= htmlspecialchars($booking['full_name']) ?><br>
-                        หน่วยงานต้นสังกัด: <?= htmlspecialchars($booking['department']) ?><br>
+                        ชื่อผู้จอง: <?= htmlspecialchars($booking['full_name'] ?? '-', ENT_QUOTES, 'UTF-8') ?><br>
+                        หน่วยงานต้นสังกัด: <?= htmlspecialchars($booking['department'] ?? '-', ENT_QUOTES, 'UTF-8') ?><br>
                         เข้าพัก: <?= htmlspecialchars(formatDate($booking['check_in_date'])) ?>
                         ถึง <?= htmlspecialchars(formatDate($booking['check_out_date'])) ?><br>
                     </p>

@@ -1,2 +1,5 @@
 uploads/
 plugins/
+composer.json
+composer.lock
+vendor/

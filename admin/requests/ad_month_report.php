@@ -102,16 +102,16 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_month_report.css
                     }
                     ?>
                 </select>
-
                 <button class="btn-main" type="submit">
                     <i class="fas fa-search"></i> แสดงรายงาน
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-print" onclick="window.print()">
+                    <i class="fas fa-print" aria-hidden="true"></i> พิมพ์รายงาน
                 </button>
             </form>
 
             <div class="ms-auto">
-                <button type="button" class="btn btn-outline-secondary btn-print" onclick="window.print()">
-                    <i class="fas fa-print" aria-hidden="true"></i> พิมพ์รายงาน
-                </button>
+                <a class="btn" href="ad_requests.php">กลับหน้าเอกสาร</a>
             </div>
         </div>
 

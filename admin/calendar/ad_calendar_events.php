@@ -68,6 +68,7 @@ $events = [];
 // สร้าง events สำหรับแต่ละการจอง
 if ($result) {
     while ($row = $result->fetch_assoc()) {
+        $bookingCode = formatBookingCode($row['booking_id']);
         $roomName   = $row['room_name'];
         $roomId     = (int)$row['room_id'];
         $checkIn  = $row['start_date'];   
@@ -77,13 +78,14 @@ if ($result) {
         $w = (int)$row['woman_count'];
         $m = (int)$row['man_count'];
 
-        $pieces = ["ห้อง {$roomName}"];
+        $pieces = ["ห้อง {$roomName}", $bookingCode];
         if ($w > 0) $pieces[] = "หญิง {$w}";
         if ($m > 0) $pieces[] = "ชาย {$m}";
         $titleMain = implode(' • ', $pieces);
 
         $tooltip = "ผู้จอง: {$row['full_name']}\n"
             . "ห้อง {$roomName}\n";
+
 
         $color = $roomColors[$roomId] ?? '#0d6efd';
 
