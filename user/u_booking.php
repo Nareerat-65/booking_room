@@ -152,7 +152,7 @@ $activeMenu = 'booking';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <select name="department" id="department" class="form-select" required>
+                                <select name="study_dept" id="study_dept" class="form-select" >
                                     <option value="">เลือกภาควิชา</option>
                                     <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
                                     <option value="จักษุวิทยา">จักษุวิทยา</option>
@@ -181,7 +181,7 @@ $activeMenu = 'booking';
                         <div class="row mt-2">
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <select name="department" id="department" class="form-select" required>
+                                <select name="elective_dept" id="elective_dept" class="form-select">
                                     <option value="">เลือกภาควิชา</option>
                                     <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
                                     <option value="จักษุวิทยา">จักษุวิทยา</option>

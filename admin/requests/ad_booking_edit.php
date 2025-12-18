@@ -87,7 +87,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css
 
             <div class="app-content">
                 <div class="container-fluid">
-
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger">
                             <ul class="mb-0">

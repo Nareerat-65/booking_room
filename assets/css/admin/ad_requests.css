@@ -48,11 +48,7 @@
 
 /* คอลัมน์: เลขที่ใบจอง */
 #bookingsTable th:nth-child(1),
-#bookingsTable td:nth-child(1) {
-    width: 50px;
-}
-
-/* คอลัมน์: เลขที่ใบจอง */
+#bookingsTable td:nth-child(1),
 #bookingsTable th:nth-child(4),
 #bookingsTable td:nth-child(4) {
     width: 50px;
@@ -72,15 +68,11 @@
 #bookingsTable td:nth-child(10),
 #bookingsTable th:nth-child(11),
 #bookingsTable td:nth-child(11) {
-    width: 55px;
+    width: 60px;
 }
 
 #bookingsTable th:nth-child(12),
-#bookingsTable td:nth-child(12) {
-    width: 40px;
-}
-
-
+#bookingsTable td:nth-child(12),
 #bookingsTable th:nth-child(13),
 #bookingsTable td:nth-child(13) {
     width: 35px;

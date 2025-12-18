@@ -27,8 +27,8 @@ $positionOther = $_POST['positionOtherDetail'] ?? null;
 $department    = $_POST['department'] ?? '';
 $purpose       = $_POST['purpose'] ?? null;
 $studyCourse   = $_POST['studyCourse'] ?? '';
-$studyDept     = $_POST['studyDept'] ?? '';
-$electiveDept  = $_POST['electiveDept'] ?? '';
+$studyDept     = $_POST['study_dept'] ?? '';
+$electiveDept  = $_POST['elective_dept'] ?? '';
 $womanCount    = isset($_POST['womanCount']) ? (int)$_POST['womanCount'] : 0;
 $manCount      = isset($_POST['manCount'])   ? (int)$_POST['manCount']   : 0;
 

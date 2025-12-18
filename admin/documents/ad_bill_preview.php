@@ -154,7 +154,7 @@ $issueThai = formatThaiDateShort(date('Y-m-d'));
 <head>
     <meta charset="utf-8">
     <title>ใบแจ้งรายละเอียดค่าใช้จ่าย #<?= h($bookingCode) ?></title>
-
+    <link href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/BaiJamjuree/BaiJamjuree.css" rel="stylesheet" />
     <style>
         /* ===== Print settings ===== */
         @page { size: A4; margin: 12mm; }
@@ -171,7 +171,7 @@ $issueThai = formatThaiDateShort(date('Y-m-d'));
 
         *{ box-sizing:border-box; }
         body{
-            font-family:"TH Sarabun New","Kanit",Arial,sans-serif;
+            font-family: 'Bai Jamjuree', sans-serif;
             background:var(--bg);
             margin:0;
             color:var(--ink);
