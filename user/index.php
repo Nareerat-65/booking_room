@@ -18,7 +18,7 @@ $activeMenu = 'index';
     <div class="container-fluid hero px-0">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
         <p class=" text-white mb-4">
-            กรอกคำขอจองออนไลน์ รอการอนุมัติผ่านอีเมล และรับลิงก์สำหรับกรอกรายชื่อผู้เข้าพักในแต่ละห้อง
+            กรอกคำขอจองออนไลน์และรอรับผลการอนุมัติผ่านอีเมล 
         </p>
         <div class="d-flex justify-content-center gap-2">
             <a href="u_booking.php" class="btn btn-main">เริ่มจองห้องพัก</a>
@@ -50,7 +50,7 @@ $activeMenu = 'index';
                 <div class="card step-card h-100 p-3">
                     <h5>3. รับผลทางอีเมล</h5>
                     <p class="small text-muted mb-0">
-                        หากอนุมัติ ระบบจะส่งอีเมลพร้อมลิงก์ให้คุณเข้าไปกรอกรายชื่อผู้เข้าพักในแต่ละห้อง
+                        ได้รับอีเมลแจ้งผลการอนุมัติคำขอจอง
                     </p>
                 </div>
             </div>

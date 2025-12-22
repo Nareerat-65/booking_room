@@ -29,7 +29,7 @@ $activeMenu = 'booking';
                 <div class="mb-3">
                     <label for="phone" class="form-label required">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" class="form-control" id="phone" name="phone"
-                        maxlength="10" inputmode="numeric" pattern="[0-9]{10}" required>
+                        maxlength="10" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required>
                 </div>
 
                 <div class="mb-3">
@@ -57,12 +57,15 @@ $activeMenu = 'booking';
                         <label class="form-check-label me-2" for="positionStudent">
                             นักศึกษา / นิสิตแพทย์ชั้นปีที่
                         </label>
-                        <input
-                            type="text"
-                            class="form-control form-control-sm"
-                            name="studentYear"
-                            placeholder="เช่น 4"
-                            style="max-width: 120px;" />
+                        <select name="studentYear" id="studentYear" class="form-select form-select-sm" style="max-width: 100px;">
+                            <option value="">เลือกชั้นปี</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
                     </div>
 
                     <div class="form-check mb-2">
@@ -116,7 +119,8 @@ $activeMenu = 'booking';
                             class="form-control form-control-sm"
                             name="positionOtherDetail"
                             placeholder="ระบุ"
-                            style="max-width: 200px;" />
+                            style="max-width: 200px;"
+                            disabled />
                     </div>
                 </fieldset>
                 <!-- หน่วยงานต้นสังกัด -->
@@ -130,11 +134,10 @@ $activeMenu = 'booking';
                         required
                         placeholder="พิมพ์เพื่อค้นหา หรือกรอกใหม่" />
                     <datalist id="departmentList">
-                        <option value="คณะแพทยศาสตร์">
-                        <option value="โรงพยาบาลมหาวิทยาลัย">
-                        <option value="ภาควิชาอายุรศาสตร์">
-                        <option value="ภาควิชาศัลยศาสตร์">
-                        <option value="ภาควิชากุมารเวชศาสตร์">
+                        <option value="ศูนย์แพทยศาสตรศึกษาชั้นคลินิก โรงพยาบาลขอนแก่น">
+                        <option value="ศูนย์แพทยศาสตรศึกษาชั้นคลินิก โรงพยาบาลหาดใหญ่">
+                        <option value="ศูนย์แพทยศาสตรศึกษาชั้นคลินิก โรงพยาบาลสระบุรี">
+                        <option value="ศูนย์แพทยศาสตรศึกษาชั้นคลินิก โรงพยาบาลแพร่">
                     </datalist>
                 </div>
                 <!-- วัตถุประสงค์ -->
@@ -152,7 +155,7 @@ $activeMenu = 'booking';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small mb-1">ภาควิชา</label>
-                                <select name="study_dept" id="study_dept" class="form-select" >
+                                <select name="study_dept" id="study_dept" class="form-select">
                                     <option value="">เลือกภาควิชา</option>
                                     <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
                                     <option value="จักษุวิทยา">จักษุวิทยา</option>

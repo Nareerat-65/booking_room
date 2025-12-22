@@ -45,7 +45,8 @@
     border: 1px solid #F57B39;
 }
 
-.btn-print {
+.btn-print,
+.btn-back {
     border-radius: 999px;
 }
 

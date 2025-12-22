@@ -44,23 +44,23 @@ try {
     $ok = allocateRoomsStrict($conn, $bookingId);
     if (!$ok) {
         $conn->rollback();
-        header("Location: ad_booking_edit.php?id={$bookingId}&reallocate_error=full");
+        header("Location: ad_edit_booking.php?id={$bookingId}&reallocate_error=full");
         exit;
     }
 
     // ✅ เติมรายชื่อผู้เข้าพักลง room_guests ตาม allocation ใหม่
     if (!autoFillRoomGuestsFromRequests($conn, $bookingId)) {
         $conn->rollback();
-        header("Location: ad_booking_edit.php?id={$bookingId}&reallocate_error=guest_fill");
+        header("Location: ad_edit_booking.php?id={$bookingId}&reallocate_error=guest_fill");
         exit;
     }
 
     $conn->commit();
-    header("Location: ad_booking_edit.php?id={$bookingId}&reallocated=1");
+    header("Location: ad_edit_booking.php?id={$bookingId}&reallocated=1");
     exit;
 } catch (Throwable $e) {
     $conn->rollback();
     error_log('reallocate error: ' . $e->getMessage());
-    header("Location: ad_booking_edit.php?id={$bookingId}&reallocate_error=exception");
+    header("Location: ad_edit_booking.php?id={$bookingId}&reallocate_error=exception");
     exit;
 }

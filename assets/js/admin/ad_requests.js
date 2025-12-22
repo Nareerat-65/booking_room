@@ -241,7 +241,7 @@ $(function () {
         if (!currentDetailId) return;
 
         // วิธีง่ายสุด: เด้งไปหน้าฟอร์มแก้ไข
-        window.location.href = 'ad_booking_edit.php?id=' + currentDetailId;
+        window.location.href = 'ad_edit_booking.php?id=' + currentDetailId;
     });
 
 });

@@ -111,7 +111,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_month_report.css
             </form>
 
             <div class="ms-auto">
-                <a class="btn" href="ad_requests.php">กลับหน้าเอกสาร</a>
+                <a class="btn btn-outline-secondary btn-back" href="ad_requests.php">กลับหน้าเอกสาร</a>
             </div>
         </div>
 

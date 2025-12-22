@@ -1,11 +1,31 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const positionRadios = document.querySelectorAll('input[name="position"]');
+    const studentYear = document.getElementById('studentYear');
+    const otherDetail = document.querySelector('input[name="positionOtherDetail"]');
 
-    const phone = document.getElementById("phone");
-    if (phone) {
-        phone.addEventListener("input", function () {
-            this.value = this.value.replace(/[^0-9]/g, "").slice(0, 10);
+    positionRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            // student
+            if (radio.value === 'student') {
+                studentYear.disabled = false;
+                studentYear.required = true;
+            } else {
+                studentYear.disabled = true;
+                studentYear.required = false;
+                studentYear.value = '';
+            }
+
+            // other
+            if (radio.value === 'other') {
+                otherDetail.disabled = false;
+                otherDetail.required = true;
+            } else {
+                otherDetail.disabled = true;
+                otherDetail.required = false;
+                otherDetail.value = '';
+            }
         });
-    }
+    });
 
     // ===== Datepicker =====
     const today = new Date();
@@ -14,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const minCheckIn = new Date(today);
     minCheckIn.setDate(minCheckIn.getDate() + 14);
     const maxCheckIn = new Date(today);
-    maxCheckIn.setDate(maxCheckIn.getDate() + 60);
+    maxCheckIn.setDate(maxCheckIn.getDate() + 74);
 
     $('#checkInDate').datepicker({
         format: 'dd-mm-yyyy',
@@ -38,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         format: 'dd-mm-yyyy',
         autoclose: true,
         startDate: minCheckIn,
-        endDate: maxCheckIn,
+        // endDate: maxCheckIn,
         language: 'th',
         thaiyear: true
     });
@@ -182,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="col-md-3 col-6">
                 <label class="form-label small">เบอร์โทรศัพท์</label>
-                <input type="tel" name="guest_phone[]" class="form-control" placeholder="เช่น 0812345678">
+                <input type="tel" name="guest_phone[]" class="form-control" placeholder="เช่น 0812345678" maxlength="10">
             </div>
             <div class="col-md-1 col-12 d-flex justify-content-md-center justify-content-start mt-2 mt-md-0">
                 <button type="button" class="btn btn-sm btn-outline-danger btn-remove-guest">

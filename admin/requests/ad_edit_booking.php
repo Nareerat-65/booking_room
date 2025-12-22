@@ -55,7 +55,7 @@ $manCount      = (int)($booking['man_count'] ?? 0);
 
 $activeMenu = 'requests';
 $pageTitle  = 'แก้ไขข้อมูลการจอง';
-$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css">';
+$extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css">';
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -325,7 +325,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_booking_edit.css
     </div>
 
     <?php include '../../partials/admin/script_admin.php'; ?>
-    <script src="/assets/js/admin/ad_booking_edit.js"></script>
+    <script src="/assets/js/admin/ad_edit_booking.js"></script>
 </body>
 
 </html>

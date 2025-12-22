@@ -105,7 +105,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 <div class="icon">
                                     <i class="fas fa-hourglass-half"></i>
                                 </div>
-                                <a href="ad_requests.php" class="small-box-footer">
+                                <a href="requests/ad_requests.php" class="small-box-footer">
                                     ดูรายการ <i class="fas fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -121,7 +121,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 <div class="icon">
                                     <i class="fas fa-calendar-check"></i>
                                 </div>
-                                <a href="ad_requests.php" class="small-box-footer">
+                                <a href="requests/ad_requests.php" class="small-box-footer">
                                     ดูรายละเอียด <i class="fas fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -137,7 +137,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 <div class="icon">
                                     <i class="fas fa-bed"></i>
                                 </div>
-                                <a href="ad_calendar.php" class="small-box-footer">
+                                <a href="calendar/ad_calendar.php" class="small-box-footer">
                                     ไปหน้าปฏิทิน <i class="fas fa-arrow-circle-right"></i>
                                 </a>
                             </div>
@@ -153,7 +153,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
                                 <div class="icon">
                                     <i class="fas fa-door-open"></i>
                                 </div>
-                                <a href="ad_calendar.php" class="small-box-footer">
+                                <a href="calendar/ad_calendar.php" class="small-box-footer">
                                     ดูปฏิทินห้องพัก <i class="fas fa-arrow-circle-right"></i>
                                 </a>
                             </div>
