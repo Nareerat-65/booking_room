@@ -41,7 +41,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
         <main class="app-main">
             <div class="app-content-header py-3">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
-                    <h3>เลขที่ใบจอง #<?= $bookingCode ?></h3>
+                    <div>
+                        <h2 class="mb-2">จัดการเอกสาร</h2>
+                    </div>
                     <div class="d-flex gap-2">
                         <a class="btn btn-sm btn-outline-primary"
                             href="ad_bill_preview.php?booking_id=<?= (int)$booking['id'] ?>">
@@ -49,8 +51,10 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
                         </a>
                         <a href="ad_doc_bookings.php" class="btn btn-secondary btn-sm">ย้อนกลับ</a>
                     </div>
+
                 </div>
                 <div class="container-fluid mt-2">
+                    เลขที่ใบจอง: <strong><?= $bookingCode ?></strong>
                     <p>
                         ชื่อผู้จอง: <?= htmlspecialchars($booking['full_name'] ?? '-', ENT_QUOTES, 'UTF-8') ?><br>
                         หน่วยงานต้นสังกัด: <?= htmlspecialchars($booking['department'] ?? '-', ENT_QUOTES, 'UTF-8') ?><br>
@@ -72,11 +76,11 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
                             <input type="hidden" name="booking_id" value="<?= (int)$booking_id ?>">
                             <div class="card-body row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">ชื่อไฟล์</label>
+                                    <label class="form-label">ประเภทเอกสาร</label>
                                     <input type="text" name="doc_type" class="form-control" placeholder="เช่น หนังสืออนุมัติ">
                                 </div>
                                 <div class="col-md-5">
-                                    <label class="form-label">ไฟล์</label>
+                                    <label class="form-label">เอกสาร</label>
                                     <input type="file" name="file" class="form-control" required>
                                 </div>
                                 <div class="col-md-3">
@@ -103,11 +107,11 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
                                 <thead>
                                     <tr>
                                         <th>ประเภทเอกสาร</th>
-                                        <th>ชื่อไฟล์เดิม</th>
-                                        <th>อัปโดย</th>
+                                        <th>ชื่อเอกสาร</th>
+                                        <th>ผู้อัปโหลด</th>
                                         <th>ขนาด</th>
                                         <th>แสดงให้ user</th>
-                                        <th>วันที่อัป</th>
+                                        <th>วันที่อัปโหลด</th>
                                         <th>จัดการ</th>
                                     </tr>
                                 </thead>

@@ -50,6 +50,88 @@ function getAdminBookingList(mysqli $conn): mysqli_result
     return $result;
 }
 
+function getBookingGuestRequests(mysqli $conn, int $bookingId): array
+{
+    $stmt = $conn->prepare("
+        SELECT id, guest_name, gender, guest_phone
+        FROM booking_guest_requests
+        WHERE booking_id = ?
+        ORDER BY id ASC
+    ");
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $rows = [];
+    while ($r = $res->fetch_assoc()) {
+        $rows[] = $r;
+    }
+    $stmt->close();
+    return $rows;
+}
+
+/**
+ * แทนที่รายชื่อทั้งหมดของ booking นี้ด้วยชุดใหม่ (ง่ายและชัวร์สุด)
+ */
+function replaceBookingGuestRequests(mysqli $conn, int $bookingId, array $guests): void
+{
+    // ลบของเดิม
+    $stmtDel = $conn->prepare("DELETE FROM booking_guest_requests WHERE booking_id = ?");
+    $stmtDel->bind_param('i', $bookingId);
+    $stmtDel->execute();
+    $stmtDel->close();
+
+    if (empty($guests)) return;
+
+    // เพิ่มของใหม่
+    $stmtIns = $conn->prepare("
+        INSERT INTO booking_guest_requests (booking_id, guest_name, gender, guest_phone)
+        VALUES (?, ?, ?, ?)
+    ");
+
+    foreach ($guests as $g) {
+        $name  = trim((string)($g['guest_name'] ?? ''));
+        $gender = $g['gender'] ?? null;      // 'F' | 'M' | null
+        $phone = trim((string)($g['guest_phone'] ?? ''));
+
+        if ($name === '') continue; // ข้ามแถวว่าง
+
+        // กันค่าผิด
+        if ($gender !== 'F' && $gender !== 'M') $gender = null;
+
+        $stmtIns->bind_param('isss', $bookingId, $name, $gender, $phone);
+        $stmtIns->execute();
+    }
+
+    $stmtIns->close();
+}
+
+/**
+ * แปลง POST -> guests array
+ * รับรูปแบบ input เป็น guest_name[], guest_gender[], guest_phone[]
+ */
+function parseGuestPost(array $post): array
+{
+    $names  = $post['guest_name']  ?? [];
+    $genders= $post['guest_gender']?? [];
+    $phones = $post['guest_phone'] ?? [];
+
+    if (!is_array($names) || !is_array($genders) || !is_array($phones)) return [];
+
+    $out = [];
+    $n = max(count($names), count($genders), count($phones));
+
+    for ($i = 0; $i < $n; $i++) {
+        $out[] = [
+            'guest_name'  => $names[$i]   ?? '',
+            'gender'      => $genders[$i] ?? null,
+            'guest_phone' => $phones[$i]  ?? '',
+        ];
+    }
+    return $out;
+}
+
+
 /**
  * อัปเดตข้อมูลการจองจากฟอร์ม admin
  * return [bool $ok, array $errors, array $updatedFields]
@@ -57,6 +139,7 @@ function getAdminBookingList(mysqli $conn): mysqli_result
 function updateBooking(mysqli $conn, int $bookingId, array $post): array
 {
     $errors = [];
+    $updated = [];
 
     // map input
     $fullName = trim($post['full_name'] ?? '');
@@ -83,17 +166,15 @@ function updateBooking(mysqli $conn, int $bookingId, array $post): array
     $manCount   = isset($post['man_count'])   ? (int)$post['man_count']   : 0;
 
     // validate
-    if ($fullName === '') {
-        $errors[] = 'กรุณากรอกชื่อผู้จอง';
-    }
-    if ($email === '') {
-        $errors[] = 'กรุณากรอกอีเมล';
-    }
+    if ($fullName === '') $errors[] = 'กรุณากรอกชื่อผู้จอง';
+    if ($email === '') $errors[] = 'กรุณากรอกอีเมล';
+
     if (!$checkIn || !$checkOut) {
         $errors[] = 'กรุณาระบุวันที่เข้าพักและวันที่ย้ายออกให้ถูกต้อง';
     } elseif ($checkOut < $checkIn) {
         $errors[] = 'วันที่ย้ายออกต้องไม่น้อยกว่าวันที่เข้าพัก';
     }
+
     if ($womanCount < 0 || $manCount < 0) {
         $errors[] = 'จำนวนผู้เข้าพักต้องไม่ติดลบ';
     }
@@ -109,6 +190,9 @@ function updateBooking(mysqli $conn, int $bookingId, array $post): array
     if ($position !== 'other') {
         $positionOther = null;
     }
+
+    // --- guests parse (เพิ่มเข้ามา) ---
+    $guests = parseGuestPost($post); // [['guest_name'=>..,'gender'=>..,'guest_phone'=>..], ...]
 
     if (!empty($errors)) {
         return [false, $errors, []];
@@ -136,37 +220,52 @@ function updateBooking(mysqli $conn, int $bookingId, array $post): array
         WHERE id = ?
     ";
 
-    $stmt = $conn->prepare($sqlUpdate);
-    if (!$stmt) {
-        return [false, ['ไม่สามารถเตรียมคำสั่งฐานข้อมูลได้: ' . $conn->error], []];
-    }
+    $conn->begin_transaction();
 
-    $stmt->bind_param(
-        'sssssissssssssiii',
-        $fullName,
-        $phone,
-        $lineId,
-        $email,
-        $position,
-        $studentYear,
-        $positionOther,
-        $department,
-        $purpose,
-        $studyCourse,
-        $studyDept,
-        $electiveDept,
-        $checkIn,
-        $checkOut,
-        $womanCount,
-        $manCount,
-        $bookingId
-    );
+    try {
+        $stmt = $conn->prepare($sqlUpdate);
+        if (!$stmt) {
+            $conn->rollback();
+            return [false, ['ไม่สามารถเตรียมคำสั่งฐานข้อมูลได้: ' . $conn->error], []];
+        }
 
-    if (!$stmt->execute()) {
+        $stmt->bind_param(
+            'sssssissssssssiii',
+            $fullName,
+            $phone,
+            $lineId,
+            $email,
+            $position,
+            $studentYear,
+            $positionOther,
+            $department,
+            $purpose,
+            $studyCourse,
+            $studyDept,
+            $electiveDept,
+            $checkIn,
+            $checkOut,
+            $womanCount,
+            $manCount,
+            $bookingId
+        );
+
+        if (!$stmt->execute()) {
+            $stmt->close();
+            $conn->rollback();
+            return [false, ['บันทึกไม่สำเร็จ: ' . $stmt->error], []];
+        }
         $stmt->close();
-        return [false, ['บันทึกไม่สำเร็จ: ' . $stmt->error], []];
+
+        // --- replace guests (เพิ่มเข้ามา) ---
+        replaceBookingGuestRequests($conn, $bookingId, $guests);
+
+        $conn->commit();
+
+    } catch (Throwable $e) {
+        $conn->rollback();
+        return [false, ['บันทึกไม่สำเร็จ: ' . $e->getMessage()], []];
     }
-    $stmt->close();
 
     $updated = [
         'full_name'      => $fullName,
@@ -185,10 +284,12 @@ function updateBooking(mysqli $conn, int $bookingId, array $post): array
         'check_out_date' => $checkOut,
         'woman_count'    => $womanCount,
         'man_count'      => $manCount,
+        'guests'         => $guests,
     ];
 
     return [true, [], $updated];
 }
+
 
 
 

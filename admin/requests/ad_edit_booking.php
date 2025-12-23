@@ -52,6 +52,7 @@ $checkInValue  = $booking['check_in_date'] ?? '';
 $checkOutValue = $booking['check_out_date'] ?? '';
 $womanCount    = (int)($booking['woman_count'] ?? 0);
 $manCount      = (int)($booking['man_count'] ?? 0);
+$guestRows = getBookingGuestRequests($conn, $bookingId);
 
 $activeMenu = 'requests';
 $pageTitle  = 'แก้ไขข้อมูลการจอง';
@@ -73,7 +74,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
             <div class="app-content-header py-3">
                 <div class="container-fluid d-flex justify-content-between align-items-center">
                     <div>
-                        <h2 class="mb-0">แก้ไขข้อมูลการจอง</h2>
+                        <h2 class="mb-2">แก้ไขข้อมูลการจอง</h2>
                         <div class="text-muted">
                             เลขที่ใบจอง: <strong><?= h($bookingCode) ?></strong>
                             <span class="ms-3">
@@ -168,9 +169,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
 
                                         <div class="mb-3 position-student-group">
                                             <label class="form-label">ชั้นปี (กรณีเป็นนักศึกษา/นิสิตแพทย์)</label>
-                                            <input type="number" name="student_year" min="1" max="10"
-                                                class="form-control"
-                                                value="<?= h($studentYear) ?>">
+                                            <select name="student_year" id="student_year" class="form-select" style="max-width: 120px;">
+                                                <option value="">เลือกชั้นปี</option>
+                                                <option value="1" <?= $studentYear == '1' ? 'selected' : '' ?>>1</option>
+                                                <option value="2" <?= $studentYear == '2' ? 'selected' : '' ?>>2</option>
+                                                <option value="3" <?= $studentYear == '3' ? 'selected' : '' ?>>3</option>
+                                                <option value="4" <?= $studentYear == '4' ? 'selected' : '' ?>>4</option>
+                                                <option value="5" <?= $studentYear == '5' ? 'selected' : '' ?>>5</option>
+                                                <option value="6" <?= $studentYear == '6' ? 'selected' : '' ?>>6</option>
+                                            </select>
                                         </div>
 
                                         <div class="mb-3 position-other-group">
@@ -210,44 +217,44 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
                                         </div>
                                         <div class="col-md-4 purpose-study-group">
                                             <label class="form-label">ภาควิชาที่มาศึกษา</label>
-                                            <select name="study_dept" id="study_dept" class="form-select" >
+                                            <select name="study_dept" id="study_dept" class="form-select">
                                                 <option value="">เลือกภาควิชา</option>
-                                                <option value="กุมารเวชศาสตร์" <?= $study_dept === 'กุมารเวชศาสตร์'? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
-                                                <option value="จักษุวิทยา" <?= $study_dept === 'จักษุวิทยา'? 'selected' : '' ?>>จักษุวิทยา</option>
-                                                <option value="จิตเวชศาสตร์" <?= $study_dept === 'จิตเวชศาสตร์'? 'selected' : '' ?>>จิตเวชศาสตร์</option>
-                                                <option value="นิติเวชศาสตร์" <?= $study_dept === 'นิติเวชศาสตร์'? 'selected' : '' ?>>นิติเวชศาสตร์</option>
-                                                <option value="พยาธิวิทยา" <?= $study_dept === 'พยาธิวิทยา'? 'selected' : '' ?>>พยาธิวิทยา</option>
-                                                <option value="รังสีวิทยา" <?= $study_dept === 'รังสีวิทยา'? 'selected' : '' ?>>รังสีวิทยา</option>
-                                                <option value="วิสัญญีวิทยา" <?= $study_dept === 'วิสัญญีวิทยา'? 'selected' : '' ?>>วิสัญญีวิทยา</option>
-                                                <option value="ศัลยศาสตร์" <?= $study_dept === 'ศัลยศาสตร์'? 'selected' : '' ?>>ศัลยศาสตร์</option>
-                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $study_dept === 'สูติศาสตร์-นรีเวชวิทยา'? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
-                                                <option value="ออร์โธปิดิกส์" <?= $study_dept === 'ออร์โธปิดิกส์'? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
-                                                <option value="อายุรศาสตร์" <?= $study_dept === 'อายุรศาสตร์'? 'selected' : '' ?>>อายุรศาสตร์</option>
-                                                <option value="เวชศาสตร์ครอบครัว" <?= $study_dept === 'เวชศาสตร์ครอบครัว'? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
-                                                <option value="เวชศาสตร์ชุมชน" <?= $study_dept === 'เวชศาสตร์ชุมชน'? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
-                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $study_dept === 'เวชศาสตร์ฟื้นฟู'? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
-                                                <option value="โสต ศอ นาสิกวิทยา" <?= $study_dept === 'โสต ศอ นาสิกวิทยา'? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
+                                                <option value="กุมารเวชศาสตร์" <?= $study_dept === 'กุมารเวชศาสตร์' ? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
+                                                <option value="จักษุวิทยา" <?= $study_dept === 'จักษุวิทยา' ? 'selected' : '' ?>>จักษุวิทยา</option>
+                                                <option value="จิตเวชศาสตร์" <?= $study_dept === 'จิตเวชศาสตร์' ? 'selected' : '' ?>>จิตเวชศาสตร์</option>
+                                                <option value="นิติเวชศาสตร์" <?= $study_dept === 'นิติเวชศาสตร์' ? 'selected' : '' ?>>นิติเวชศาสตร์</option>
+                                                <option value="พยาธิวิทยา" <?= $study_dept === 'พยาธิวิทยา' ? 'selected' : '' ?>>พยาธิวิทยา</option>
+                                                <option value="รังสีวิทยา" <?= $study_dept === 'รังสีวิทยา' ? 'selected' : '' ?>>รังสีวิทยา</option>
+                                                <option value="วิสัญญีวิทยา" <?= $study_dept === 'วิสัญญีวิทยา' ? 'selected' : '' ?>>วิสัญญีวิทยา</option>
+                                                <option value="ศัลยศาสตร์" <?= $study_dept === 'ศัลยศาสตร์' ? 'selected' : '' ?>>ศัลยศาสตร์</option>
+                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $study_dept === 'สูติศาสตร์-นรีเวชวิทยา' ? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
+                                                <option value="ออร์โธปิดิกส์" <?= $study_dept === 'ออร์โธปิดิกส์' ? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
+                                                <option value="อายุรศาสตร์" <?= $study_dept === 'อายุรศาสตร์' ? 'selected' : '' ?>>อายุรศาสตร์</option>
+                                                <option value="เวชศาสตร์ครอบครัว" <?= $study_dept === 'เวชศาสตร์ครอบครัว' ? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
+                                                <option value="เวชศาสตร์ชุมชน" <?= $study_dept === 'เวชศาสตร์ชุมชน' ? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
+                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $study_dept === 'เวชศาสตร์ฟื้นฟู' ? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
+                                                <option value="โสต ศอ นาสิกวิทยา" <?= $study_dept === 'โสต ศอ นาสิกวิทยา' ? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4 purpose-elective-group">
                                             <label class="form-label">ภาควิชา (Elective)</label>
-                                            <select name="elective_dept" id="elective_dept" class="form-select" >
+                                            <select name="elective_dept" id="elective_dept" class="form-select">
                                                 <option value="">เลือกภาควิชา</option>
-                                                <option value="กุมารเวชศาสตร์" <?= $elective_dept === 'กุมารเวชศาสตร์'? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
-                                                <option value="จักษุวิทยา" <?= $elective_dept === 'จักษุวิทยา'? 'selected' : '' ?>>จักษุวิทยา</option>
-                                                <option value="จิตเวชศาสตร์" <?= $elective_dept === 'จิตเวชศาสตร์'? 'selected' : '' ?>>จิตเวชศาสตร์</option>
-                                                <option value="นิติเวชศาสตร์" <?= $elective_dept === 'นิติเวชศาสตร์'? 'selected' : '' ?>>นิติเวชศาสตร์</option>
-                                                <option value="พยาธิวิทยา" <?= $elective_dept === 'พยาธิวิทยา'? 'selected' : '' ?>>พยาธิวิทยา</option>
-                                                <option value="รังสีวิทยา" <?= $elective_dept === 'รังสีวิทยา'? 'selected' : '' ?>>รังสีวิทยา</option>
-                                                <option value="วิสัญญีวิทยา" <?= $elective_dept === 'วิสัญญีวิทยา'? 'selected' : '' ?>>วิสัญญีวิทยา</option>
-                                                <option value="ศัลยศาสตร์" <?= $elective_dept === 'ศัลยศาสตร์'? 'selected' : '' ?>>ศัลยศาสตร์</option>
-                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $elective_dept === 'สูติศาสตร์-นรีเวชวิทยา'? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
-                                                <option value="ออร์โธปิดิกส์" <?= $elective_dept === 'ออร์โธปิดิกส์'? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
-                                                <option value="อายุรศาสตร์" <?= $elective_dept === 'อายุรศาสตร์'? 'selected' : '' ?>>อายุรศาสตร์</option>
-                                                <option value="เวชศาสตร์ครอบครัว" <?= $elective_dept === 'เวชศาสตร์ครอบครัว'? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
-                                                <option value="เวชศาสตร์ชุมชน" <?= $elective_dept === 'เวชศาสตร์ชุมชน'? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
-                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $elective_dept === 'เวชศาสตร์ฟื้นฟู'? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
-                                                <option value="โสต ศอ นาสิกวิทยา" <?= $elective_dept === 'โสต ศอ นาสิกวิทยา'? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
+                                                <option value="กุมารเวชศาสตร์" <?= $elective_dept === 'กุมารเวชศาสตร์' ? 'selected' : '' ?>>กุมารเวชศาสตร์</option>
+                                                <option value="จักษุวิทยา" <?= $elective_dept === 'จักษุวิทยา' ? 'selected' : '' ?>>จักษุวิทยา</option>
+                                                <option value="จิตเวชศาสตร์" <?= $elective_dept === 'จิตเวชศาสตร์' ? 'selected' : '' ?>>จิตเวชศาสตร์</option>
+                                                <option value="นิติเวชศาสตร์" <?= $elective_dept === 'นิติเวชศาสตร์' ? 'selected' : '' ?>>นิติเวชศาสตร์</option>
+                                                <option value="พยาธิวิทยา" <?= $elective_dept === 'พยาธิวิทยา' ? 'selected' : '' ?>>พยาธิวิทยา</option>
+                                                <option value="รังสีวิทยา" <?= $elective_dept === 'รังสีวิทยา' ? 'selected' : '' ?>>รังสีวิทยา</option>
+                                                <option value="วิสัญญีวิทยา" <?= $elective_dept === 'วิสัญญีวิทยา' ? 'selected' : '' ?>>วิสัญญีวิทยา</option>
+                                                <option value="ศัลยศาสตร์" <?= $elective_dept === 'ศัลยศาสตร์' ? 'selected' : '' ?>>ศัลยศาสตร์</option>
+                                                <option value="สูติศาสตร์-นรีเวชวิทยา" <?= $elective_dept === 'สูติศาสตร์-นรีเวชวิทยา' ? 'selected' : '' ?>>สูติศาสตร์-นรีเวชวิทยา</option>
+                                                <option value="ออร์โธปิดิกส์" <?= $elective_dept === 'ออร์โธปิดิกส์' ? 'selected' : '' ?>>ออร์โธปิดิกส์</option>
+                                                <option value="อายุรศาสตร์" <?= $elective_dept === 'อายุรศาสตร์' ? 'selected' : '' ?>>อายุรศาสตร์</option>
+                                                <option value="เวชศาสตร์ครอบครัว" <?= $elective_dept === 'เวชศาสตร์ครอบครัว' ? 'selected' : '' ?>>เวชศาสตร์ครอบครัว</option>
+                                                <option value="เวชศาสตร์ชุมชน" <?= $elective_dept === 'เวชศาสตร์ชุมชน' ? 'selected' : '' ?>>เวชศาสตร์ชุมชน</option>
+                                                <option value="เวชศาสตร์ฟื้นฟู" <?= $elective_dept === 'เวชศาสตร์ฟื้นฟู' ? 'selected' : '' ?>>เวชศาสตร์ฟื้นฟู</option>
+                                                <option value="โสต ศอ นาสิกวิทยา" <?= $elective_dept === 'โสต ศอ นาสิกวิทยา' ? 'selected' : '' ?>>โสต ศอ นาสิกวิทยา</option>
                                             </select>
                                         </div>
                                     </div>
@@ -255,7 +262,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
                             </div>
 
                             <!-- วันที่และจำนวนคน -->
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 mb-3">
                                 <div class="card h-100">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">ช่วงวันที่เข้าพัก</h5>
@@ -275,7 +282,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 mb-3">
                                 <div class="card h-100">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">จำนวนผู้เข้าพัก</h5>
@@ -294,7 +301,96 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- รายชื่อผู้เข้าพัก -->
+                        <div class="col-lg-12">
+                            <div class="card shadow-sm">
+                                <div class="card-header d-flex align-items-center">
+                                    <h5 class="card-title mb-0">รายชื่อผู้เข้าพัก</h5>
 
+                                    <button type="button" class="btn btn-sm btn-light ms-auto" id="btnAddGuest">
+                                        <i class="fas fa-user-plus me-1"></i> เพิ่มรายชื่อ
+                                    </button>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm align-middle mb-0" id="guestTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 56px;" class="text-center">#</th>
+                                                    <th style="width: 40%;">ชื่อ-สกุล</th>
+                                                    <th style="width: 20%;">เพศ</th>
+                                                    <th style="width: 30%;">เบอร์โทร</th>
+                                                    <th style="width: 90px;" class="text-end">จัดการ</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <?php if (!empty($guestRows)): ?>
+                                                    <?php $idx = 1;
+                                                    foreach ($guestRows as $g): ?>
+                                                        <tr class="guest-row">
+                                                            <td class="text-center text-muted fw-semibold guest-no"><?= $idx++ ?></td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="guest_name[]"
+                                                                    class="form-control form-control-sm"
+                                                                    value="<?= h($g['guest_name'] ?? '') ?>"
+                                                                    placeholder="ชื่อผู้เข้าพัก">
+                                                            </td>
+                                                            <td>
+                                                                <select name="guest_gender[]" class="form-select form-select-sm">
+                                                                    <option value="">-</option>
+                                                                    <option value="F" <?= ($g['gender'] ?? '') === 'F' ? 'selected' : '' ?>>หญิง</option>
+                                                                    <option value="M" <?= ($g['gender'] ?? '') === 'M' ? 'selected' : '' ?>>ชาย</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text"
+                                                                    name="guest_phone[]"
+                                                                    class="form-control form-control-sm"
+                                                                    value="<?= h($g['guest_phone'] ?? '') ?>"
+                                                                    placeholder="เบอร์ (ถ้ามี)">
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-danger btnRemoveGuest"
+                                                                    title="ลบรายชื่อ">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <!-- Empty state -->
+                                                    <tr class="guest-empty">
+                                                        <td colspan="5" class="py-4">
+                                                            <div class="d-flex flex-column align-items-center text-center">
+                                                                <div class="mb-2 text-muted">
+                                                                    <i class="far fa-address-card fa-2x"></i>
+                                                                </div>
+                                                                <div class="fw-semibold">ยังไม่มีรายชื่อผู้เข้าพัก</div>
+                                                                <div class="text-muted small">กด “เพิ่มรายชื่อ” เพื่อเริ่มกรอกข้อมูล</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Callout -->
+                                    <div class="alert alert-light border mt-3 mb-0">
+                                        <div class="d-flex align-items-start gap-2">
+                                            <i class="fas fa-info-circle mt-1"></i>
+                                            <div class="small">
+                                                ถ้าต้องการให้รายชื่อมีผลกับการจัดห้อง ให้กด <span class="fw-semibold">“จัดสรรห้องใหม่”</span> หลังบันทึก
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mt-4 d-flex justify-content-between align-items-center">
@@ -308,7 +404,6 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_edit_booking.css
                         </div>
                     </form>
 
-                    <!-- ⭐ ฟอร์มแยกต่างหากสำหรับจัดสรรห้องใหม่ (ห้ามซ้อนใน form หลัก) -->
                     <div class="mt-3 d-flex justify-content-end">
                         <form method="post" action="ad_reallocate_rooms.php"
                             onsubmit="return confirm('ต้องการจัดสรรห้องใหม่หรือไม่? ห้องเดิมจะถูกลบและจัดใหม่ทั้งหมด');">
