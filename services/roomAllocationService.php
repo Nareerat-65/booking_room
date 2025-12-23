@@ -1,62 +1,33 @@
 <?php
-require_once __DIR__ . '/../db.php';
+// services/roomAllocationService.php
 
+require_once __DIR__ . '/../repositories/roomAllocationRepo.php';
+require_once __DIR__ . '/../repositories/guestRequestRepo.php';
+
+/**
+ * จัดสรรห้องแบบ strict:
+ * - อ่านจำนวนหญิง/ชาย + วันที่จาก bookings
+ * - หา rooms ว่าง (มี buffer end_date + 3 วัน)
+ * - insert room_allocations แยกหญิงก่อน แล้วชาย
+ *
+ * หมายเหตุ: ควรถูกเรียกภายใน transaction (เช่น approveBooking)
+ */
 function allocateRoomsStrict(mysqli $conn, int $bookingId): bool
 {
-    $stmt = $conn->prepare("
-        SELECT woman_count, man_count, check_in_date, check_out_date
-        FROM bookings
-        WHERE id = ?
-    ");
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    $stmt->bind_result($womanCount, $manCount, $checkIn, $checkOut);
-    if (!$stmt->fetch()) {
-        $stmt->close();
-        return false;
-    }
-    $stmt->close();
+    $bk = alloc_getBookingCountsAndDates($conn, $bookingId);
+    if (!$bk) return false;
 
-    $startDate = $checkIn;
-    $endDate   = $checkOut;
-    $rooms     = [];
+    $remainW  = (int)($bk['woman_count'] ?? 0);
+    $remainM  = (int)($bk['man_count'] ?? 0);
+    $startDate = (string)($bk['check_in_date'] ?? '');
+    $endDate   = (string)($bk['check_out_date'] ?? '');
 
-    $sqlRooms = "
-        SELECT r.id, r.capacity
-        FROM rooms r
-        WHERE r.id NOT IN (
-            SELECT DISTINCT ra.room_id
-            FROM room_allocations ra
-            WHERE NOT (
-                DATE_ADD(ra.end_date, INTERVAL 3 DAY) < ?
-                OR ra.start_date > ?
-            )
-        )
-        ORDER BY r.id ASC
-    ";
+    if ($startDate === '' || $endDate === '') return false;
 
-    $stmt = $conn->prepare($sqlRooms);
-    $stmt->bind_param('ss', $startDate, $endDate);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $rooms[] = $row;
-    }
-    $stmt->close();
-
-    if (empty($rooms)) {
-        return false;
-    }
+    $rooms = alloc_findAvailableRoomsWithBuffer($conn, $startDate, $endDate);
+    if (empty($rooms)) return false;
 
     $roomIndex = 0;
-    $insert = $conn->prepare("
-        INSERT INTO room_allocations
-            (booking_id, room_id, start_date, end_date, woman_count, man_count)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
-
-    $remainW = (int)$womanCount;
-    $remainM = (int)$manCount;
 
     // ผู้หญิง
     while ($remainW > 0 && $roomIndex < count($rooms)) {
@@ -64,20 +35,11 @@ function allocateRoomsStrict(mysqli $conn, int $bookingId): bool
         $cap    = (int)$rooms[$roomIndex]['capacity'];
         $num    = min($cap, $remainW);
 
-        $zero = 0;
-        $insert->bind_param(
-            'iissii',
-            $bookingId,
-            $roomId,
-            $startDate,
-            $endDate,
-            $num,
-            $zero
-        );
-        $insert->execute();
+        $ok = alloc_insertAllocation($conn, $bookingId, $roomId, $startDate, $endDate, $num, 0);
+        if (!$ok) return false;
 
-        $remainW   -= $num;
-        $roomIndex += 1;
+        $remainW -= $num;
+        $roomIndex++;
     }
 
     // ผู้ชาย
@@ -86,92 +48,46 @@ function allocateRoomsStrict(mysqli $conn, int $bookingId): bool
         $cap    = (int)$rooms[$roomIndex]['capacity'];
         $num    = min($cap, $remainM);
 
-        $zero = 0;
-        $insert->bind_param(
-            'iissii',
-            $bookingId,
-            $roomId,
-            $startDate,
-            $endDate,
-            $zero,
-            $num
-        );
-        $insert->execute();
+        $ok = alloc_insertAllocation($conn, $bookingId, $roomId, $startDate, $endDate, 0, $num);
+        if (!$ok) return false;
 
-        $remainM   -= $num;
-        $roomIndex += 1;
+        $remainM -= $num;
+        $roomIndex++;
     }
 
-    $insert->close();
-
-    return $remainW === 0 && $remainM === 0;
+    return ($remainW === 0 && $remainM === 0);
 }
 
 /**
- * เติมรายชื่อผู้เข้าพักจาก booking_guest_requests
- * ลง room_guests ตาม room_allocations ของ booking นั้น
+ * เติมรายชื่อผู้เข้าพักจาก booking_guest_requests ลง room_guests ตาม allocations
+ * - ดึง allocations ของ booking
+ * - ดึง guest requests
+ * - ลบ room_guests เดิมของ allocation แล้ว insert ใหม่ตามจำนวนคนในห้องนั้น
  *
- * ต้องถูกเรียกภายใต้ transaction เดียวกับ allocateRoomsStrict()
+ * หมายเหตุ: ควรถูกเรียกภายใน transaction เดียวกับ allocateRoomsStrict()
  */
 function autoFillRoomGuestsFromRequests(mysqli $conn, int $bookingId): bool
 {
-    // 1) ดึง allocation ของ booking นี้
-    $sqlAlloc = "
-        SELECT 
-            a.id AS allocation_id,
-            a.room_id,
-            a.woman_count,
-            a.man_count
-        FROM room_allocations a
-        WHERE a.booking_id = ?
-        ORDER BY a.id
-    ";
-
-    $stmt = $conn->prepare($sqlAlloc);
-    if (!$stmt) {
-        return false;
-    }
-
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    $allocs = [];
-    while ($row = $res->fetch_assoc()) {
-        $allocs[(int)$row['allocation_id']] = $row;
-    }
-    $stmt->close();
-
+    $allocs = alloc_listAllocationsByBookingId($conn, $bookingId);
     if (empty($allocs)) {
-        // ยังไม่จัดสรรห้อง → ไม่มีอะไรให้เติม แต่ถือว่าไม่ error
+        // ยังไม่จัดสรรห้อง → ไม่มีอะไรให้เติม ถือว่า ok
         return true;
     }
 
-    // 2) ดึงรายชื่อจาก booking_guest_requests
-    $requests = getGuestRequestsByBookingId($conn, $bookingId);
-    if (empty($requests)) {
-        // ผู้จองไม่ได้กรอกชื่อไว้ → ข้าม (ให้ user ไปกรอกภายหลังได้)
-        return true;
-    }
+    $requests = guestRequest_listByBookingId($conn, $bookingId);
+    if (empty($requests)) return true;
 
-    // แยกผู้หญิง / ผู้ชาย / ไม่ระบุ เพื่อง่ายต่อการจับคู่กับห้อง
-    $women   = [];
-    $men     = [];
+    $women = [];
+    $men = [];
     $unknown = [];
 
     foreach ($requests as $r) {
-        $gender = strtoupper(trim((string)($r['gender'] ?? '')));
-
-        if ($gender === 'F') {
-            $women[] = $r;
-        } elseif ($gender === 'M') {
-            $men[] = $r;
-        } else {
-            $unknown[] = $r;
-        }
+        $g = strtoupper(trim((string)($r['gender'] ?? '')));
+        if ($g === 'F') $women[] = $r;
+        elseif ($g === 'M') $men[] = $r;
+        else $unknown[] = $r;
     }
 
-    // helper เล็ก ๆ สำหรับดึง guest ตัวถัดไปตามเพศที่ห้องต้องการ
     $popGuest = function (string $wantGender) use (&$women, &$men, &$unknown) {
         if ($wantGender === 'F') {
             if (!empty($women))   return array_shift($women);
@@ -183,133 +99,38 @@ function autoFillRoomGuestsFromRequests(mysqli $conn, int $bookingId): bool
         return null;
     };
 
-    // 3) วนทีละ allocation แล้วอัดชื่อเข้า room_guests ตามจำนวนที่จัดคนไว้
-    foreach ($allocs as $aid => $a) {
-        $aid = (int)$aid;
+    foreach ($allocs as $a) {
+        $allocationId = (int)($a['allocation_id'] ?? 0);
+        $womanCount   = (int)($a['woman_count'] ?? 0);
+        $manCount     = (int)($a['man_count'] ?? 0);
 
-        $womanCount = (int)($a['woman_count'] ?? 0);
-        $manCount   = (int)($a['man_count']   ?? 0);
-        $maxGuests  = $womanCount + $manCount;
+        $maxGuests = $womanCount + $manCount;
+        if ($allocationId <= 0 || $maxGuests <= 0) continue;
 
-        if ($maxGuests <= 0) {
-            continue;
-        }
-
-        // กำหนดเพศหลักของห้อง (ใช้ logic เดิมจาก u_guest_form)
+        // เพศหลักของห้อง (คง logic เดิมของคุณ)
         $gender = ($womanCount > 0 && $manCount === 0) ? 'F' : 'M';
 
-        // เคลียร์ room_guests เดิมของ allocation นี้ก่อน
-        $del = $conn->prepare("
-            DELETE FROM room_guests
-            WHERE booking_id = ? AND allocation_id = ?
-        ");
-        if (!$del) {
-            return false;
-        }
-        $del->bind_param('ii', $bookingId, $aid);
-        $del->execute();
-        $del->close();
-
-        // เตรียม insert
-        $ins = $conn->prepare("
-            INSERT INTO room_guests (booking_id, allocation_id, guest_name, guest_phone, gender)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        if (!$ins) {
+        // เคลียร์ของเดิม
+        if (!guest_deleteByBookingAndAllocation($conn, $bookingId, $allocationId)) {
             return false;
         }
 
         $inserted = 0;
-
         while ($inserted < $maxGuests) {
             $guest = $popGuest($gender);
-            if ($guest === null) {
-                break; // ไม่มี guest ให้ใส่แล้ว
-            }
+            if ($guest === null) break;
 
-            $name  = trim((string)$guest['guest_name']);
-            if ($name === '') {
-                continue;
-            }
+            $name = trim((string)($guest['guest_name'] ?? ''));
+            if ($name === '') continue;
+
             $phone = trim((string)($guest['guest_phone'] ?? ''));
 
-            $ins->bind_param(
-                'iisss',
-                $bookingId,
-                $aid,
-                $name,
-                $phone,
-                $gender
-            );
-            $ins->execute();
+            $ok = guest_insertByAllocation($conn, $bookingId, $allocationId, $name, $phone, $gender);
+            if (!$ok) return false;
+
             $inserted++;
         }
-
-        $ins->close();
     }
 
-    // ไม่ต้องเป๊ะ 100% ว่าครบทุกคน (เราตรวจแล้วตอนส่งฟอร์มอยู่แล้ว)
     return true;
-}
-
-function buildRoomSummaryHtml(mysqli $conn, int $bookingId): string
-{
-    $sql = "
-        SELECT 
-            r.room_name,
-            g.guest_name
-        FROM room_allocations a
-        JOIN rooms r 
-            ON r.id = a.room_id
-        LEFT JOIN room_guests g
-            ON g.booking_id = a.booking_id
-           AND g.allocation_id = a.id
-        WHERE a.booking_id = ?
-        ORDER BY r.room_name, g.id
-    ";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) return '';
-
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    $byRoom = [];
-
-    while ($row = $res->fetch_assoc()) {
-        $roomName  = trim((string)($row['room_name'] ?? ''));
-        $guestName = trim((string)($row['guest_name'] ?? ''));
-
-        if ($roomName === '' || $guestName === '') continue;
-
-        if (!isset($byRoom[$roomName])) {
-            $byRoom[$roomName] = [];
-        }
-        $byRoom[$roomName][] = $guestName;
-    }
-
-    $stmt->close();
-
-    if (empty($byRoom)) {
-        return ''; // ไม่มีข้อมูล ไม่ต้องแสดงอะไร
-    }
-
-    // สร้าง HTML
-    $html  = '<div style="background:#fafafa; border-radius:8px; padding:12px 14px;';
-    $html .= 'border-left:4px solid #4e9bff; margin:10px 0 18px;">';
-    $html .= '<p style="margin:0 0 8px 0;"><b>รายละเอียดการจัดห้องพัก:</b></p>';
-    $html .= '<ul style="margin:0; padding-left:18px;">';
-
-    foreach ($byRoom as $roomName => $guests) {
-        $html .= '<li><b>ห้อง ' 
-              . htmlspecialchars($roomName, ENT_QUOTES, "UTF-8")
-              . ':</b> '
-              . htmlspecialchars(implode(', ', $guests), ENT_QUOTES, "UTF-8")
-              . '</li>';
-    }
-
-    $html .= '</ul></div>';
-
-    return $html;
 }

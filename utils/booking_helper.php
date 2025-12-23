@@ -86,4 +86,65 @@ function thaiMonth($m)
     return $arr[(int)$m] ?? '';
 }
 
+function buildRoomSummaryHtml(mysqli $conn, int $bookingId): string
+{
+    $sql = "
+        SELECT 
+            r.room_name,
+            g.guest_name
+        FROM room_allocations a
+        JOIN rooms r 
+            ON r.id = a.room_id
+        LEFT JOIN room_guests g
+            ON g.booking_id = a.booking_id
+           AND g.allocation_id = a.id
+        WHERE a.booking_id = ?
+        ORDER BY r.room_name, g.id
+    ";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) return '';
+
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $byRoom = [];
+
+    while ($row = $res->fetch_assoc()) {
+        $roomName  = trim((string)($row['room_name'] ?? ''));
+        $guestName = trim((string)($row['guest_name'] ?? ''));
+
+        if ($roomName === '' || $guestName === '') continue;
+
+        if (!isset($byRoom[$roomName])) {
+            $byRoom[$roomName] = [];
+        }
+        $byRoom[$roomName][] = $guestName;
+    }
+
+    $stmt->close();
+
+    if (empty($byRoom)) {
+        return ''; // ไม่มีข้อมูล ไม่ต้องแสดงอะไร
+    }
+
+    // สร้าง HTML
+    $html  = '<div style="background:#fafafa; border-radius:8px; padding:12px 14px;';
+    $html .= 'border-left:4px solid #4e9bff; margin:10px 0 18px;">';
+    $html .= '<p style="margin:0 0 8px 0;"><b>รายละเอียดการจัดห้องพัก:</b></p>';
+    $html .= '<ul style="margin:0; padding-left:18px;">';
+
+    foreach ($byRoom as $roomName => $guests) {
+        $html .= '<li><b>ห้อง ' 
+              . htmlspecialchars($roomName, ENT_QUOTES, "UTF-8")
+              . ':</b> '
+              . htmlspecialchars(implode(', ', $guests), ENT_QUOTES, "UTF-8")
+              . '</li>';
+    }
+
+    $html .= '</ul></div>';
+
+    return $html;
+}
 
