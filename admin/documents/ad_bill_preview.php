@@ -147,21 +147,249 @@ $payerLine = $department;
 
 // วันที่ออกใบแจ้ง
 $issueThai = formatThaiDateShort(date('Y-m-d'));
-
-$pageTitle  = "ใบแจ้งรายละเอียดค่าใช้จ่าย #{$bookingCode}";
-$extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_bill_preview.css">';
-?>
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <meta charset="utf-8">
+    <title>ใบแจ้งรายละเอียดค่าใช้จ่าย #<?= h($bookingCode) ?></title>
+    <link href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/BaiJamjuree/BaiJamjuree.css" rel="stylesheet" />
+    <style>
+        /* ===== Print settings ===== */
+        @page { size: A4; margin: 12mm; }
+
+        :root{
+            --ink:#111;
+            --muted:#555;
+            --bg:#f3f4f6;
+            --paper:#fff;
+            --line:#111;
+            --soft:#e5e7eb;
+            --accent:#111;
+        }
+
+        *{ box-sizing:border-box; }
+        body{
+            font-family: 'Bai Jamjuree', sans-serif;
+            background:var(--bg);
+            margin:0;
+            color:var(--ink);
+        }
+
+        .wrap{ max-width: 980px; margin: 14px auto; padding: 0 12px; }
+        .toolbar{
+            display:flex; gap:10px; justify-content:flex-end;
+            margin-bottom: 10px;
+        }
+        .btn{
+            border:1px solid var(--muted);
+            background:#fff;
+            padding:8px 14px;
+            border-radius:10px;
+            cursor:pointer;
+            text-decoration:none;
+            color:#111;
+            font-size:14px;
+            transition: .15s ease;
+        }
+        .btn:hover{ transform: translateY(-1px); }
+        .btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
+
+        .paper{
+            background:var(--paper);
+            border-radius:14px;
+            box-shadow:0 10px 26px rgba(0,0,0,.10);
+            padding: 16px 18px 18px;
+            border: 1px solid rgba(17,17,17,.08);
+            overflow:hidden;
+        }
+
+        /* ===== Header ===== */
+        .doc-header{
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+            justify-content:space-between;
+            padding: 10px 12px 12px;
+            border:1px solid rgba(17,17,17,.18);
+            border-radius:12px;
+            background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+        }
+        .brand{
+            min-width: 260px;
+        }
+        .brand .h1{
+            font-size: 30px;
+            font-weight: 900;
+            margin:0;
+            letter-spacing:.2px;
+            line-height: 1.05;
+        }
+        .brand .sub{
+            margin-top:4px;
+            font-size:18px;
+            color:var(--muted);
+            line-height:1.2;
+        }
+
+        .meta{
+            text-align:right;
+            font-size: 18px;
+            line-height: 1.35;
+        }
+        .badge{
+            display:inline-block;
+            border:1px solid rgba(17,17,17,.35);
+            border-radius:999px;
+            padding:2px 10px;
+            font-size:16px;
+            margin-bottom:6px;
+            background:#fff;
+        }
+        .meta strong{ font-weight: 900; }
+
+        .hr{
+            height:1px;
+            background:rgba(17,17,17,.25);
+            margin: 12px 0;
+        }
+
+        /* ===== Paragraphs ===== */
+        .para{
+            font-size: 19px;
+            line-height: 1.65;
+            margin: 10px 0;
+        }
+        .center{ text-align:center; }
+        .lead{
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        .highlight{
+            border:1px solid rgba(17,17,17,.25);
+            border-radius:12px;
+            padding: 10px 12px;
+            background:#fcfcfc;
+        }
+
+        .big-center{
+            text-align:center;
+            font-size: 30px;
+            font-weight: 900;
+            margin: 10px 0 12px;
+            letter-spacing:.3px;
+        }
+
+        /* ===== Table ===== */
+        table{
+            width:100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 19px;
+            margin-top: 10px;
+            border:1px solid rgba(17,17,17,.35);
+            border-radius: 12px;
+            overflow:hidden;
+        }
+        th, td{
+            padding: 10px 12px;
+            vertical-align: top;
+        }
+        thead th{
+            text-align:center;
+            font-weight: 900;
+            background: #f7f7f7;
+            border-bottom: 1px solid rgba(17,17,17,.35);
+        }
+        tbody td{
+            border-bottom: 1px solid rgba(17,17,17,.18);
+        }
+        tbody tr:last-child td{
+            border-bottom: none;
+        }
+
+        td.amount{
+            width: 22%;
+            text-align: right;
+            font-size: 24px;
+            font-weight: 900;
+            padding-right: 14px;
+            white-space: nowrap;
+        }
+
+        .item{ line-height: 1.75; }
+        .item .subnote{ color:var(--muted); }
+
+        .names-box{
+            margin-top: 8px;
+            border:1px dashed rgba(17,17,17,.35);
+            border-radius: 10px;
+            padding: 8px 10px;
+            background:#fff;
+        }
+
+        /* ===== Footer / Notes ===== */
+        .footer{
+            margin-top: 12px;
+            font-size: 19px;
+            line-height: 1.65;
+        }
+        .footer strong{ font-weight: 900; }
+
+        .note-box{
+            margin-top: 10px;
+            border: 2px solid var(--ink);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 18px;
+            line-height: 1.55;
+            background: #fff;
+        }
+
+        .sign-row{
+            display:flex;
+            gap: 14px;
+            margin-top: 12px;
+        }
+        .sign{
+            flex:1;
+            border:1px solid rgba(17,17,17,.25);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background:#fcfcfc;
+            min-height: 88px;
+        }
+        .sign .label{
+            font-weight: 900;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .sign .line{
+            height:1px;
+            background:rgba(17,17,17,.25);
+            margin-top: 30px;
+        }
+        .sign .hint{
+            color:var(--muted);
+            font-size: 16px;
+            margin-top: 6px;
+        }
+
+        @media print {
+            body { background:#fff; }
+            .wrap { max-width: 100%; margin: 0; padding: 0; }
+            .toolbar { display:none !important; }
+            .paper { box-shadow:none; border-radius: 0; padding: 0; border:none; }
+            .doc-header{ border-radius: 10px; }
+        }
+    </style>
 </head>
 
 <body>
 <div class="wrap">
-    
     <div class="toolbar">
         <a class="btn" href="ad_doc_manage.php?booking_id=<?= (int)$bookingId ?>">กลับหน้าเอกสาร</a>
         <button class="btn primary" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
