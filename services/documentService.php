@@ -1,6 +1,4 @@
 <?php
-// services/documentService.php
-
 require_once __DIR__ . '/../db.php';
 
 /**
@@ -61,8 +59,9 @@ function getDocumentById(mysqli $conn, int $docId): ?array
     return $res->fetch_assoc() ?: null;
 }
 
-/** insert row เอกสารใหม่ (ไฟล์ถูกย้ายไปแล้ว, ส่ง path เข้ามา) */
-function insertBookingDocument(
+
+
+function insertAdminDocument(
     mysqli $conn,
     int $bookingId,
     int $adminId,
@@ -99,31 +98,6 @@ function insertBookingDocument(
     return $stmt->execute();
 }
 
-/** ลบ row เอกสารใน DB */
-function deleteBookingDocumentById(mysqli $conn, int $docId): bool
-{
-    $sql = "DELETE FROM booking_documents WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $docId);
-    return $stmt->execute();
-}
-
-function getDocumentsVisibleToUser(mysqli $conn, int $bookingId): mysqli_result
-{
-    $sql = "
-        SELECT id, uploaded_by, doc_type, original_name, file_path, mime_type, file_size, uploaded_at
-        FROM booking_documents
-        WHERE booking_id = ?
-          AND is_visible_to_user = 1
-        ORDER BY uploaded_at DESC
-    ";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    return $stmt->get_result();
-}
-
 function insertUserDocument(
     mysqli $conn,
     int $bookingId,
@@ -153,3 +127,28 @@ function insertUserDocument(
 
     return $stmt->execute();
 }
+/** ลบ row เอกสารใน DB */
+function deleteBookingDocumentById(mysqli $conn, int $docId): bool
+{
+    $sql = "DELETE FROM booking_documents WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $docId);
+    return $stmt->execute();
+}
+
+function getDocumentsVisibleToUser(mysqli $conn, int $bookingId): mysqli_result
+{
+    $sql = "
+        SELECT id, uploaded_by, doc_type, original_name, file_path, mime_type, file_size, uploaded_at
+        FROM booking_documents
+        WHERE booking_id = ?
+          AND is_visible_to_user = 1
+        ORDER BY uploaded_at DESC
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+

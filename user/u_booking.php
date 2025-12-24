@@ -12,15 +12,12 @@ $activeMenu = 'booking';
 </head>
 
 <body>
-    <!-- navbar -->
     <?php include '../partials/user/nav_user.php'; ?>
 
-    <!-- ฟอร์มจองห้องพัก -->
     <div class="container py-5">
         <h2 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h2>
         <div class="bookingForm">
             <form id="bookingForm" method="post" action="u_booking_process.php">
-                <!-- ชื่อ-นามสกุล, เบอร์, ID LINE, Email -->
                 <div class="mb-3">
                     <label for="fullName" class="form-label required">ชื่อ–นามสกุล ผู้จองห้องพัก</label>
                     <input type="text" class="form-control" id="fullName" name="fullName" required />
@@ -42,7 +39,6 @@ $activeMenu = 'booking';
                     <input type="email" class="form-control" id="email" name="email" required />
                 </div>
 
-                <!-- ตำแหน่ง -->
                 <fieldset class="mb-3">
                     <legend class="fs-6 required">ตำแหน่ง</legend>
 
@@ -123,7 +119,7 @@ $activeMenu = 'booking';
                             disabled />
                     </div>
                 </fieldset>
-                <!-- หน่วยงานต้นสังกัด -->
+                
                 <div class="mb-3">
                     <label for="department" class="form-label required">ชื่อหน่วยงานต้นสังกัด</label>
                     <input
@@ -140,7 +136,7 @@ $activeMenu = 'booking';
                         <option value="ศูนย์แพทยศาสตรศึกษาชั้นคลินิก โรงพยาบาลแพร่">
                     </datalist>
                 </div>
-                <!-- วัตถุประสงค์ -->
+                
                 <fieldset class="mb-4">
                     <legend class="fs-6 required">วัตถุประสงค์การเข้าพัก</legend>
 
@@ -206,7 +202,7 @@ $activeMenu = 'booking';
                         </div>
                     </div>
                 </fieldset>
-                <!-- ช่วงวันที่เข้าพัก -->
+                
                 <div class="row g-3 mb-3" id="dateRangePicker">
                     <div class="col-md-6">
                         <label for="checkInDate" class="form-label required">วันที่ย้ายเข้าพัก</label>
@@ -217,7 +213,7 @@ $activeMenu = 'booking';
                         <input type="text" class="form-control date end" id="checkOutDate" name="checkOutDate" required placeholder="วว-ดด-ปปปป" />
                     </div>
                 </div>
-                <!-- จำนวนผู้เข้าพัก -->
+                
                 <div class="mb-4">
                     <label class="form-label required">จำนวนผู้เข้าพัก</label>
                     <div class="row g-3">
@@ -232,7 +228,6 @@ $activeMenu = 'booking';
                     </div>
                 </div>
 
-                <!-- รายชื่อผู้เข้าพัก -->
                 <div class="mb-4">
                     <label class="form-label required">รายชื่อผู้เข้าพัก</label>
                     <p class="text-muted small mb-2">
@@ -252,7 +247,6 @@ $activeMenu = 'booking';
                     <div id="guestListContainer"></div>
                 </div>
 
-
                 <div class="d-flex justify-content-between">
                     <button type="reset" class="btn btn-outline-secondary">ล้างฟอร์ม</button>
                     <button type="submit" class="btn btn-primary">ส่งคำขอ</button>
@@ -264,14 +258,7 @@ $activeMenu = 'booking';
 
     <?php include '../partials/user/footer_user.php'; ?>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datepair.js/0.2.2/jquery.datepair.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php include '../partials/user/script_user.php'; ?>
 
     <script src="/assets/js/user/u_booking.js"></script>
 </body>

@@ -291,12 +291,6 @@ function updateBooking(mysqli $conn, int $bookingId, array $post): array
 }
 
 
-
-
-
-/**
- * ลบ booking + room_allocations + booking_documents (และไฟล์)
- */
 function deleteBooking(mysqli $conn, int $bookingId): bool
 {
     try {
@@ -363,13 +357,6 @@ function deleteBooking(mysqli $conn, int $bookingId): bool
     }
 }
 
-/**
- * อนุมัติ booking:
- *  - gen token
- *  - อัปเดต status + token + expired
- *  - ลบ allocations เดิม + จัดห้องใหม่ (strict)
- *  return booking array สำหรับใช้ส่งเมล หรือ null ถ้า fail
- */
 function approveBooking(mysqli $conn, int $bookingId): ?array
 {
     try {

@@ -12,14 +12,11 @@ $activeMenu = 'contact';
 </head>
 
 <body>
-    <!-- navbar -->
     <?php include '../partials/user/nav_user.php'; ?>
 
-    <!-- main content -->
     <div class="container py-5">
         <h2 class="text-center mb-5">ติดต่อเรา</h2>
         <div class="row g-4 justify-content-center">
-            <!-- การ์ด 1 -->
             <div class="col-md-3 ">
                 <div class="contact-box text-center p-4  bg-white shadow-sm">
                     <i class="fas fa-map-marker-alt icon-lg mb-3"></i>
@@ -32,7 +29,6 @@ $activeMenu = 'contact';
                 </div>
             </div>
 
-            <!-- การ์ด 2 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
                     <i class="fas fa-phone icon-lg mb-3"></i>
@@ -43,7 +39,6 @@ $activeMenu = 'contact';
                 </div>
             </div>
 
-            <!-- การ์ด 3 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
                     <i class="fas fa-envelope icon-lg mb-3"></i>
@@ -54,7 +49,6 @@ $activeMenu = 'contact';
                 </div>
             </div>
 
-            <!-- การ์ด 4 -->
             <div class="col-md-3">
                 <div class="contact-box text-center p-4 bg-white shadow-sm">
                     <i class="fas fa-comments icon-lg mb-3"></i>
@@ -64,7 +58,6 @@ $activeMenu = 'contact';
             </div>
         </div>
 
-        <!-- แผนที่ -->
         <div class="row mt-5">
             <div class="col-md-10 mx-auto">
                 <div class="map-box p-4 bg-white shadow-sm">
@@ -76,9 +69,9 @@ $activeMenu = 'contact';
         </div>
     </div>
 
-    <!-- footer -->
+    
     <?php include '../partials/user/footer_user.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <?php include '../partials/user/script_user.php'; ?>
 </body>
 
 </html>

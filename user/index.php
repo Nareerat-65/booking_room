@@ -11,10 +11,8 @@ $activeMenu = 'index';
 </head>
 
 <body>
-    <!-- navbar -->
     <?php include '../partials/user/nav_user.php'; ?>
 
-    <!-- ชื่อระบบ -->
     <div class="container-fluid hero px-0">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
         <p class=" text-white mb-4">
@@ -26,7 +24,6 @@ $activeMenu = 'index';
         </div>
     </div>
 
-    <!-- ขั้นตอนการจอง -->
     <div id="steps" class="container pb-4 mt-4 ">
         <h2 class="h4 mb-3 text-center mb-4">ขั้นตอนการจอง</h2>
         <div class="row g-3">
@@ -65,7 +62,6 @@ $activeMenu = 'index';
         </div>
     </div>
 
-    <!-- ประกาศ / เงื่อนไข -->
     <div class="container pb-5">
         <div class="alert alert-warning ">
             <strong>ประกาศ / เงื่อนไขการเข้าพัก</strong><br>
@@ -76,7 +72,7 @@ $activeMenu = 'index';
         </div>
     </div>
     <?php include '../partials/user/footer_user.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <?php include '../partials/user/script_user.php'; ?>
 </body>
 
 </html>
