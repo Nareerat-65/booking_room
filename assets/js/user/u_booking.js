@@ -63,7 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
         thaiyear: true
     });
 
-    $.getJSON('api_get_full_dates.php', function (fullDates) {
+    $.getJSON('u_full_dates.php', function (fullDates) {
+        console.log('Full dates:', fullDates);
 
         const disabled = fullDates.map(function (d) {
             const parts = d.split('-');

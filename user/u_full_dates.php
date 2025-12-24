@@ -1,49 +1,35 @@
 <?php
-// user/api_get_full_dates.php
 header('Content-Type: application/json; charset=utf-8');
-
 require_once __DIR__ . '/../db.php';
 
-// ตรวจสอบว่าเชื่อมต่อฐานข้อมูลได้หรือไม่
 if (!isset($conn) || !($conn instanceof mysqli)) {
     echo json_encode([]);
     exit;
 }
 
-// -------------------- 1) กำหนดช่วงวันที่ที่จะตรวจสอบ --------------------
 $today   = new DateTime('today');
-// ถ้าอยากให้ตรงกับหน้า booking (minCheckIn = วันนี้ + 14 วัน) ก็ทำแบบนี้:
 $startDt = (clone $today)->modify('+14 days');
-// ตรวจไปล่วงหน้า 6 เดือน (ปรับได้)
 $endDt   = (clone $startDt)->modify('+6 months');
 
 $startDate = $startDt->format('Y-m-d');
 $endDate   = $endDt->format('Y-m-d');
 
-// -------------------- 2) หา capacity รวมทั้งหมดของทุกห้อง --------------------
-$totalCapacity = 0;
-
-$sqlCap = "SELECT SUM(capacity) AS total_cap FROM rooms";
-if ($resCap = $conn->query($sqlCap)) {
-    if ($rowCap = $resCap->fetch_assoc()) {
-        $totalCapacity = (int)($rowCap['total_cap'] ?? 0);
-    }
-    $resCap->free();
+// 1) จำนวนห้องทั้งหมด
+$totalRooms = 0;
+$sqlRooms = "SELECT COUNT(*) AS total_rooms FROM rooms";
+if ($res = $conn->query($sqlRooms)) {
+    $row = $res->fetch_assoc();
+    $totalRooms = (int)($row['total_rooms'] ?? 0);
+    $res->free();
 }
 
-// ถ้าไม่มีห้องเลย ก็ถือว่ายังไม่มีวันที่จะ disable (หรือจะให้เต็มทุกวันก็แล้วแต่ design)
-if ($totalCapacity <= 0) {
+if ($totalRooms <= 0) {
     echo json_encode([]);
     exit;
 }
 
-// -------------------- 3) ดึง allocation ที่อนุมัติแล้วและทับซ้อนช่วงวันที่ --------------------
 $sqlAlloc = "
-    SELECT 
-        a.start_date,
-        a.end_date,
-        a.woman_count,
-        a.man_count
+    SELECT a.room_id, a.start_date, a.end_date
     FROM room_allocations a
     INNER JOIN bookings b ON b.id = a.booking_id
     WHERE b.status = 'approved'
@@ -61,37 +47,39 @@ $stmt->bind_param('ss', $startDate, $endDate);
 $stmt->execute();
 $res = $stmt->get_result();
 
-// array เก็บจำนวนคนต่อวัน เช่น ['2025-01-10' => 12, ...]
-$occupancy = [];
+// 3) เก็บ set ของ room_id ต่อวัน
+$usedRoomsByDate = [];
 
-// loop allocation ทุกแถว แล้วแตกเป็นรายวัน
+$inclusiveEnd = true; // ถ้า end_date เป็น "วันออก" ให้เปลี่ยนเป็น false
+   
 while ($row = $res->fetch_assoc()) {
+    $roomId = (int)($row['room_id'] ?? 0);
     $allocStart = $row['start_date'] ?? null;
     $allocEnd   = $row['end_date'] ?? null;
 
-    if (!$allocStart || !$allocEnd) {
-        continue;
-    }
-
-    $count = (int)($row['woman_count'] ?? 0) + (int)($row['man_count'] ?? 0);
-    if ($count <= 0) {
-        continue;
-    }
+    if ($roomId <= 0 || !$allocStart || !$allocEnd) continue;
 
     $dStart = new DateTime($allocStart);
     $dEnd   = new DateTime($allocEnd);
 
-    // บังคับให้ไม่ออกนอกช่วงที่เราสนใจ
+    // กันข้อมูลสลับวัน
+    if ($dStart > $dEnd) continue;
+
+    // ถ้า end_date คือวันออก (ไม่ค้าง) ให้ไม่นับวันนั้น
+    if (!$inclusiveEnd) {
+        $dEnd->modify('-1 day');
+        if ($dStart > $dEnd) continue; // เช่น พัก 1 คืนแบบ start=end_date
+    }
+
+    // จำกัดให้อยู่ในช่วงที่สนใจ
     if ($dStart < $startDt) $dStart = clone $startDt;
     if ($dEnd   > $endDt)   $dEnd   = clone $endDt;
+    if ($dStart > $dEnd) continue;
 
-    // เดินวันจาก start → end (ถือว่าแต่ละวันในช่วงนี้มีคนพัก)
     while ($dStart <= $dEnd) {
         $key = $dStart->format('Y-m-d');
-        if (!isset($occupancy[$key])) {
-            $occupancy[$key] = 0;
-        }
-        $occupancy[$key] += $count;
+        if (!isset($usedRoomsByDate[$key])) $usedRoomsByDate[$key] = [];
+        $usedRoomsByDate[$key][$roomId] = true;
 
         $dStart->modify('+1 day');
     }
@@ -99,14 +87,10 @@ while ($row = $res->fetch_assoc()) {
 
 $stmt->close();
 
-// -------------------- 4) หา “วันที่เต็มแล้ว” --------------------
+// 4) วันเต็ม = ห้องถูกใช้ครบทุกห้อง
 $fullDates = [];
-
-foreach ($occupancy as $date => $numPeople) {
-    if ($numPeople >= $totalCapacity) {
-        $fullDates[] = $date;
-    }
+foreach ($usedRoomsByDate as $date => $roomSet) {
+    if (count($roomSet) >= $totalRooms) $fullDates[] = $date;
 }
 
-// ส่งออกเป็น JSON
-echo json_encode($fullDates);
+echo json_encode(array_values($fullDates));

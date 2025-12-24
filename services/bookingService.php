@@ -71,6 +71,36 @@ function getBookingGuestRequests(mysqli $conn, int $bookingId): array
 }
 
 /**
+ * ดึงรายชื่อผู้เข้าพักที่กรอกในฟอร์มคำขอ
+ */
+function getGuestRequestsByBookingId(mysqli $conn, int $bookingId): array
+{
+    $sql = "
+        SELECT id, guest_name, gender, guest_phone
+        FROM booking_guest_requests
+        WHERE booking_id = ?
+        ORDER BY id
+    ";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return [];
+    }
+
+    $stmt->bind_param('i', $bookingId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $rows = [];
+    while ($row = $res->fetch_assoc()) {
+        $rows[] = $row;
+    }
+
+    $stmt->close();
+    return $rows;
+}
+
+/**
  * แทนที่รายชื่อทั้งหมดของ booking นี้ด้วยชุดใหม่ (ง่ายและชัวร์สุด)
  */
 function replaceBookingGuestRequests(mysqli $conn, int $bookingId, array $guests): void
@@ -437,35 +467,6 @@ function rejectBooking(mysqli $conn, int $bookingId, string $reason): ?array
     $stmt->close();
 
     return getBookingById($conn, $bookingId);
-}
-/**
- * ดึงรายชื่อผู้เข้าพักที่กรอกในฟอร์มคำขอ
- */
-function getGuestRequestsByBookingId(mysqli $conn, int $bookingId): array
-{
-    $sql = "
-        SELECT id, guest_name, gender, guest_phone
-        FROM booking_guest_requests
-        WHERE booking_id = ?
-        ORDER BY id
-    ";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        return [];
-    }
-
-    $stmt->bind_param('i', $bookingId);
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    $rows = [];
-    while ($row = $res->fetch_assoc()) {
-        $rows[] = $row;
-    }
-
-    $stmt->close();
-    return $rows;
 }
 
 /**
