@@ -1,0 +1,35 @@
+body {
+    background: #fbf6f4ff;
+    font-family: 'Bai Jamjuree', sans-serif;
+}
+
+.navbar {
+    font-size: 0.95rem;
+    backdrop-filter: blur(12px);
+    background-color: #F57B39;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.navbar-brand {
+    font-size: 1.9rem;
+}
+
+.nav-link {
+    transition: 0.3s;
+    font-size: 1.1rem;
+    background-color: #F57B39;
+}
+
+.nav-link:hover {
+    background-color: white;
+    color: #F57B39;
+    border-radius: 0.5rem;
+    padding-inline: 1rem;
+}
+
+.nav-link.active:hover {
+    background-color: white !important;
+    color: #F57B39 !important;
+}

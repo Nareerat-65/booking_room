@@ -1,0 +1,25 @@
+body {
+    background: #fbf6f4;
+    font-family: 'Bai Jamjuree', sans-serif;
+}
+
+.app-header {
+    background-color: #F57B39 !important;
+    color: #fff !important;
+    font-size: 20px;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.nav-link.active i {
+    color: #fff !important;
+}
+
+
+.main-header .nav-link {
+    color: #fff !important;
+}
