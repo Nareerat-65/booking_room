@@ -33,70 +33,129 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const minCheckIn = new Date(today);
     minCheckIn.setDate(minCheckIn.getDate() + 14);
+
     const maxCheckIn = new Date(today);
     maxCheckIn.setDate(maxCheckIn.getDate() + 74);
 
-    $('#checkInDate').datepicker({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        startDate: minCheckIn,
-        endDate: maxCheckIn,
-        language: 'th',
-        thaiyear: true
-    }).on('changeDate', function (e) {
-        const start = e.date;
-        $('#checkOutDate').datepicker('setStartDate', start);
+    function toYMD(dateObj) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
 
-        const end = $('#checkOutDate').datepicker('getDate');
-        if (end && end < start) {
-            $('#checkOutDate').datepicker('setDate', start);
-        }
-    });
+    function addDaysYMD(ymd, days) {
+        const d = new Date(ymd);
+        d.setDate(d.getDate() + days);
+        return toYMD(d);
+    }
 
+    function initDatepickers(fullSet) {
+        // กัน init ซ้ำ
+        try { $('#checkInDate').datepicker('destroy'); } catch (e) { }
+        try { $('#checkOutDate').datepicker('destroy'); } catch (e) { }
 
-    $('#checkOutDate').datepicker({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        startDate: minCheckIn,
-        // endDate: maxCheckIn,
-        language: 'th',
-        thaiyear: true
-    });
+        const commonOpts = {
+            format: 'dd-mm-yyyy',
+            autoclose: true,
+            language: 'th',
+            thaiyear: true,
+            startDate: minCheckIn,
 
-    $.getJSON('u_full_dates.php', function (fullDates) {
-        console.log('Full dates:', fullDates);
+            // ใส่ป้าย "เต็ม" แต่ไม่ disable
+            beforeShowDay: function (date) {
+                const ymd = toYMD(date);
+                if (fullSet.has(ymd)) {
+                    return { enabled: true, classes: 'is-full', tooltip: 'เต็มแล้ว' };
+                }
+                return true;
+            }
+        };
 
-        const disabled = fullDates.map(function (d) {
-            const parts = d.split('-');
-            if (parts.length !== 3) return d;
-            return parts[2] + '-' + parts[1] + '-' + parts[0];
+        // check-in
+        $('#checkInDate').datepicker({
+            ...commonOpts,
+            endDate: maxCheckIn
+        }).on('changeDate', function (e) {
+            const picked = e.date; // สำคัญ: e.date
+            const ymd = toYMD(picked);
+
+            // ถ้าจะ "กันไม่ให้เลือกจริง" ให้ทำ soft-block แบบนี้
+            if (fullSet.has(ymd)) {
+                $('#checkInDate').datepicker('update', '');
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่สามารถเลือกวันที่นี้ได้',
+                    text: 'วันที่นี้ห้องเต็มแล้ว'
+                });
+                return;
+            }
+
+            // ตั้ง checkOut startDate ให้ >= checkIn
+            $('#checkOutDate').datepicker('setStartDate', picked);
+
+            const out = $('#checkOutDate').datepicker('getDate');
+            if (out && out < picked) {
+                $('#checkOutDate').datepicker('setDate', picked);
+            }
         });
 
-        $('#checkInDate').datepicker('setDatesDisabled', disabled);
-        $('#checkOutDate').datepicker('setDatesDisabled', disabled);
+        // check-out
+        $('#checkOutDate').datepicker({
+            ...commonOpts
+        }).on('changeDate', function (e) {
+            const picked = e.date;
+            const ymd = toYMD(picked);
+
+            if (fullSet.has(ymd)) {
+                $('#checkOutDate').datepicker('update', '');
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่สามารถเลือกวันที่นี้ได้',
+                    text: 'วันที่นี้ห้องเต็มแล้ว'
+                });
+                return;
+            }
+        });
+
+        // ถ้าคุณยังต้องดักวันที่ disable จาก rule อื่น (เช่นจองน้อยกว่า 14 วัน)
+        // ให้ดักเฉพาะ "disabled จริง" ไม่เกี่ยวกับ is-full
+        $(document).off('mousedown.fullguard').on('mousedown.fullguard', '.datepicker-days td.day', function (e) {
+            const $td = $(this);
+            if ($td.hasClass('disabled') || $td.hasClass('disabled-date')) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ไม่สามารถเลือกวันที่นี้ได้',
+                    html: `
+          ช่วงวันดังกล่าวไม่เปิดให้จองผ่านระบบออนไลน์<br>
+          หากต้องการจองในกรณีเร่งด่วนหรือฉุกเฉิน<br>
+          กรุณาติดต่อเจ้าหน้าที่เพื่อดำเนินการแทน<br><br>
+          <b>เบอร์โทรศัพท์: 0-5596-7847</b>
+        `,
+                    confirmButtonText: 'ตกลง'
+                });
+            }
+        });
+    }
+
+    // โหลดวันเต็มจาก backend แล้วค่อย init datepicker
+    $.getJSON('u_full_dates.php', function (fullDates) {
+        console.log('Full dates:', fullDates); // ต้องเป็น ["YYYY-MM-DD",...]
+        const fullSet = new Set();
+        fullDates.forEach(ymd => {
+            // วันเต็มจาก DB
+            fullSet.add(ymd);
+
+            // วันทำความสะอาด 3 วันถัดไป
+            fullSet.add(addDaysYMD(ymd, 1));
+            fullSet.add(addDaysYMD(ymd, 2));
+            fullSet.add(addDaysYMD(ymd, 3));
+        });
+        console.log('Full + Cleaning:', [...fullSet]);
+        initDatepickers(fullSet);
     });
 
-    // ดัก mousedown บนทุก cell วันที่ แล้วเช็คเองว่าถูก disable มั้ย
-    $(document).on('mousedown', '.datepicker-days td.day', function (e) {
-        const $td = $(this);
-
-        // ถ้า td นี้ถูกปิดใช้งาน (เช่น disabled จาก setDatesDisabled / ช่วงวันที่นอก range)
-        if ($td.hasClass('disabled') || $td.hasClass('disabled-date')) {
-            e.preventDefault(); // กันไม่ให้ datepicker ทำงานต่อ
-
-            Swal.fire({
-                icon: 'info',
-                title: 'ไม่สามารถเลือกวันที่นี้ได้',
-                html: `
-                ช่วงวันดังกล่าวไม่เปิดให้จองผ่านระบบออนไลน์<br>
-                หากต้องการจองในกรณีเร่งด่วนหรือฉุกเฉิน<br>
-                กรุณาติดต่อเจ้าหน้าที่เพื่อดำเนินการแทน<br><br>
-                <b>เบอร์โทรศัพท์: 0-5596-7847</b>
-            `,
-                confirmButtonText: 'ตกลง'
-            });
-        }
-    });
 
 
     // ===== ส่งฟอร์มแบบ AJAX + SweetAlert2 =====

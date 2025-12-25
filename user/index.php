@@ -16,7 +16,7 @@ $activeMenu = 'index';
     <div class="container-fluid hero px-0">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
         <p class=" text-white mb-4">
-            กรอกคำขอจองออนไลน์และรอรับผลการอนุมัติผ่านอีเมล 
+            กรอกคำขอจองออนไลน์และรอรับผลการอนุมัติผ่านอีเมล
         </p>
         <div class="d-flex justify-content-center gap-2">
             <a href="u_booking.php" class="btn btn-main">เริ่มจองห้องพัก</a>
@@ -29,7 +29,7 @@ $activeMenu = 'index';
         <div class="row g-3">
             <div class="col-md-3">
                 <div class="card step-card h-100 p-3">
-                    <h5>1. ส่งคำขอจอง</h5>
+                    <h5>1. ส่งคำขอการจอง</h5>
                     <p class="small text-muted mb-0">
                         กรอกแบบฟอร์มข้อมูลส่วนตัว จำนวนผู้เข้าพัก และช่วงวันที่ต้องการเข้าพักผ่านหน้า “จองห้องพัก”
                     </p>
@@ -47,7 +47,7 @@ $activeMenu = 'index';
                 <div class="card step-card h-100 p-3">
                     <h5>3. รับผลทางอีเมล</h5>
                     <p class="small text-muted mb-0">
-                        ได้รับอีเมลแจ้งผลการอนุมัติคำขอจอง
+                        ได้รับอีเมลแจ้งผลการอนุมัติคำขอการจอง
                     </p>
                 </div>
             </div>
@@ -63,14 +63,34 @@ $activeMenu = 'index';
     </div>
 
     <div class="container pb-5">
-        <div class="alert alert-warning ">
-            <strong>ประกาศ / เงื่อนไขการเข้าพัก</strong><br>
-            - กรุณาส่งคำขอจองล่วงหน้าอย่างน้อย 2 สัปดาห์ก่อนวันที่เข้าพัก<br>
-            - ห้องพัก 1 ห้องเข้าพักได้สูงสุด 4 คน แยกห้องตามเพศ (ชาย/หญิง)<br>
-            - หลังย้ายออกจะมีการทำความสะอาดห้อง 3 วัน ก่อนเปิดให้จองรอบถัดไป<br>
-            - หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่ผ่านหน้า “ติดต่อเรา”
+        <div class="alert alert-warning">
+            <strong class="d-block mb-2">ประกาศ / เงื่อนไขการเข้าพัก</strong>
+
+            <ul class="mb-0 ps-3">
+                <li>
+                    กรุณาส่งคำขอจองล่วงหน้าอย่างน้อย
+                    <strong>2 สัปดาห์ก่อนวันที่เข้าพัก</strong>
+                    <br>
+                    <small class="text-muted">
+                        กรณีต้องการจองในระยะเวลาน้อยกว่า 2 สัปดาห์ กรุณาติดต่อเจ้าหน้าที่โดยตรง
+                    </small>
+                </li>
+                <li>
+                    ห้องพัก 1 ห้องเข้าพักได้สูงสุด 4 คน
+                    และแยกห้องตามเพศ (ชาย / หญิง)
+                </li>
+                <li>
+                    หลังย้ายออกจะมีการทำความสะอาดห้อง 3 วัน
+                    ก่อนเปิดให้จองรอบถัดไป
+                </li>
+                <li>
+                    หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่ผ่านหน้า
+                    <strong>“ติดต่อเรา”</strong>
+                </li>
+            </ul>
         </div>
     </div>
+
     <?php include '../partials/user/footer_user.php'; ?>
     <?php include '../partials/user/script_user.php'; ?>
 </body>
