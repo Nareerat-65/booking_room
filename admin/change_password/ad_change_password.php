@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
 
 $activeMenu = 'change_password';
 $pageTitle = 'เปลี่ยนรหัสผ่านผู้ดูแลระบบ';
@@ -9,15 +10,15 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
 
         <!-- Navbar + Sidebar -->
-        <?php include_once '../../partials/admin/nav_admin.php'; ?>
-        <?php include_once '../../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <!-- MAIN -->
         <main class="app-main">
@@ -104,11 +105,11 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_change_password.
 
         </main>
 
-        <?php include_once '../../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
 
     </div>
 
-    <?php include_once '../../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script src="../../assets/js/admin/ad_change_password.js"></script>
 
 </body>

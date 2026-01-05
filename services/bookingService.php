@@ -1,9 +1,10 @@
 <?php
 // services/bookingService.php
 
-require_once __DIR__ . '/../utils/booking_helper.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once UTILS_PATH . '/booking_helper.php';
 require_once __DIR__ . '/roomAllocationService.php';
-require_once __DIR__ . '/../db.php';
+require_once CONFIG_PATH . '/db.php';
 // ถ้าจะใช้ส่งเมล ให้ require PHPMailer
 require_once __DIR__ . '/../PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../PHPMailer/src/PHPMailer.php';

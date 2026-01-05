@@ -5,7 +5,8 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
-require_once '../../db.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ad_change_password.php");

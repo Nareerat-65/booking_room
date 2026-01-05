@@ -1,8 +1,9 @@
 <?php
 session_start();
-require_once '../db.php';
-require_once '../utils/booking_helper.php';
-require_once '../services/documentService.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once SERVICES_PATH . '/documentService.php';
 
 $bookingId = (int)($_GET['booking_id'] ?? 0);
 if ($bookingId <= 0) {
@@ -48,7 +49,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_upload_document.cs
 <html lang="th">
 
 <head>
-    <?php include '../partials/user/head_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/head_user.php'; ?>
 </head>
 
 <body class="bg-light">

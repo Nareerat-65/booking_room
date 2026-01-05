@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 1) . '/config.php';
 $pageTitle = 'แบบฟอร์มขอจองห้องพัก - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_booking.css">';
 $activeMenu = 'booking';
@@ -8,12 +9,11 @@ $activeMenu = 'booking';
 <html lang="th">
 
 <head>
-    <?php include '../partials/user/head_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/head_user.php'; ?>
 </head>
 
 <body>
-    <?php include '../partials/user/nav_user.php'; ?>
-
+    <?php include_once PARTIALS_PATH . '/user/nav_user.php'; ?>
     <div class="container py-5">
         <h2 class="h3 mb-4 text-center">แบบฟอร์มขอจองห้องพัก</h2>
         <div class="bookingForm">
@@ -256,9 +256,9 @@ $activeMenu = 'booking';
 
     </div>
 
-    <?php include '../partials/user/footer_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/footer_user.php'; ?>
 
-    <?php include '../partials/user/script_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/script_user.php'; ?>
 
     <script src="/assets/js/user/u_booking.js"></script>
 </body>

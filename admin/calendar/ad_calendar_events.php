@@ -1,7 +1,8 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../db.php';
-require_once '../../utils/booking_helper.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
 
 // ดึงข้อมูลการจองที่ได้รับการอนุมัติทั้งหมด
 $sql = "

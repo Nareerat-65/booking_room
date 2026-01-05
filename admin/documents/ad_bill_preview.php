@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once __DIR__ . '/../../db.php';
-require_once __DIR__ . '/../../utils/booking_helper.php';
-require_once __DIR__ . '/../../services/billService.php';
-require_once __DIR__ . '/../../services/bookingService.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once SERVICES_PATH . '/billService.php';
+require_once SERVICES_PATH . '/bookingService.php';
 
 $bookingId = isset($_GET['booking_id']) ? (int)$_GET['booking_id'] : 0;
 if ($bookingId <= 0) {
@@ -155,7 +156,7 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_bill_preview.css
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body>

@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../utils/admin_guard.php';
-require_once '../db.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
 
 //คำขอที่ยังไม่อนุมัติ
 $sqlPending = "SELECT COUNT(*) AS c FROM bookings WHERE status = 'pending'";
@@ -73,13 +74,13 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
 <html lang="th">
 
 <head>
-    <?php include '../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-        <?php include_once __DIR__ . '/../partials/admin/nav_admin.php'; ?>
-        <?php include_once __DIR__ . '/../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <!-- ===== Main Content ===== -->
         <main class="app-main">
@@ -180,11 +181,11 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_dashboard.css">'
             </div>
         </main>
 
-        <?php include_once __DIR__ . '/../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
 
     </div>
 
-    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
         window.genderLabels = <?= json_encode($labels_gender); ?>;

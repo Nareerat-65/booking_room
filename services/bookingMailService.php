@@ -4,8 +4,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../utils/booking_helper.php';
-require_once __DIR__ . '/../mail_config.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once CONFIG_PATH . '/mail_config.php';
 
 // โหลด PHPMailer
 require_once __DIR__ . '/../PHPMailer/src/Exception.php';

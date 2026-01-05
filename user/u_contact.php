@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 1) . '/config.php';
 $pageTitle = 'ติดต่อเรา - ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="/assets/css/user/u_contact.css">';
 $activeMenu = 'contact';
@@ -8,12 +9,11 @@ $activeMenu = 'contact';
 <html lang="th">
 
 <head>
-    <?php include '../partials/user/head_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/head_user.php'; ?>
 </head>
 
 <body>
-    <?php include '../partials/user/nav_user.php'; ?>
-
+    <?php include_once PARTIALS_PATH . '/user/nav_user.php'; ?>
     <div class="container py-5">
         <h2 class="text-center mb-5">ติดต่อเรา</h2>
         <div class="row g-4 justify-content-center">
@@ -72,8 +72,8 @@ $activeMenu = 'contact';
     </div>
 
 
-    <?php include '../partials/user/footer_user.php'; ?>
-    <?php include '../partials/user/script_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/footer_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/script_user.php'; ?>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once dirname(__DIR__, 2) . '/config.php';
 if (!isset($_SESSION['admin_id'])) {
     header('Location:  /admin/ad_login.php');
     exit;
@@ -15,13 +16,13 @@ $extraHead = '
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-        <?php include_once '../../partials/admin/nav_admin.php'; ?>
-        <?php include_once '../../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <main class="app-main">
 
@@ -42,7 +43,7 @@ $extraHead = '
 
         </main>
 
-        <?php include_once '../../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
 
     </div>
 
@@ -66,7 +67,7 @@ $extraHead = '
         </div>
     </div>
 
-    <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
     <script src="../../assets/js/admin/ad_calendar.js"></script>
 </body>

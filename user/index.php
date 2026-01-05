@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 1) . '/config.php';
 $pageTitle = 'ระบบจองห้องพัก';
 $extraHead = '<link rel="stylesheet" href="../assets/css/user/index.css">';
 $activeMenu = 'index';
@@ -7,12 +8,11 @@ $activeMenu = 'index';
 <html lang="th">
 
 <head>
-    <?php include '../partials/user/head_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/head_user.php'; ?>
 </head>
 
 <body>
-    <?php include '../partials/user/nav_user.php'; ?>
-
+    <?php include_once PARTIALS_PATH . '/user/nav_user.php'; ?>
     <div class="container-fluid hero px-0">
         <h1 class="mb-3">ระบบจองห้องพักสำหรับนิสิตแพทย์ / แพทย์ / บุคลากร</h1>
         <p class=" text-white mb-4">
@@ -91,8 +91,8 @@ $activeMenu = 'index';
         </div>
     </div>
 
-    <?php include '../partials/user/footer_user.php'; ?>
-    <?php include '../partials/user/script_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/footer_user.php'; ?>
+    <?php include_once PARTIALS_PATH . '/user/script_user.php'; ?>
 </body>
 
 </html>

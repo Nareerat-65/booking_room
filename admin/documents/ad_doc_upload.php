@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../db.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
 
 $booking_id = (int)($_POST['booking_id'] ?? 0);
 $doc_type   = trim($_POST['doc_type'] ?? '');

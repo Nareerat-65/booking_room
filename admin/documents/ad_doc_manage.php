@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../db.php';
-require_once '../../utils/booking_helper.php';
-require_once __DIR__ . '/../../services/documentService.php';
-require_once __DIR__ . '/../../services/bookingService.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once SERVICES_PATH . '/documentService.php';
+require_once SERVICES_PATH . '/bookingService.php';
 
 /* --- FIX: ดึง booking_id ให้ถูกต้อง --- */
 $booking_id = isset($_GET['booking_id']) ? (int)$_GET['booking_id'] : 0;
@@ -30,13 +31,13 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-        <?php include '../../partials/admin/nav_admin.php'; ?>
-        <?php include '../../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <main class="app-main">
             <div class="app-content-header py-3">
@@ -146,9 +147,9 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
             </div>
         </main>
 
-        <?php include '../../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
     </div>
-    <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (window.jQuery && $.fn.DataTable) {

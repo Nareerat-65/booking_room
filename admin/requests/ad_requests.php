@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once __DIR__ . '/../../utils/booking_helper.php';
-require_once __DIR__ . '/../../db.php';
-require_once __DIR__ . '/../../services/bookingService.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once CONFIG_PATH . '/db.php';
+require_once SERVICES_PATH . '/bookingService.php';
 
 $activeMenu = 'requests';
 $pageTitle = 'รายการจองห้องพัก';
@@ -14,14 +15,14 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
 
-        <?php include_once '../../partials/admin/nav_admin.php'; ?>
-        <?php include_once '../../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <!-- ===== Main Content (v4) ===== -->
         <main class="app-main">
@@ -155,7 +156,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
             </div>
         </main>
 
-        <?php include_once '../../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
 
     </div>
 
@@ -212,7 +213,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
 
 
     <!-- ===== Scripts ===== -->
-    <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="/assets/js/admin/ad_requests.js"></script>

@@ -2,8 +2,9 @@
 // user/u_upload_document_process.php
 
 session_start();
-require_once '../db.php';
-require_once '../services/documentService.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
+require_once SERVICES_PATH . '/documentService.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: u_upload_document.php');

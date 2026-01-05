@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../db.php';
-require_once __DIR__ . '/../utils/booking_helper.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
 
 /**
  * นับจำนวนวันแบบรวมวันเข้า + วันออก

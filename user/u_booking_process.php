@@ -1,10 +1,10 @@
 
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-require_once '../db.php';
-require_once '../utils/booking_helper.php';
-require_once '../services/bookingMailService.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once SERVICES_PATH . '/bookingMailService.php';
 header('Content-Type: application/json; charset=utf-8');
 
 // ดัก error แบบรวม ๆ เผื่อหลุด try

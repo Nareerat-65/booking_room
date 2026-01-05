@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../utils/booking_helper.php';
-require_once '../../db.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once CONFIG_PATH . '/db.php';
 header('Content-Type: text/html; charset=utf-8');
 
 /* -------------------------------------------------
@@ -63,7 +64,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_month_report.css
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body>

@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../db.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     echo json_encode([]);

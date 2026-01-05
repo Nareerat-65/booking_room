@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once '../db.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
 
 $conn = new mysqli($host, $user, $password, $dbname);
 if ($conn->connect_error) {
@@ -40,7 +41,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
 <html lang="th">
 
 <head>
-    <?php include '../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="login-body">
@@ -119,7 +120,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
         </div>
     </div>
 
-    <?php include_once __DIR__ . '/../partials/admin/script_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
     <script>
         // toggle แสดง/ซ่อนรหัสผ่าน
         $(function() {

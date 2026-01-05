@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once __DIR__ . '/../../db.php';
-require_once __DIR__ . '/../../services/bookingService.php';
-require_once __DIR__ . '/../../services/roomAllocationService.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
+require_once SERVICES_PATH . '/bookingService.php';
+require_once SERVICES_PATH . '/roomAllocationService.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ad_requests.php?error=invalid_method');

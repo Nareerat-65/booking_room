@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../db.php';
+require_once dirname(__DIR__, 1) . '/config.php';
+require_once CONFIG_PATH . '/db.php';
 
 function allocateRoomsStrict(mysqli $conn, int $bookingId): bool
 {

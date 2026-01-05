@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__ . '/../../utils/admin_guard.php';
-require_once '../../db.php';
-require_once '../../utils/booking_helper.php';
-require_once __DIR__ . '/../../services/documentService.php';
+require_once dirname(__DIR__, 2) . '/config.php';
+require_once UTILS_PATH . '/admin_guard.php';
+require_once CONFIG_PATH . '/db.php';
+require_once UTILS_PATH . '/booking_helper.php';
+require_once SERVICES_PATH . '/documentService.php';
 
 $res = getBookingsForDocumentPage($conn);
 
@@ -15,13 +16,13 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css
 <html lang="th">
 
 <head>
-    <?php include '../../partials/admin/head_admin.php'; ?>
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-        <?php include '../../partials/admin/nav_admin.php'; ?>
-        <?php include '../../partials/admin/sidebar_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
         <main class="app-main">
             <div class="app-content-header py-3">
@@ -80,9 +81,9 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_doc_bookings.css
             </div>
         </main>
 
-        <?php include '../../partials/admin/footer_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
     </div>
-        <?php include_once __DIR__ . '/../../partials/admin/script_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
         <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="/assets/js/admin/ad_doc_bookings.js"></script>
