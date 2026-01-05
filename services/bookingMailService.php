@@ -260,7 +260,7 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                                 <div style="background:#fafafa; border-radius:8px; padding:12px 14px;
                                     border-left:4px solid #F57B39; margin:10px 0 18px;">
                                     <p style="margin:0;"><b>หน่วยงาน :</b> หน่วยงานกิจการนิสิต คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร</p>
-                                    <p style="margin:0;"><b>เบอร์โทรศัพท์ :</b> 0-5596-7847</p>
+                                    <p style="margin:0;"><b>เบอร์โทรศัพท์ :</b> 082-7946535 </p>
                                     <p style="margin:0;"><b>E-mail :</b> dormitory@nu.ac.th</p>
                                 </div>
 

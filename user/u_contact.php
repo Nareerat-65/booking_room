@@ -34,7 +34,7 @@ $activeMenu = 'contact';
                     <i class="fas fa-phone icon-lg mb-3"></i>
                     <h5 class="mt-3 fw-bold">โทรศัพท์</h5>
                     <p class="text-muted small">
-                        0-5596-7847
+                        082-7946535
                     </p>
                 </div>
             </div>
@@ -49,13 +49,15 @@ $activeMenu = 'contact';
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="contact-box text-center p-4 bg-white shadow-sm">
-                    <i class="fas fa-comments icon-lg mb-3"></i>
-                    <h5 class="mt-3 fw-bold">Q&A</h5>
-                    <p class="text-muted small">Messenger</p>
+                <div class="col-md-3">
+                    <a href="https://www.facebook.com/SACMEDNU" class="contact-link">
+                        <div class="contact-box text-center p-4 bg-white shadow-sm">
+                            <i class="fas fa-comments icon-lg mb-3"></i>
+                            <h5 class="mt-3 fw-bold">Q&A</h5>
+                            <p class="text-muted small">Messenger</p>
+                        </div>
+                    </a>
                 </div>
-            </div>
         </div>
 
         <div class="row mt-5">
@@ -69,7 +71,7 @@ $activeMenu = 'contact';
         </div>
     </div>
 
-    
+
     <?php include '../partials/user/footer_user.php'; ?>
     <?php include '../partials/user/script_user.php'; ?>
 </body>

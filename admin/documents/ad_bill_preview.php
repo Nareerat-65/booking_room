@@ -151,7 +151,6 @@ $issueThai = formatThaiDateShort(date('Y-m-d'));
 $pageTitle  = "ใบแจ้งรายละเอียดค่าใช้จ่าย #{$bookingCode}";
 $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_bill_preview.css">';
 ?>
-?>
 
 <!DOCTYPE html>
 <html lang="th">
@@ -176,7 +175,6 @@ $extraHead = '<link rel="stylesheet" href="\assets\css\admin\ad_bill_preview.css
                 <div class="sub">เอกสารสำหรับออกใบเสร็จรับเงิน / ตรวจสอบข้อมูลค่าใช้จ่าย</div>
             </div>
             <div class="meta">
-                <div class="badge">เอกสารแจ้งค่าใช้จ่าย</div><br>
                 เลขที่ใบจอง: <strong>#<?= h($bookingCode) ?></strong><br>
                 วันที่ออกใบแจ้ง: <strong><?= h($issueThai) ?></strong>
             </div>
