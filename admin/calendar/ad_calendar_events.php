@@ -1,10 +1,30 @@
 <?php
+session_start();
 header('Content-Type: application/json; charset=utf-8');
+
 require_once dirname(__DIR__, 2) . '/config.php';
 require_once CONFIG_PATH . '/db.php';
 require_once UTILS_PATH . '/booking_helper.php';
 
-// ดึงข้อมูลการจองที่ได้รับการอนุมัติทั้งหมด
+// ✅ กันข้อมูลรั่ว: ต้องเป็นแอดมินเท่านั้น
+if (!isset($_SESSION['admin_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'unauthorized']);
+    exit;
+}
+
+// ✅ รับช่วงวันที่จาก FullCalendar/Board เพื่อไม่ดึงทั้งหมด
+$rangeStart = $_GET['start'] ?? null; // format: YYYY-MM-DD
+$rangeEnd   = $_GET['end'] ?? null;   // format: YYYY-MM-DD
+
+// fallback: ถ้าไม่ส่งมา ให้ดึงช่วง 60 วันจากวันนี้
+if (!$rangeStart || !$rangeEnd) {
+    $rangeStart = date('Y-m-d', strtotime('-30 days'));
+    $rangeEnd   = date('Y-m-d', strtotime('+30 days'));
+}
+
+// หมายเหตุ: end ใน FullCalendar เป็น exclusive อยู่แล้ว
+// เราจะเลือก allocation ที่ "ทับซ้อนช่วง" (start < rangeEnd AND end >= rangeStart)
 $sql = "
     SELECT 
         a.id,
@@ -40,102 +60,97 @@ $sql = "
            ON g.allocation_id = a.id
           AND g.booking_id    = a.booking_id
     WHERE b.status = 'approved'
+      AND a.start_date < ?
+      AND a.end_date >= ?
     GROUP BY 
-        a.id,
-        a.booking_id,
-        a.room_id,
-        a.start_date,
-        a.end_date,
-        a.woman_count,
-        a.man_count,
-        r.room_name,
-        b.full_name
+        a.id, a.booking_id, a.room_id, a.start_date, a.end_date,
+        a.woman_count, a.man_count, r.room_name, b.full_name
     ORDER BY a.start_date, r.id
 ";
 
-//สีห้องพัก
 $roomColors = [
-    1 => '#e57373',   
-    2 => '#64b5f6',   
-    3 => '#81c784',   
-    4 => '#ffb74d',   
-    5 => '#ba68c8',   
-    6 => '#ff65c4',   
+    1 => '#64b5f6',
+    2 => '#64b5f6',
+    3 => '#64b5f6',
+    4 => '#64b5f6',
+    5 => '#64b5f6',
+    6 => '#64b5f6',
 ];
 
-$result = $conn->query($sql);
+// ใช้ prepared เพื่อปลอดภัยและรองรับพารามิเตอร์
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('ss', $rangeEnd, $rangeStart);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $events = [];
 
-// สร้าง events สำหรับแต่ละการจอง
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $bookingCode = formatBookingCode($row['booking_id']);
-        $roomName   = $row['room_name'];
-        $roomId     = (int)$row['room_id'];
-        $checkIn  = $row['start_date'];   
-        $checkOut = $row['end_date'];     
-        $cleanStart = date('Y-m-d', strtotime($checkOut . ' +1 day'));
-        $cleanEnd   = date('Y-m-d', strtotime($checkOut . ' +3 day'));
-        $w = (int)$row['woman_count'];
-        $m = (int)$row['man_count'];
+while ($row = $result->fetch_assoc()) {
+    $bookingCode = formatBookingCode($row['booking_id']);
+    $roomName    = $row['room_name'];
+    $roomId      = (int)$row['room_id'];
+    $checkIn     = $row['start_date'];
+    $checkOut    = $row['end_date'];
 
-        $pieces = ["ห้อง {$roomName}", $bookingCode];
-        if ($w > 0) $pieces[] = "หญิง {$w}";
-        if ($m > 0) $pieces[] = "ชาย {$m}";
-        $titleMain = implode(' • ', $pieces);
+    $cleanStart = date('Y-m-d', strtotime($checkOut . ' +1 day'));
+    $cleanEnd   = date('Y-m-d', strtotime($checkOut . ' +3 day'));
 
-        $tooltip = "ผู้จอง: {$row['full_name']}\n"
-            . "ห้อง {$roomName}\n";
+    $w = (int)$row['woman_count'];
+    $m = (int)$row['man_count'];
 
+    // ✅ ทำ title ให้สั้นลง (อ่านง่ายขึ้น)
+    $pieces = [$bookingCode];
+    if ($w > 0) $pieces[] = "หญิง {$w}";
+    if ($m > 0) $pieces[] = "ชาย {$m}";
+    $titleMain = implode(' ', $pieces);
 
-        $color = $roomColors[$roomId] ?? '#0d6efd';
+    $guestList = $row['guest_list'] ?: 'ยังไม่มีรายชื่อผู้เข้าพัก';
 
-        // เพิ่มข้อมูลรายชื่อผู้เข้าพักใน tooltip
-        $guestList = $row['guest_list'] ?? '';
-        if ($guestList === null || $guestList === '') {
-            $guestList = 'ยังไม่มีรายชื่อผู้เข้าพัก';
-        }
-        // สร้าง event สำหรับการเข้าพัก
-        $events[] = [
-            'id'      => $row['id'],   
-            'title'   => $titleMain,
-            'start'   => $checkIn,
-            'end'     => date('Y-m-d', strtotime($checkOut . ' +1 day')), 
-            'allDay'  => true,
-            'color'   => $color,
-            'extendedProps' => [
-                'tooltip'    => $tooltip,
-                'room'       => $roomName,
-                'booking_id' => $row['booking_id'],
-                'booker'     => $row['full_name'],
-                'start_real' => formatDate($checkIn),
-                'end_real'   => formatDate($checkOut),
-                'guests'     => $guestList,
-                'type'       => 'stay',
-                'booking_code' => formatBookingCode($row['booking_id'])
-            ],
-        ];
-        // สร้าง event สำหรับการทำความสะอาด
-        $events[] = [
-            'id'      => 'clean-' . $row['id'],
-            'title'   => "ห้อง {$roomName} (ทำความสะอาด)",
-            'start'   => $cleanStart,
-            'end'     => date('Y-m-d', strtotime($cleanEnd . ' +1 day')), 
-            'allDay'  => true,
-            'color'   => '#999999',
-            'textColor' => '#ffffff',
-            'extendedProps' => [
-                'room'       => $roomName,
-                'booking_id' => $row['booking_id'],
-                'booker'     => $row['full_name'],
-                'start_real' => $cleanStart,
-                'end_real'   => $cleanEnd,
-                'type'       => 'cleaning',
-            ],
-        ];
-    }
-    $result->free();
+    $color = $roomColors[$roomId] ?? '#0d6efd';
+
+    // stay
+    $events[] = [
+        'id'     => (string)$row['id'],
+        'title'  => $titleMain,
+        'start'  => $checkIn,
+        'end'    => date('Y-m-d', strtotime($checkOut . ' +1 day')),
+        'allDay' => true,
+        'color'  => $color,
+        'extendedProps' => [
+            'room_id'      => $roomId,
+            'room'         => $roomName,
+            'booking_id'   => (int)$row['booking_id'],
+            'booking_code' => $bookingCode,
+            'booker'       => $row['full_name'],
+            'start_real'   => formatDate($checkIn),
+            'end_real'     => formatDate($checkOut),
+            'guests'       => $guestList,
+            'type'         => 'stay',
+        ],
+    ];
+
+    // cleaning (3 days)
+    $events[] = [
+        'id'     => 'clean-' . $row['id'],
+        'title'  => "ทำความสะอาด",
+        'start'  => $cleanStart,
+        'end'    => date('Y-m-d', strtotime($cleanEnd . ' +1 day')),
+        'allDay' => true,
+        'color'  => '#9e9e9e',
+        'textColor' => '#fff',
+        'extendedProps' => [
+            'room_id'    => $roomId,
+            'room'       => $roomName,
+            'booking_id' => (int)$row['booking_id'],
+            'booker'     => $row['full_name'],
+            'start_real' => $cleanStart,
+            'end_real'   => $cleanEnd,
+            'type'       => 'cleaning',
+        ],
+    ];
 }
 
-echo json_encode($events);
+$stmt->close();
 $conn->close();
+
+echo json_encode($events, JSON_UNESCAPED_UNICODE);

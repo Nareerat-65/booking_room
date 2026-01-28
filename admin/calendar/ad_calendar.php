@@ -37,7 +37,30 @@ $extraHead = '
 
             <div class="app-content">
                 <div class="container-fluid">
+                    <div class="d-flex gap-2 align-items-center mb-3 flex-wrap">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-dark" id="btnViewBoard">ตารางห้อง (Board)</button>
+                            <button class="btn btn-outline-dark" id="btnViewCalendar">ปฏิทิน (Calendar)</button>
+                        </div>
+
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-secondary" data-range="14">14 วัน</button>
+                            <button class="btn btn-outline-secondary" data-range="30">30 วัน</button>
+                        </div>
+
+                        <div class="form-check ms-2">
+                            <input class="form-check-input" type="checkbox" id="toggleCleaning" checked>
+                            <label class="form-check-label" for="toggleCleaning">แสดงทำความสะอาด</label>
+                        </div>
+
+                        <input class="form-control ms-auto" style="max-width:260px" id="searchText"
+                            placeholder="ค้นหา: RM / ชื่อผู้จอง / ห้อง">
+                    </div>
+
+                    <div id="board" class="d-none"></div>
                     <div id="calendar"></div>
+
+                    <!-- <div id="calendar"></div> -->
                 </div>
             </div>
 
