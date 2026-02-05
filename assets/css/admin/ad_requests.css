@@ -51,8 +51,9 @@
 #bookingsTable td:nth-child(1),
 #bookingsTable th:nth-child(4),
 #bookingsTable td:nth-child(4) {
-    width: 50px;
+    width: 40px;
 }
+
 
 #bookingsTable th:nth-child(7),
 #bookingsTable td:nth-child(7) {
@@ -61,7 +62,7 @@
 
 #bookingsTable th:nth-child(8),
 #bookingsTable td:nth-child(8) {
-    width: 120px;
+    width: 110px;
 }
 
 #bookingsTable th:nth-child(10),
@@ -72,7 +73,9 @@
 }
 
 #bookingsTable th:nth-child(12),
-#bookingsTable td:nth-child(12),
+#bookingsTable td:nth-child(12){
+    width: 30px;
+}
 #bookingsTable th:nth-child(13),
 #bookingsTable td:nth-child(13) {
     width: 35px;

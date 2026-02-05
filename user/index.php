@@ -61,6 +61,7 @@ $activeMenu = 'index';
             </div>
         </div>
     </div>
+    
 
     <div class="container pb-5">
         <div class="alert alert-warning">
@@ -90,6 +91,8 @@ $activeMenu = 'index';
             </ul>
         </div>
     </div>
+
+   
 
     <?php include_once PARTIALS_PATH . '/user/footer_user.php'; ?>
     <?php include_once PARTIALS_PATH . '/user/script_user.php'; ?>

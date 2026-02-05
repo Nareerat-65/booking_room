@@ -41,9 +41,9 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="/admin/change_password/ad_change_password.php" class="nav-link <?= ($activeMenu ?? '') === 'change_password' ? 'active' : '' ?>">
-                        <i class="nav-icon fas fa-key"></i>
-                        <p>เปลี่ยนรหัสผ่าน</p>
+                    <a href="/admin/rooms/ad_rooms_list.php" class="nav-link <?= ($activeMenu ?? '') === 'rooms' ? 'active' : '' ?>">
+                        <i class="nav-icon fas fa-home"></i>
+                        <p>จัดการห้องพัก</p>
                     </a>
                 </li>
 

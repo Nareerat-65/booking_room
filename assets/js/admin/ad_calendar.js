@@ -254,8 +254,8 @@ document.addEventListener("DOMContentLoaded", function () {
           bar.style.color = "#fff";
           bar.textContent = `🧹 ${e.title}`;
         } else {
-          bar.style.background = "#64b5f6";
-          bar.style.color = "#0b1b2a";
+          bar.style.background = "#6699FF";
+          bar.style.color = "#ffffff";
           bar.textContent = e.title;
         }
 
@@ -410,6 +410,8 @@ document.addEventListener("DOMContentLoaded", function () {
     btnCalendar.classList.remove("btn-outline-dark");
     btnBoard.classList.remove("btn-dark");
     btnBoard.classList.add("btn-outline-dark");
+
+    calendar.render(); 
     calendar.refetchEvents();
   }
 

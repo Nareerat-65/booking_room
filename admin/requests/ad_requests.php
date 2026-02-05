@@ -59,7 +59,7 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                         <th>ภาควิชา</th>
                                         <th>วันที่เข้าพัก</th>
                                         <th>วันที่ออก</th>
-                                        <th>จำนวนคน</th>
+                                        <th>จำนวน</th>
                                         <th>สถานะ</th>
                                         <th>จัดการ</th>
                                     </tr>
