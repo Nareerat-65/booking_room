@@ -81,67 +81,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+$pageTitle  = "แก้ไขห้องพัก";
+$activeMenu = "rooms";
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <title>แก้ไขห้องพัก</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
-<body>
-    <div class="container mt-4" style="max-width:650px">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
 
-        <h3 class="mb-3">✏️ แก้ไขห้องพัก</h3>
-        <small class="text-muted">
-            ขณะนี้มีผู้เข้าพัก <?= $current_guest_count ?> คน
-        </small>
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
-        <?php if ($error): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
+        <main class="app-main">
+            <div class="container mt-4" style="max-width:650px">
 
-        <?php if ($success): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
-        <?php endif; ?>
+                <h3 class="mb-3">✏️ แก้ไขห้องพัก</h3>
+                <small class="text-muted">
+                    ขณะนี้มีผู้เข้าพัก <?= $current_guest_count ?> คน
+                </small>
 
-        <form method="post">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
 
-            <div class="mb-3">
-                <label class="form-label">ชื่อห้อง *</label>
-                <input type="text" name="room_name"
-                    class="form-control"
-                    value="<?= htmlspecialchars($room['room_name']) ?>"
-                    required>
-            </div>
+                <?php if ($success): ?>
+                    <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+                <?php endif; ?>
 
-            <div class="mb-3">
-                <label class="form-label">ที่ตั้ง / อาคาร</label>
-                <input type="text" name="location"
-                    class="form-control"
-                    value="<?= htmlspecialchars($room['location']) ?>">
-            </div>
+                <form method="post">
 
-            <div class="mb-3">
-                <label class="form-label">ความจุ (คน) *</label>
-                <input type="number" name="capacity"
-                    class="form-control"
-                    min="<?= $current_guest_count > 0 ? $room['capacity'] : 1 ?>"
-                    value="<?= (int)$room['capacity'] ?>"
-                    required>
-            </div>
+                    <div class="mb-3">
+                        <label class="form-label">ชื่อห้อง *</label>
+                        <input type="text" name="room_name"
+                            class="form-control"
+                            value="<?= htmlspecialchars($room['room_name']) ?>"
+                            required>
+                    </div>
 
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary">บันทึก</button>
-                <a href="ad_rooms_list.php" class="btn btn-secondary">กลับ</a>
-            </div>
+                    <div class="mb-3">
+                        <label class="form-label">ที่ตั้ง / อาคาร</label>
+                        <input type="text" name="location"
+                            class="form-control"
+                            value="<?= htmlspecialchars($room['location']) ?>">
+                    </div>
 
-        </form>
+                    <div class="mb-3">
+                        <label class="form-label">ความจุ (คน) *</label>
+                        <input type="number" name="capacity"
+                            class="form-control"
+                            min="<?= $current_guest_count > 0 ? $room['capacity'] : 1 ?>"
+                            value="<?= (int)$room['capacity'] ?>"
+                            required>
+                    </div>
 
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="saveRoom(event)">บันทึก</button>
+                        <a href="ad_rooms_list.php" class="btn btn-secondary">กลับ</a>
+                    </div>
+
+                </form>
+        </main>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
     </div>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
+    <script>
+        function saveRoom(e) {
+            e.preventDefault();
+            SA.confirm(
+                'ยืนยันการบันทึกข้อมูล?',
+                'คุณแน่ใจหรือไม่ว่าต้องการบันทึกข้อมูลห้องพักนี้?',
+                'บันทึกข้อมูล',
+                'ยกเลิก',
+                (isConfirmed) => {
+                    if (isConfirmed) {
+                        document.querySelector('form').submit();
+                    }
+                }
+            )
+        }
+    </script>
 </body>
-
+ 
 </html>

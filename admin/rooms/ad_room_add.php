@@ -44,60 +44,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+$pageTitle  = "เพิ่มห้องพัก";
+$activeMenu = "rooms";
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8">
-    <title>เพิ่มห้องพัก</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <?php include_once PARTIALS_PATH . '/admin/head_admin.php'; ?>
 </head>
 
-<body>
-    <div class="container mt-4" style="max-width:600px">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+        <?php include_once PARTIALS_PATH . '/admin/nav_admin.php'; ?>
+        <?php include_once PARTIALS_PATH . '/admin/sidebar_admin.php'; ?>
 
-        <h3 class="mb-3">➕ เพิ่มห้องพัก</h3>
+        <main class="app-main">
+            <div class="container mt-4" style="max-width:600px">
 
-        <?php if ($error): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
+                <h3 class="mb-3">➕ เพิ่มห้องพัก</h3>
 
-        <form method="post">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
 
-            <div class="mb-3">
-                <label class="form-label">ชื่อห้อง *</label>
-                <input type="text" name="room_name"
-                    class="form-control"
-                    value="<?= htmlspecialchars($room_name) ?>"
-                    required>
+                <form method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label">ชื่อห้อง *</label>
+                        <input type="text" name="room_name"
+                            class="form-control"
+                            value="<?= htmlspecialchars($room_name) ?>"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">ที่ตั้ง / อาคาร</label>
+                        <input type="text" name="location"
+                            class="form-control"
+                            placeholder="เช่น อาคาร A ชั้น 2"
+                            value="<?= htmlspecialchars($location) ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">ความจุ (คน) *</label>
+                        <input type="number" name="capacity"
+                            class="form-control"
+                            min="1"
+                            value="<?= htmlspecialchars($capacity) ?>"
+                            required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="saveRoom(event)">บันทึก</button>
+                        <a href="ad_rooms_list.php" class="btn btn-secondary">ยกเลิก</a>
+                    </div>
+
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">ที่ตั้ง / อาคาร</label>
-                <input type="text" name="location"
-                    class="form-control"
-                    placeholder="เช่น อาคาร A ชั้น 2"
-                    value="<?= htmlspecialchars($location) ?>">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">ความจุ (คน) *</label>
-                <input type="number" name="capacity"
-                    class="form-control"
-                    min="1"
-                    value="<?= htmlspecialchars($capacity) ?>"
-                    required>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary">บันทึก</button>
-                <a href="ad_rooms_list.php" class="btn btn-secondary">ยกเลิก</a>
-            </div>
-
-        </form>
+        </main>
+        <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
     </div>
+    <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
+
+    <script>
+        function saveRoom(e) {
+            e.preventDefault();
+            SA.confirm(
+                'ยืนยันการเพิ่มห้องพัก?',
+                'คุณแน่ใจหรือไม่ว่าต้องการเพิ่มห้องพักนี้?',
+                'เพิ่มห้องพัก',
+                'ยกเลิก',
+                (isConfirmed) => {
+                    if (isConfirmed) {
+                        e.target.closest('form').submit();
+                    }
+                }
+            )
+        }
+    </script>
 </body>
+
 
 </html>
