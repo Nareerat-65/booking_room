@@ -132,7 +132,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
                                                 </a>
                                                 <a href="ad_doc_delete.php?id=<?= (int)$doc['id'] ?>&booking_id=<?= (int)$booking_id ?>"
                                                     class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('ลบเอกสารนี้แน่ใจหรือไม่?');">
+                                                    onclick="deleteDocument(event, <?= (int)$doc['id'] ?>)">
                                                     ลบ
                                                 </a>
                                             </td>
@@ -156,6 +156,19 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_doc_manage.css">
                 $('#docListTable').DataTable();
             }
         });
+
+        function deleteDocument(e, docID) {
+            e.preventDefault();
+            SA.confirm(
+                'ยืนยันการลบเอกสาร',
+                'คุณแน่ใจหรือไม่ว่าต้องการลบเอกสารนี้? การกระทำนี้ไม่สามารถย้อนกลับได้',
+                'ลบ',
+                'ยกเลิก',
+                function() {
+                    window.location.href = 'ad_doc_delete.php?id=' + docID + '&booking_id=<?= (int)$booking_id ?>';
+                }
+            );
+        }
     </script>
 </body>
 

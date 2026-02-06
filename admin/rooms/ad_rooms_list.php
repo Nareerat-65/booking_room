@@ -85,12 +85,14 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
                                                     <?php if ($room['is_active']): ?>
                                                         <a href="ad_room_toggle.php?id=<?= $room['id'] ?>&action=off"
                                                             class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('ต้องการปิดห้องนี้ใช่หรือไม่?');">
+                                                            onclick="confirmCloseRoom(event, <?= $room['id'] ?>)">
                                                             ปิดห้อง
                                                         </a>
+
                                                     <?php else: ?>
                                                         <a href="ad_room_toggle.php?id=<?= $room['id'] ?>&action=on"
-                                                            class="btn btn-success btn-sm">
+                                                            class="btn btn-success btn-sm"
+                                                            onclick="OpenRoomSuccess(event,<?= $room['id'] ?>)">
                                                             เปิดห้อง
                                                         </a>
                                                     <?php endif; ?>
@@ -115,7 +117,37 @@ $extraHead = '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css
         <?php include_once PARTIALS_PATH . '/admin/footer_admin.php'; ?>
     </div>
     <?php include_once PARTIALS_PATH . '/admin/script_admin.php'; ?>
+    <script>
+        function confirmCloseRoom(e, roomID) {
+            e.preventDefault();
+            SA.confirm(
+                'ยืนยันการปิดห้องพัก',
+                'คุณแน่ใจหรือไม่ว่าต้องการปิดห้องพักนี้? ห้องพักที่ถูกปิดจะไม่สามารถจองได้จนกว่าจะมีการเปิดใช้งานใหม่',
+                'ใช่, ปิดห้องพัก',
+                'ยกเลิก',
+                (isConfirmed) => {
+                    if (!isConfirmed) {
+                        return;
+                    }
+                    window.location.href = 'ad_room_toggle.php?id=' + roomID + '&action=off';
+                }
+            )
+        }
 
+        function OpenRoomSuccess(e, roomID) {
+            e.preventDefault();
+            SA.success('เปิดห้องพักแล้ว', undefined,
+                () => {
+                    window.location.href = 'ad_room_toggle.php?id=' + roomID + '&action=on';
+                }, {
+                    timer: 10000,
+                    showConfirmButton: true,
+                }
+
+            );
+
+        }
+    </script>
 </body>
 
 </html>

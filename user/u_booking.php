@@ -26,7 +26,8 @@ $activeMenu = 'booking';
                 <div class="mb-3">
                     <label for="phone" class="form-label required">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" class="form-control" id="phone" name="phone"
-                        maxlength="10" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required>
+                        maxlength="10" inputmode="numeric" pattern="[0-9]{10}" required
+                        onkeypress="return /[0-9]/.test(String.fromCharCode(event.which))">
                 </div>
 
                 <div class="mb-3">
