@@ -2,7 +2,7 @@
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
     <div class="sidebar-brand">
         <a href="ad_dashboard.php" class="brand-link d-flex align-items-center gap-2">
-            <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png"
+            <img src="../../assets/img/Medicine_Naresuan.png"
                 alt="Logo" class="brand-image img-circle elevation-3"
                 style="opacity:.9; width: 35px;height: 35px;">
             <span class="brand-text">ระบบจองห้องพัก</span>

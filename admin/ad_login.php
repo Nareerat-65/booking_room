@@ -54,7 +54,7 @@ $extraHead = '<link rel="stylesheet" href="/assets/css/admin/ad_login.css">'; //
             <!-- โลโก้ + หัวข้อ -->
             <div class="login-header text-center">
                 <div class="login-logo-wrap mb-3">
-                    <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png"
+                    <img src="../assets/img/Medicine_Naresuan.png"
                         alt="Logo"
                         class="login-logo img-fluid">
                 </div>

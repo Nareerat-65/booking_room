@@ -67,7 +67,7 @@ function sendNewBooking(
                         overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
 
                 <div style="background:#F57B39; padding:18px; align-items:center; color:#ffffff; display:flex;">
-                    <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
+                    <img src="../assets/img/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
                     <div>
                         <h2 style="margin:0; font-size:22px;">แจ้งเตือนคำขอจองห้องพักใหม่</h2>
                     </div>
@@ -173,7 +173,7 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                             overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
                         <div style="background:#F57B39; padding:18px; align-items:center; color:#ffffff; display:flex;">
-                            <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
+                            <img src="../assets/img/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
                             <div>
                                 <h2 style="margin:0; font-size:22px;">ยืนยันการจองห้องพักของคุณ</h2>
                                 <p style="margin:4px 0 0; font-size:14px; opacity:.9;">
@@ -240,7 +240,7 @@ function sendBookingResult(array $booking, string $status, ?string $reason = nul
                                 overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
                             <div style="background:#F57B39; padding:18px; align-items:center; color:#ffffff; display:flex;">
-                                <img src="https://upload.wikimedia.org/wikipedia/th/b/b2/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
+                                <img src="../assets/img/Medicine_Naresuan.png" alt="Logo" width="60" height="60" class="me-3">
                                 <div>
                                     <h2 style="margin:0; font-size:22px;">ผลการจองห้องพักของคุณ</h2>
                                     <p style="margin:4px 0 0; font-size:14px; opacity:.9;">
